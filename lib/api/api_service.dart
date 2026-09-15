@@ -105,6 +105,41 @@ class ApiService {
     return AuthResponse(token: token, user: user);
   }
 
+  Future<AuthUser> me() async {
+    final token = await getToken();
+
+    if (token == null || token.isEmpty) {
+      throw const ApiException('Token autentikasi tidak ditemukan.', statusCode: 401);
+    }
+
+    final response = await http.get(
+      Uri.parse('${ApiConfig.mobileUrl}/me'),
+      headers: _authHeaders(token),
+    );
+
+    final data = _decode(response);
+
+    if (response.statusCode != 200 || data['status'] != 'success') {
+      throw ApiException(
+        data['message']?.toString() ?? 'Gagal mengambil data user.',
+        statusCode: response.statusCode,
+      );
+    }
+
+    final userJson = data['data'];
+
+    if (userJson is! Map) {
+      throw const ApiException('Response /me dari server tidak valid.');
+    }
+
+    final user = AuthUser.fromJson(Map<String, dynamic>.from(userJson));
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('auth_user', jsonEncode(userJson));
+
+    return user;
+  }
+
   Future<void> logout() async {
     final token = await getToken();
 
