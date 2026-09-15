@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
-import 'login_page.dart';
+import 'api_login_page.dart';
 import '../widgets/shared_widgets.dart';
 
 class AccountSettingsPage extends StatefulWidget {
@@ -24,14 +24,12 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     try {
       await ApiService.instance.logout();
     } on ApiException catch (e) {
+      await ApiService.instance.clearSession();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message)),
       );
-      return;
     } catch (_) {
-      // Even when the server cannot be reached, clear the local token and
-      // return to login so the user is not stuck in the authenticated UI.
       await ApiService.instance.clearSession();
     } finally {
       if (mounted) setState(() => _isLoggingOut = false);
@@ -40,7 +38,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     if (!mounted) return;
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginPage()),
+      MaterialPageRoute(builder: (_) => const ApiLoginPage()),
       (_) => false,
     );
   }
