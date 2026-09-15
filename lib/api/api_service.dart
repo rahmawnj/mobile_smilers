@@ -58,6 +58,107 @@ class AuthResponse {
   final AuthUser user;
 }
 
+class LinenCategory {
+  const LinenCategory({
+    required this.id,
+    required this.namaKategoriLinen,
+    required this.subKategoriLinen,
+    required this.jumlahStok,
+    required this.jumlahHilang,
+  });
+
+  final int id;
+  final String namaKategoriLinen;
+  final String subKategoriLinen;
+  final int jumlahStok;
+  final int jumlahHilang;
+
+  factory LinenCategory.fromJson(Map<String, dynamic> json) {
+    return LinenCategory(
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      namaKategoriLinen: json['nama_kategori_linen']?.toString() ?? '',
+      subKategoriLinen: json['sub_kategori_linen']?.toString() ?? '',
+      jumlahStok: (json['jumlah_stok'] as num?)?.toInt() ?? 0,
+      jumlahHilang: (json['jumlah_hilang'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
+class LinenItem {
+  const LinenItem({
+    required this.id,
+    required this.kodeLinen,
+    required this.tagRfid,
+    required this.qrCode,
+    required this.status,
+  });
+
+  final int id;
+  final String kodeLinen;
+  final String tagRfid;
+  final String qrCode;
+  final String status;
+
+  factory LinenItem.fromJson(Map<String, dynamic> json) {
+    return LinenItem(
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      kodeLinen: json['kode_linen']?.toString() ?? '',
+      tagRfid: json['tag_rfid']?.toString() ?? '',
+      qrCode: json['qr_code']?.toString() ?? '',
+      status: json['status']?.toString() ?? '',
+    );
+  }
+}
+
+class LinenMeta {
+  const LinenMeta({
+    required this.currentPage,
+    required this.perPage,
+    required this.total,
+    required this.lastPage,
+  });
+
+  final int currentPage;
+  final int perPage;
+  final int total;
+  final int lastPage;
+
+  factory LinenMeta.fromJson(Map<String, dynamic> json) {
+    return LinenMeta(
+      currentPage: (json['current_page'] as num?)?.toInt() ?? 1,
+      perPage: (json['per_page'] as num?)?.toInt() ?? 10,
+      total: (json['total'] as num?)?.toInt() ?? 0,
+      lastPage: (json['last_page'] as num?)?.toInt() ?? 1,
+    );
+  }
+}
+
+class LinenListResponse {
+  const LinenListResponse({required this.data, required this.meta});
+
+  final List<LinenCategory> data;
+  final LinenMeta meta;
+}
+
+class LinenItemsResponse {
+  const LinenItemsResponse({required this.data, required this.meta});
+
+  final List<LinenItem> data;
+  final LinenMeta meta;
+}
+
+class LinenDropdownSubCategory {
+  const LinenDropdownSubCategory({required this.subKategoriLinen});
+
+  final String subKategoriLinen;
+
+  factory LinenDropdownSubCategory.fromJson(Map<String, dynamic> json) {
+    return LinenDropdownSubCategory(
+      subKategoriLinen: json['sub_kategori_linen']?.toString() ?? '',
+    );
+  }
+}
+
 class ApiService {
   static final ApiService instance = ApiService._();
 
@@ -138,6 +239,107 @@ class ApiService {
     await prefs.setString('auth_user', jsonEncode(userJson));
 
     return user;
+  }
+
+  Future<LinenListResponse> getLinen({
+    String? search,
+    int? perPage,
+  }) async {
+    final query = <String, String>{};
+    if (search != null && search.trim().isNotEmpty) {
+      query['search'] = search.trim();
+    }
+    if (perPage != null) query['per_page'] = perPage.toString();
+
+    final data = await _get('/linen', query: query);
+    final items = (data['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((item) => LinenCategory.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+
+    return LinenListResponse(
+      data: items,
+      meta: LinenMeta.fromJson(
+        Map<String, dynamic>.from((data['meta'] as Map?) ?? const {}),
+      ),
+    );
+  }
+
+  Future<LinenCategory> getLinenCategory(int kategoriLinen) async {
+    final data = await _get('/linen/$kategoriLinen');
+    final category = data['data'];
+
+    if (category is! Map) {
+      throw const ApiException('Response detail linen tidak valid.');
+    }
+
+    return LinenCategory.fromJson(Map<String, dynamic>.from(category));
+  }
+
+  Future<LinenItemsResponse> getLinenItems(
+    int kategoriLinen, {
+    int? perPage,
+  }) async {
+    final query = <String, String>{};
+    if (perPage != null) query['per_page'] = perPage.toString();
+
+    final data = await _get('/linen/$kategoriLinen/items', query: query);
+    final items = (data['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((item) => LinenItem.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+
+    return LinenItemsResponse(
+      data: items,
+      meta: LinenMeta.fromJson(
+        Map<String, dynamic>.from((data['meta'] as Map?) ?? const {}),
+      ),
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getLinenCategoryDropdown() async {
+    final data = await _get('/linen-dropdown/category');
+    return (data['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
+  }
+
+  Future<List<LinenDropdownSubCategory>> getLinenSubCategoryDropdown() async {
+    final data = await _get('/linen-dropdown/sub-category');
+    return (data['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((item) => LinenDropdownSubCategory.fromJson(
+              Map<String, dynamic>.from(item),
+            ))
+        .toList();
+  }
+
+  Future<Map<String, dynamic>> _get(
+    String path, {
+    Map<String, String>? query,
+  }) async {
+    final token = await getToken();
+
+    if (token == null || token.isEmpty) {
+      throw const ApiException('Token autentikasi tidak ditemukan.', statusCode: 401);
+    }
+
+    final uri = Uri.parse('${ApiConfig.mobileUrl}$path').replace(
+      queryParameters: query == null || query.isEmpty ? null : query,
+    );
+
+    final response = await http.get(uri, headers: _authHeaders(token));
+    final data = _decode(response);
+
+    if (response.statusCode != 200 || data['status'] != 'success') {
+      throw ApiException(
+        data['message']?.toString() ?? 'Request API gagal.',
+        statusCode: response.statusCode,
+      );
+    }
+
+    return data;
   }
 
   Future<void> logout() async {
