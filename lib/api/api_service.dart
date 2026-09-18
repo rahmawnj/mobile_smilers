@@ -4,46 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiConfig {
-  static const _storageKey = 'api_base_url';
+  static const defaultBaseUrl = 'https://smilers.co.id';
 
-  static const defaultBaseUrl = String.fromEnvironment(
-    'BASE_URL',
-    defaultValue: '',
-  );
-
-  static String? _savedBaseUrl;
-
-  static Future<String?> getBaseUrl() async {
-    if (_savedBaseUrl != null) return _savedBaseUrl;
-
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(_storageKey)?.trim();
-    if (saved != null && saved.isNotEmpty) {
-      _savedBaseUrl = normalize(saved);
-      return _savedBaseUrl;
-    }
-
-    final env = defaultBaseUrl.trim();
-    if (env.isNotEmpty) {
-      _savedBaseUrl = normalize(env);
-      return _savedBaseUrl;
-    }
-
-    return null;
-  }
-
-  static Future<void> saveBaseUrl(String value) async {
-    final normalized = normalize(value);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_storageKey, normalized);
-    _savedBaseUrl = normalized;
-  }
-
-  static Future<void> clearBaseUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_storageKey);
-    _savedBaseUrl = null;
-  }
+  static Future<String> getBaseUrl() async => normalize(defaultBaseUrl);
 
   static String normalize(String value) {
     var url = value.trim();
@@ -58,13 +21,7 @@ class ApiConfig {
     return url;
   }
 
-  static Future<String> getMobileUrl() async {
-    final base = await getBaseUrl();
-    if (base == null || base.isEmpty) {
-      throw const ApiException('Base URL belum dikonfigurasi.');
-    }
-    return '$base/api/mobile';
-  }
+  static Future<String> getMobileUrl() async => '${await getBaseUrl()}/api/mobile';
 }
 
 class ApiException implements Exception {
