@@ -407,8 +407,9 @@ class ApiService {
           headers: _authHeaders(token),
         );
 
-        if (response.statusCode != 200) {
-          final data = _decode(response);
+        final data = _decode(response);
+
+        if (response.statusCode != 200 || data['status'] != 'success') {
           throw ApiException(
             data['message']?.toString() ?? 'Logout gagal.',
             statusCode: response.statusCode,
