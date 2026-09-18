@@ -12,8 +12,8 @@ class ApiLoginPage extends StatefulWidget {
 }
 
 class _ApiLoginPageState extends State<ApiLoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController(text: 'superadmin');
+  final _passwordController = TextEditingController(text: 'password');
 
   bool _obscurePassword = true;
   bool _isLoading = false;
