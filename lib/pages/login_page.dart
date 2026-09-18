@@ -381,7 +381,7 @@ class _TopBrand extends StatelessWidget {
             ),
           ),
           child: const CustomPaint(
-            painter: _HospitalLogoPainter(),
+            child: const _HospitalLogo(),
           ),
         ),
 
@@ -878,101 +878,23 @@ class _Footer extends StatelessWidget {
   }
 }
 
-/* ============================================================
-   HOSPITAL LOGO
-   ============================================================ */
-
-class _HospitalLogoPainter extends CustomPainter {
-  const _HospitalLogoPainter();
+class _HospitalLogo extends StatelessWidget {
+  const _HospitalLogo();
 
   @override
-  void paint(
-    Canvas canvas,
-    Size size,
-  ) {
-    final green = Paint()
-      ..color = const Color(0xff52D8A8)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 7
-      ..strokeJoin = StrokeJoin.round
-      ..strokeCap = StrokeCap.round;
-
-    final blue = Paint()
-      ..color = const Color(0xff2455A4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 7
-      ..strokeJoin = StrokeJoin.round
-      ..strokeCap = StrokeCap.round;
-
-    final c = Offset(
-      size.width / 2,
-      size.height / 2,
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Image.network(
+        '$url',
+        width: 120,
+        height: 120,
+        fit: BoxFit.contain,
+      ),
     );
-
-    final greenPath = Path()
-      ..moveTo(
-        c.dx - 1,
-        c.dy - 32,
-      )
-      ..lineTo(
-        c.dx + 29,
-        c.dy - 32,
-      )
-      ..lineTo(
-        c.dx + 29,
-        c.dy,
-      )
-      ..lineTo(
-        c.dx + 61,
-        c.dy,
-      )
-      ..lineTo(
-        c.dx + 61,
-        c.dy + 30,
-      )
-      ..lineTo(
-        c.dx + 1,
-        c.dy + 30,
-      )
-      ..quadraticBezierTo(
-        c.dx - 29,
-        c.dy + 30,
-        c.dx - 29,
-        c.dy,
-      )
-      ..lineTo(
-        c.dx - 1,
-        c.dy,
-      );
-
-    final bluePath = Path()
-      ..moveTo(
-        c.dx - 33,
-        c.dy - 1,
-      )
-      ..lineTo(
-        c.dx - 3,
-        c.dy - 1,
-      )
-      ..quadraticBezierTo(
-        c.dx + 27,
-        c.dy - 1,
-        c.dx + 27,
-        c.dy + 29,
-      )
-      ..lineTo(
-        c.dx + 27,
-        c.dy + 59,
-      )
-      ..lineTo(
-        c.dx - 3,
-        c.dy + 59,
-      )
-      ..lineTo(
-        c.dx - 3,
-        c.dy + 29,
-      )
-      ..quadraticBezierTo(
+  }
+}
+ierTo(
         c.dx - 3,
         c.dy - 1,
         c.dx - 33,
