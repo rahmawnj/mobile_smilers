@@ -129,7 +129,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(14),
                         child: Image.network(
-                          '$url',
+                          'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
                           width: 66,
                           height: 66,
                           fit: BoxFit.cover,
