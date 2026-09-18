@@ -55,11 +55,12 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             height: 164,
             width: double.infinity,
             alignment: Alignment.center,
-            color: const Color(0xff159cf1),
-            child: const Icon(
-              Icons.local_hospital,
-              color: Colors.white,
-              size: 84,
+            color: Colors.white,
+            child: Image.network(
+              '$url',
+              height: 120,
+              width: 120,
+              fit: BoxFit.contain,
             ),
           ),
           Padding(
