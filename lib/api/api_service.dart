@@ -4,12 +4,67 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiConfig {
-  static const baseUrl = String.fromEnvironment(
+  static const _storageKey = 'api_base_url';
+
+  static const defaultBaseUrl = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'https://smilers.co.id',
+    defaultValue: '',
   );
 
-  static String get mobileUrl => '$baseUrl/api/mobile';
+  static String? _savedBaseUrl;
+
+  static Future<String?> getBaseUrl() async {
+    if (_savedBaseUrl != null) return _savedBaseUrl;
+
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_storageKey)?.trim();
+    if (saved != null && saved.isNotEmpty) {
+      _savedBaseUrl = normalize(saved);
+      return _savedBaseUrl;
+    }
+
+    final env = defaultBaseUrl.trim();
+    if (env.isNotEmpty) {
+      _savedBaseUrl = normalize(env);
+      return _savedBaseUrl;
+    }
+
+    return null;
+  }
+
+  static Future<void> saveBaseUrl(String value) async {
+    final normalized = normalize(value);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_storageKey, normalized);
+    _savedBaseUrl = normalized;
+  }
+
+  static Future<void> clearBaseUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_storageKey);
+    _savedBaseUrl = null;
+  }
+
+  static String normalize(String value) {
+    var url = value.trim();
+    while (url.endsWith('/')) {
+      url = url.substring(0, url.length - 1);
+    }
+    if (url.endsWith('/api/mobile')) {
+      url = url.substring(0, url.length - '/api/mobile'.length);
+    } else if (url.endsWith('/api')) {
+      url = url.substring(0, url.length - '/api'.length);
+    }
+    return url;
+  }
+
+  static Future<String> getMobileUrl() async {
+    final base = await getBaseUrl();
+    if (base == null || base.isEmpty) {
+      throw const ApiException('Base URL belum dikonfigurasi.');
+    }
+    return '$base/api/mobile';
+  }
 }
 
 class ApiException implements Exception {
@@ -170,7 +225,7 @@ class ApiService {
     String deviceName = 'mobile-app',
   }) async {
     final response = await http.post(
-      Uri.parse('${ApiConfig.mobileUrl}/login'),
+      Uri.parse('${await ApiConfig.getMobileUrl()}/login'),
       headers: const {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -214,7 +269,7 @@ class ApiService {
     }
 
     final response = await http.get(
-      Uri.parse('${ApiConfig.mobileUrl}/me'),
+      Uri.parse('${await ApiConfig.getMobileUrl()}/me'),
       headers: _authHeaders(token),
     );
 
@@ -325,7 +380,7 @@ class ApiService {
       throw const ApiException('Token autentikasi tidak ditemukan.', statusCode: 401);
     }
 
-    final uri = Uri.parse('${ApiConfig.mobileUrl}$path').replace(
+    final uri = Uri.parse('${await ApiConfig.getMobileUrl()}$path').replace(
       queryParameters: query == null || query.isEmpty ? null : query,
     );
 
@@ -348,7 +403,7 @@ class ApiService {
     if (token != null && token.isNotEmpty) {
       try {
         final response = await http.post(
-          Uri.parse('${ApiConfig.mobileUrl}/logout'),
+          Uri.parse('${await ApiConfig.getMobileUrl()}/logout'),
           headers: _authHeaders(token),
         );
 
