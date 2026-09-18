@@ -57,7 +57,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             alignment: Alignment.center,
             color: Colors.white,
             child: Image.network(
-              '$url',
+              'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
               height: 120,
               width: 120,
               fit: BoxFit.contain,
