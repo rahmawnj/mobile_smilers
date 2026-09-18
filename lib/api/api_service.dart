@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiConfig {
   static const baseUrl = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'http://localhost:8000',
+    defaultValue: 'https://smilers.co.id',
   );
 
   static String get mobileUrl => '$baseUrl/api/mobile';
