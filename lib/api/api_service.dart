@@ -8,6 +8,9 @@ class ApiConfig {
 
   static Future<String> getBaseUrl() async => normalize(defaultBaseUrl);
 
+  // Dipertahankan untuk kompatibilitas halaman konfigurasi lama.
+  static Future<void> saveBaseUrl(String value) async {}
+
   static String normalize(String value) {
     var url = value.trim();
     while (url.endsWith('/')) {
