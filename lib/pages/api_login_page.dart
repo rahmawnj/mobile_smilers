@@ -126,17 +126,13 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                   ),
                   child: Column(
                     children: [
-                      Container(
-                        width: 66,
-                        height: 66,
-                        decoration: const BoxDecoration(
-                          color: Color(0xff118D9A),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.local_hospital_rounded,
-                          color: Colors.white,
-                          size: 34,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Image.network(
+                          '$url',
+                          width: 66,
+                          height: 66,
+                          fit: BoxFit.cover,
                         ),
                       ),
                       const SizedBox(height: 16),
