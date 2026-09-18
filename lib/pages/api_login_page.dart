@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
 import 'dashboard_page.dart';
+import 'api_config_page.dart';
 
 class ApiLoginPage extends StatefulWidget {
   const ApiLoginPage({super.key});
@@ -213,6 +214,26 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                         ),
                       ),
                       const SizedBox(height: 18),
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          tooltip: 'Konfigurasi Server',
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ApiConfigPage(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.settings_outlined,
+                            color: Color(0xff118D9A),
+                            size: 22,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
                       const Text(
                         'RS ANUGERAH GLOBAL SEHAT',
                         style: TextStyle(
