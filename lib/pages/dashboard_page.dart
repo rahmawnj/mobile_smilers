@@ -17,6 +17,8 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _loading = true;
   String? _error;
   List<LinenCategory> _linen = const [];
+  int _laundryCount = 0;
+  int _roomCount = 0;
 
   @override
   void initState() {
@@ -31,10 +33,26 @@ class _DashboardPageState extends State<DashboardPage> {
     });
 
     try {
-      final response = await ApiService.instance.getLinen(perPage: 10);
+      final results = await Future.wait([
+        ApiService.instance.getLinen(perPage: 10),
+        ApiService.instance.getLinenLaundry(perPage: 1000),
+        ApiService.instance.getLinenRuangan(perPage: 1000),
+      ]);
       if (!mounted) return;
+
+      final linenResponse = results[0] as LinenListResponse<LinenCategory>;
+      final laundryResponse =
+          results[1] as LinenListResponse<LinenLaundryItem>;
+      final roomResponse =
+          results[2] as LinenListResponse<LinenRuanganItem>;
+
       setState(() {
-        _linen = response.data;
+        _linen = linenResponse.data;
+        _laundryCount = laundryResponse.meta.total;
+        _roomCount = roomResponse.data.fold<int>(
+          0,
+          (sum, item) => sum + item.linenDiRuangan,
+        );
         _loading = false;
       });
     } on ApiException catch (e) {
@@ -81,8 +99,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     },
                     {
                       'value': _loading ? '...' : _linen.length.toString(),
-                      'unit': 'Kategori',
-                      'title': 'Kategori Linen',
+                      'unit': 'Linen',
+                      'title': 'Linen & Tirai di Laundry',
                       'action': 'Lihat Data',
                     },
                     {
