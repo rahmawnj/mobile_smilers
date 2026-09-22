@@ -307,6 +307,8 @@ class MetricCard extends StatelessWidget {
                     );
                   } else if (entry.key == 1) {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => LinenLaundryPage(userName: userName)));
+                  } else if (entry.key == 2) {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => LinenRuanganPage(userName: userName)));
                   } else {
                     ScaffoldMessenger.of(context)
                       ..hideCurrentSnackBar()
