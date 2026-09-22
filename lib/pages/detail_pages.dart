@@ -1,3 +1,37 @@
+
+class _MetaPagination extends StatelessWidget {
+  const _MetaPagination({required this.meta, required this.onPage});
+  final LinenMeta meta;
+  final ValueChanged<int> onPage;
+
+  @override
+  Widget build(BuildContext context) {
+    if (meta.lastPage <= 1) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          OutlinedButton(
+            onPressed: meta.currentPage > 1 ? () => onPage(meta.currentPage - 1) : null,
+            child: const Text('Sebelumnya'),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Halaman ${meta.currentPage} dari ${meta.lastPage}',
+            style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
+          ),
+          const SizedBox(width: 12),
+          OutlinedButton(
+            onPressed: meta.currentPage < meta.lastPage ? () => onPage(meta.currentPage + 1) : null,
+            child: const Text('Berikutnya'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
@@ -22,6 +56,7 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
   String? _error;
   LinenCategory? _detail;
   LinenItemsResponse? _items;
+  int _page = 1;
 
   @override
   void initState() {
@@ -38,7 +73,7 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
     try {
       final results = await Future.wait([
         ApiService.instance.getLinenCategory(widget.category.id),
-        ApiService.instance.getLinenItems(widget.category.id, perPage: 10),
+        ApiService.instance.getLinenItems(widget.category.id, perPage: 10, page: _page),
       ]);
 
       if (!mounted) return;
@@ -136,18 +171,10 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
                                 ),
                               const SizedBox(height: 12),
                               Text(
-                                'Halaman ' +
-                                    _items!.meta.currentPage.toString() +
-                                    ' dari ' +
-                                    _items!.meta.lastPage.toString() +
-                                    ' • Total ' +
-                                    _items!.meta.total.toString() +
-                                    ' item',
-                                style: const TextStyle(
-                                  color: Color(0xff8b99a5),
-                                  fontSize: 9,
-                                ),
+                                'Total ' + _items!.meta.total.toString() + ' item',
+                                style: const TextStyle(color: Color(0xff8b99a5), fontSize: 9),
                               ),
+                              _MetaPagination(meta: _items!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
                             ],
                           ),
               ),
@@ -244,6 +271,7 @@ class _InOutPageState extends State<InOutPage> {
   InOutResponse? _response;
   final _searchController = TextEditingController();
   DateTime? _selectedDate;
+  int _page = 1;
 
   @override
   void initState() {
@@ -265,6 +293,7 @@ class _InOutPageState extends State<InOutPage> {
     try {
       final r = await ApiService.instance.getInOut(
         perPage: 10,
+        page: _page,
         search: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
         daterange: _selectedDate == null ? null : _dateParam(_selectedDate!),
       );
@@ -364,7 +393,10 @@ class _InOutPageState extends State<InOutPage> {
                                 padding: EdgeInsets.all(40),
                                 child: Center(child: Text('Tidak ada data Keluar Masuk Linen & Tirai.')),
                               )
-                            : _InOutTable(rows: rows),
+                            : Column(children: [
+                                _InOutTable(rows: rows),
+                                if (_response != null) _MetaPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                              ]),
               ),
             ),
           ),
@@ -435,11 +467,11 @@ class _InOutError extends StatelessWidget {
 
 
 class LinenBelumKembaliPage extends StatefulWidget { const LinenBelumKembaliPage({super.key, required this.userName}); final String userName; @override State<LinenBelumKembaliPage> createState()=>_LinenBelumKembaliPageState(); }
-class _LinenBelumKembaliPageState extends State<LinenBelumKembaliPage> { bool _loading=true; String? _error; LinenBelumKembaliResponse? _response; List<LinenRoomOption> _rooms=const []; int? _roomId; DateTimeRange? _range; final _searchController=TextEditingController(); @override void initState(){super.initState();_load();_loadRooms();} @override void dispose(){_searchController.dispose();super.dispose();} String _date(DateTime d)=>d.day.toString()+'/'+d.month.toString()+'/'+d.year.toString(); String? get _daterange=>_range==null?null:_date(_range!.start)+' - '+_date(_range!.end);
+class _LinenBelumKembaliPageState extends State<LinenBelumKembaliPage> { bool _loading=true; String? _error; LinenBelumKembaliResponse? _response; List<LinenRoomOption> _rooms=const []; int? _roomId; DateTimeRange? _range; int _page=1; final _searchController=TextEditingController(); @override void initState(){super.initState();_load();_loadRooms();} @override void dispose(){_searchController.dispose();super.dispose();} String _date(DateTime d)=>d.day.toString()+'/'+d.month.toString()+'/'+d.year.toString(); String? get _daterange=>_range==null?null:_date(_range!.start)+' - '+_date(_range!.end);
 Future<void> _loadRooms() async {try{final rooms=await ApiService.instance.getLinenBelumKembaliRuangan();if(mounted)setState(()=>_rooms=rooms);}catch(_){}}
-Future<void> _load() async {setState((){_loading=true;_error=null;});try{final r=await ApiService.instance.getLinenBelumKembali(perPage:10,search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),ruangan:_roomId,daterange:_daterange);if(!mounted)return;setState((){_response=r;_loading=false;});}on ApiException catch(e){if(mounted)setState((){_error=e.message;_loading=false;});}catch(_){if(mounted)setState((){_error='Tidak dapat mengambil data Linen Belum Kembali.';_loading=false;});}}
+Future<void> _load() async {setState((){_loading=true;_error=null;});try{final r=await ApiService.instance.getLinenBelumKembali(perPage:10,page:_page,search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),ruangan:_roomId,daterange:_daterange);if(!mounted)return;setState((){_response=r;_loading=false;});}on ApiException catch(e){if(mounted)setState((){_error=e.message;_loading=false;});}catch(_){if(mounted)setState((){_error='Tidak dapat mengambil data Linen Belum Kembali.';_loading=false;});}}
 Future<void> _pickRange() async {final r=await showDateRangePicker(context:context,firstDate:DateTime(2020),lastDate:DateTime(2100),initialDateRange:_range);if(r!=null){setState(()=>_range=r);_load();}}
-@override Widget build(BuildContext context){final rows=_response?.data??const <LinenBelumKembaliItem>[];return AppShell(userName:widget.userName,activeIndex:4,body:Column(children:[DetailHeader(title:'Linen Belum Kembali',userName:widget.userName),Padding(padding:const EdgeInsets.fromLTRB(16,14,16,8),child:Row(children:[Expanded(child:TextField(controller:_searchController,onSubmitted:(_)=>_load(),decoration:InputDecoration(hintText:'Cari linen / ruangan...',prefixIcon:const Icon(Icons.search_rounded,size:20),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))),const SizedBox(width:8),IconButton(onPressed:_pickRange,style:IconButton.styleFrom(backgroundColor:const Color(0xff1261dc),foregroundColor:Colors.white),icon:const Icon(Icons.date_range_rounded,size:20))])),Padding(padding:const EdgeInsets.fromLTRB(16,0,16,6),child:DropdownButtonFormField<int?>(value:_roomId,isExpanded:true,decoration:InputDecoration(hintText:'Semua Ruangan',prefixIcon:const Icon(Icons.meeting_room_rounded,size:19),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)),items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua Ruangan')),..._rooms.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.nama)))],onChanged:(v){setState(()=>_roomId=v);_load();})),if(_range!=null)Padding(padding:const EdgeInsets.symmetric(horizontal:16),child:Row(children:[Expanded(child:Text('Periode: '+_date(_range!.start)+' - '+_date(_range!.end),style:const TextStyle(fontSize:9,color:Color(0xff6f7f8d)))),TextButton(onPressed:(){setState(()=>_range=null);_load();},child:const Text('Reset'))])),Expanded(child:RefreshIndicator(onRefresh:_load,child:SingleChildScrollView(physics:const AlwaysScrollableScrollPhysics(),padding:const EdgeInsets.fromLTRB(16,8,16,20),child:_loading?const Padding(padding:EdgeInsets.all(50),child:Center(child:CircularProgressIndicator())):_error!=null?_BelumKembaliError(message:_error!,onRetry:_load):rows.isEmpty?const Padding(padding:EdgeInsets.all(40),child:Center(child:Text('Tidak ada linen yang belum kembali.'))):_BelumKembaliTable(rows:rows))))]));}}
+@override Widget build(BuildContext context){final rows=_response?.data??const <LinenBelumKembaliItem>[];return AppShell(userName:widget.userName,activeIndex:4,body:Column(children:[DetailHeader(title:'Linen Belum Kembali',userName:widget.userName),Padding(padding:const EdgeInsets.fromLTRB(16,14,16,8),child:Row(children:[Expanded(child:TextField(controller:_searchController,onSubmitted:(_)=>_load(),decoration:InputDecoration(hintText:'Cari linen / ruangan...',prefixIcon:const Icon(Icons.search_rounded,size:20),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))),const SizedBox(width:8),IconButton(onPressed:_pickRange,style:IconButton.styleFrom(backgroundColor:const Color(0xff1261dc),foregroundColor:Colors.white),icon:const Icon(Icons.date_range_rounded,size:20))])),Padding(padding:const EdgeInsets.fromLTRB(16,0,16,6),child:DropdownButtonFormField<int?>(value:_roomId,isExpanded:true,decoration:InputDecoration(hintText:'Semua Ruangan',prefixIcon:const Icon(Icons.meeting_room_rounded,size:19),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)),items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua Ruangan')),..._rooms.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.nama)))],onChanged:(v){setState(()=>_roomId=v);_load();})),if(_range!=null)Padding(padding:const EdgeInsets.symmetric(horizontal:16),child:Row(children:[Expanded(child:Text('Periode: '+_date(_range!.start)+' - '+_date(_range!.end),style:const TextStyle(fontSize:9,color:Color(0xff6f7f8d)))),TextButton(onPressed:(){setState(()=>_range=null);_load();},child:const Text('Reset'))])),Expanded(child:RefreshIndicator(onRefresh:_load,child:SingleChildScrollView(physics:const AlwaysScrollableScrollPhysics(),padding:const EdgeInsets.fromLTRB(16,8,16,20),child:_loading?const Padding(padding:EdgeInsets.all(50),child:Center(child:CircularProgressIndicator())):_error!=null?_BelumKembaliError(message:_error!,onRetry:_load):rows.isEmpty?const Padding(padding:EdgeInsets.all(40),child:Center(child:Text('Tidak ada linen yang belum kembali.'))):Column(children:[_BelumKembaliTable(rows:rows),if(_response!=null)_MetaPagination(meta:_response!.meta,onPage:(page){setState(()=>_page=page);_load();})]))))]));}}
 class _BelumKembaliTable extends StatelessWidget {
   const _BelumKembaliTable({required this.rows});
 
@@ -703,9 +735,9 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final response = await ApiService.instance.getLinenLaundry(perPage: 1000);
+      final response = await ApiService.instance.getLinenLaundry(perPage: 10, page: _page);
       if (!mounted) return;
-      setState(() { _items = response.data; _loading = false; });
+      setState(() { _items = response.data; _meta = response.meta; _loading = false; });
     } on ApiException catch (e) {
       if (!mounted) return; setState(() { _error = e.message; _loading = false; });
     } catch (_) {
@@ -725,6 +757,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
         const SizedBox(height: 12),
         Container(width: double.infinity, decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(18),boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:18,offset:const Offset(0,7))]),clipBehavior:Clip.antiAlias, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth<680?680.0:constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
         if(filtered.isEmpty) const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data untuk kategori ini.'))),
+        if(_meta!=null) _MetaPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
       ]))),
     ]));
   }
@@ -751,6 +784,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
   bool _loading = true;
   String? _error;
   LinenLaundryDetailResponse? _response;
+  int _page = 1;
 
   @override
   void initState() {
@@ -767,7 +801,8 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
     try {
       final response = await ApiService.instance.getLinenLaundryCategory(
         widget.categoryId,
-        perPage: 1000,
+        perPage: 10,
+        page: _page,
       );
 
       if (!mounted) return;
@@ -939,7 +974,10 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                                   ),
                                 ),
                               ],
-                            ),
+                              ),
+                                _MetaPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                            ],
+                          ),
             ),
           ),
         ],
@@ -961,6 +999,8 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
   String? _error;
   List<LinenRuanganItem> _items = const [];
   String? _search;
+  LinenMeta? _meta;
+  int _page = 1;
   final _searchController = TextEditingController();
 
   @override
@@ -983,11 +1023,13 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
     try {
       final response = await ApiService.instance.getLinenRuangan(
         search: _search,
-        perPage: 1000,
+        perPage: 10,
+        page: _page,
       );
       if (!mounted) return;
       setState(() {
         _items = response.data;
+        _meta = response.meta;
         _loading = false;
       });
     } on ApiException catch (e) {
@@ -1165,6 +1207,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                   ),
                                 ),
                               ],
+                                if (_meta != null) _MetaPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
                             ),
             ),
           ),
@@ -1195,6 +1238,8 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
   String? _error;
   LinenRuanganDetailResponse? _response;
   LinenRuanganBaHilangResponse? _baResponse;
+  int _detailPage = 1;
+  int _baPage = 1;
 
   @override
   void initState() {
@@ -1209,8 +1254,8 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
     });
     try {
       final results = await Future.wait([
-        ApiService.instance.getLinenRuanganDetail(widget.roomId, perPage: 1000),
-        ApiService.instance.getLinenRuanganBaHilang(widget.roomId, perPage: 1000),
+        ApiService.instance.getLinenRuanganDetail(widget.roomId, perPage: 10, page: _detailPage),
+        ApiService.instance.getLinenRuanganBaHilang(widget.roomId, perPage: 10, page: _baPage),
       ]);
       if (!mounted) return;
       setState(() {
@@ -1303,6 +1348,7 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                                   )
                                   .toList(),
                             ),
+                            if (_response != null) _MetaPagination(meta: _response!.meta, onPage: (page) { setState(() => _detailPage = page); _load(); }),
                             const SizedBox(height: 18),
                             _RoomDetailTable(
                               title: 'BA Hilang',
@@ -1321,6 +1367,7 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                                   )
                                   .toList(),
                             ),
+                            if (_baResponse != null) _MetaPagination(meta: _baResponse!.meta, onPage: (page) { setState(() => _baPage = page); _load(); }),
                           ],
                         ),
             ),
@@ -1423,6 +1470,8 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   String? _error;
   List<LinenCategory> _categories = const [];
   String? _selectedCategory;
+  LinenMeta? _meta;
+  int _page = 1;
 
   @override
   void initState() {
