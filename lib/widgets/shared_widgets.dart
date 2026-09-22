@@ -299,14 +299,15 @@ class MetricCard extends StatelessWidget {
                 metric: entry.value as Map<String, dynamic>,
                 index: entry.key,
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LinenDetailPage(
-                        type: entry.key,
-                        userName: userName,
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Pilih kategori Linen & Tirai pada daftar di bawah.',
+                        ),
                       ),
-                    ),
-                  );
+                    );
                 },
               );
             },
@@ -1159,15 +1160,15 @@ class BottomNavigation extends StatelessWidget {
                   label: 'Keluar Masuk',
                   active: activeIndex == 1,
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            TransactionDetailPage(
-                          type: 0,
-                          userName: userName,
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Endpoint Keluar Masuk belum tersedia di API yang diberikan.',
+                          ),
                         ),
-                      ),
-                    );
+                      );
                   },
                 ),
               ),
@@ -1175,13 +1176,15 @@ class BottomNavigation extends StatelessWidget {
               _QRNavButton(
                 active: activeIndex == 2,
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => QRCheckPage(
-                        userName: userName,
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Endpoint QR Check belum tersedia di API yang diberikan.',
+                        ),
                       ),
-                    ),
-                  );
+                    );
                 },
               ),
 
@@ -1191,15 +1194,15 @@ class BottomNavigation extends StatelessWidget {
                   label: 'Rekap',
                   active: activeIndex == 3,
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            TransactionDetailPage(
-                          type: 1,
-                          userName: userName,
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Endpoint Rekap belum tersedia di API yang diberikan.',
+                          ),
                         ),
-                      ),
-                    );
+                      );
                   },
                 ),
               ),
@@ -1210,15 +1213,15 @@ class BottomNavigation extends StatelessWidget {
                   label: 'Belum Kembali',
                   active: activeIndex == 4,
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            CategoryDetailPage(
-                          type: 1,
-                          userName: userName,
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Endpoint Belum Kembali belum tersedia di API yang diberikan.',
+                          ),
                         ),
-                      ),
-                    );
+                      );
                   },
                 ),
               ),
