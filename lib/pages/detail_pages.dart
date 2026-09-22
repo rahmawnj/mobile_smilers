@@ -1976,7 +1976,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                                         ),
                                       ),
                                     ),
-                                  );
+                                  ),
                                 },
                               ),
                             ),
