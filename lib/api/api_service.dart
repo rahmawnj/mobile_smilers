@@ -290,9 +290,23 @@ class InOutResponse {
   const InOutResponse({required this.data,required this.meta}); final List<Map<String,dynamic>> data; final LinenMeta meta;
   factory InOutResponse.fromJson(Map<String,dynamic> j)=>InOutResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>Map<String,dynamic>.from(e)).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
 }
+class RekapanTransaksiSummary {
+  const RekapanTransaksiSummary({required this.totalLinenKeluar,required this.totalLinenMasuk,required this.totalBeratMasuk});
+  final int totalLinenKeluar,totalLinenMasuk; final double totalBeratMasuk;
+  factory RekapanTransaksiSummary.fromJson(Map<String,dynamic> j)=>RekapanTransaksiSummary(totalLinenKeluar:_toInt(j['total_linen_keluar']),totalLinenMasuk:_toInt(j['total_linen_masuk']),totalBeratMasuk:double.tryParse(j['total_berat_masuk']?.toString()??'')??0);
+}
+class RekapanTransaksiItem {
+  const RekapanTransaksiItem({required this.tanggalRaw,required this.tanggal,required this.jumlahLinenKeluar,required this.jumlahLinenMasuk,required this.beratLinenMasuk});
+  final String tanggalRaw,tanggal; final int jumlahLinenKeluar,jumlahLinenMasuk; final double beratLinenMasuk;
+  factory RekapanTransaksiItem.fromJson(Map<String,dynamic> j)=>RekapanTransaksiItem(tanggalRaw:j['tanggal_raw']?.toString()??'',tanggal:j['tanggal']?.toString()??'',jumlahLinenKeluar:_toInt(j['jumlah_linen_keluar']),jumlahLinenMasuk:_toInt(j['jumlah_linen_masuk']),beratLinenMasuk:double.tryParse(j['berat_linen_masuk']?.toString()??'')??0);
+}
 class RekapanTransaksiResponse {
-  const RekapanTransaksiResponse({required this.data}); final List<Map<String,dynamic>> data;
-  factory RekapanTransaksiResponse.fromJson(Map<String,dynamic> j)=>RekapanTransaksiResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>Map<String,dynamic>.from(e)).toList());
+  const RekapanTransaksiResponse({required this.ringkasan,required this.data});
+  final RekapanTransaksiSummary ringkasan; final List<RekapanTransaksiItem> data;
+  factory RekapanTransaksiResponse.fromJson(Map<String,dynamic> j)=>RekapanTransaksiResponse(
+    ringkasan: RekapanTransaksiSummary.fromJson(Map<String,dynamic>.from((j['ringkasan'] as Map?)??const {})),
+    data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>RekapanTransaksiItem.fromJson(Map<String,dynamic>.from(e))).toList(),
+  );
 }
 class LinenBelumKembaliItem {
   const LinenBelumKembaliItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
