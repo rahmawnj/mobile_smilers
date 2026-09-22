@@ -689,6 +689,60 @@ class _LinenMasukError extends StatelessWidget {
   ]));
 }
 
+class PermintaanLinenPage extends StatefulWidget {
+  const PermintaanLinenPage({super.key, required this.userName});
+  final String userName;
+  @override State<PermintaanLinenPage> createState()=>_PermintaanLinenPageState();
+}
+class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
+  bool _loading=true,_saving=false;
+  String? _error;
+  LinenListResponse<PermintaanLinenItem>? _response;
+  Map<String,dynamic> _formData={};
+  int? _roomId;
+  String? _status;
+  int _page=1,_perPage=10;
+  final _search=TextEditingController();
+  @override void initState(){super.initState();_load();_loadFormData();}
+  @override void dispose(){_search.dispose();super.dispose();}
+  Future<void> _loadFormData() async {try{final r=await ApiService.instance.getPermintaanLinenFormData();if(mounted)setState(()=>_formData=r.data);}catch(_){}}
+  List<Map<String,dynamic>> get _rooms=>((_formData['ruangan'] as List?)??const []).whereType<Map>().map((e)=>Map<String,dynamic>.from(e)).toList();
+  List<Map<String,dynamic>> get _linens=>((_formData['linen'] as List?)??const []).whereType<Map>().map((e)=>Map<String,dynamic>.from(e)).toList();
+  int _int(dynamic v)=>int.tryParse(v?.toString()??'')??0;
+  Future<void> _load() async {
+    setState(()=>_loading=true);
+    try{final r=await ApiService.instance.getPermintaanLinen(perPage:_perPage,page:_page,search:_search.text.trim().isEmpty?null:_search.text.trim(),ruangan:_roomId,status:_status);if(mounted)setState(()=>{_response=r,_loading=false,_error=null});}
+    on ApiException catch(e){if(mounted)setState(()=>{_error=e.message,_loading=false});}
+    catch(_){if(mounted)setState(()=>{_error='Tidak dapat mengambil data Permintaan Linen & Tirai.',_loading=false});}
+  }
+  Future<void> _create() async {
+    if(_rooms.isEmpty||_linens.isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Data ruangan atau linen untuk form belum tersedia.')));return;}
+    final date=ValueNotifier<DateTime>(DateTime.now()); int? room=_roomId??_int(_rooms.first['id']); final reason=TextEditingController(); final qty=<int,int>{};
+    final ok=await showDialog<bool>(context:context,builder:(ctx)=>StatefulBuilder(builder:(ctx,setD)=>AlertDialog(title:const Text('Buat Permintaan Linen'),content:SizedBox(width:560,height:440,child:SingleChildScrollView(child:Column(children:[
+      ListTile(title:Text('Tanggal: ${date.value.day}/${date.value.month}/${date.value.year}'),trailing:IconButton(icon:const Icon(Icons.calendar_month),onPressed:()async{final x=await showDatePicker(context:ctx,initialDate:date.value,firstDate:DateTime(2020),lastDate:DateTime(2100));if(x!=null)setD(()=>date.value=x);})),
+      DropdownButtonFormField<int>(value:room,isExpanded:true,decoration:const InputDecoration(labelText:'Ruangan'),items:_rooms.map((r)=>DropdownMenuItem(value:_int(r['id']),child:Text(r['nama_ruangan']?.toString()??r['nama']?.toString()??'-'))).toList(),onChanged:(v)=>setD(()=>room=v)),
+      TextField(controller:reason,maxLines:2,decoration:const InputDecoration(labelText:'Alasan Permintaan')),
+      const SizedBox(height:12),
+      ..._linens.map((l){final id=_int(l['id']??l['linen_id']);final name=l['nama_linen']?.toString()??l['nama_kategori_linen']?.toString()??'-';return StatefulBuilder(builder:(c,setQ){final ctl=TextEditingController(text:(qty[id]??0).toString());return Row(children:[Expanded(child:Text(name)),SizedBox(width:90,child:TextField(controller:ctl,keyboardType:TextInputType.number,decoration:const InputDecoration(labelText:'Jumlah'),onChanged:(v)=>qty[id]=_int(v)))]);});}),
+    ]))),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('Batal')),ElevatedButton(onPressed:()=>Navigator.pop(ctx,true),child:const Text('Simpan'))])));
+    reason.dispose();date.dispose(); if(ok!=true||room==null)return;
+    final items=qty.entries.where((e)=>e.value>0).map((e)=>{'linen_id':e.key,'jumlah':e.value}).toList();
+    if(items.isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Pilih minimal satu linen.')));return;}
+    setState(()=>_saving=true);
+    try{final y=DateTime.now(); final r=await ApiService.instance.createPermintaanLinen(tanggalPermintaan:'${y.year}-${y.month.toString().padLeft(2,'0')}-${y.day.toString().padLeft(2,'0')}',ruanganId:room,alasanPermintaan:reason.text.trim(),items:items);if(mounted){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(r['message']?.toString()??'Permintaan berhasil dibuat')));_page=1;await _load();}}on ApiException catch(e){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(e.message)));}finally{if(mounted)setState(()=>_saving=false);}
+  }
+  Future<void> _detail(int id) async {try{final d=await ApiService.instance.getPermintaanLinenDetail(id);if(!mounted)return;final x=d.data;showDialog(context:context,builder:(_)=>AlertDialog(title:Text('Permintaan #$id'),content:SizedBox(width:500,child:SingleChildScrollView(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text('Tanggal: ${x['tanggal_permintaan']??'-'}'),Text('Ruangan: ${x['nama_ruangan']??'-'}'),Text('Kepala Ruangan: ${x['nama_kepala_ruangan']??'-'}'),Text('Alasan: ${x['alasan_permintaan']??'-'}'),Text('Status: ${x['status']??'-'}'),const Divider(),...((x['items'] as List?)??const []).map((i)=>Text('${i['nama_linen']??'-'} • ${i['kategori_linen']??'-'} • Jumlah: ${i['jumlah']??0}'))])))));}on ApiException catch(e){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(e.message)));}}
+  Future<void> _status(int id) async {try{final r=await ApiService.instance.updatePermintaanLinenStatus(id);if(mounted){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(r['message']?.toString()??'Status berhasil diubah')));_load();}}on ApiException catch(e){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(e.message)));}}
+  @override Widget build(BuildContext context){final rows=_response?.data??const <PermintaanLinenItem>[];return AppShell(userName:widget.userName,activeIndex:-1,body:Column(children:[
+    DetailHeader(title:'Permintaan Linen & Tirai',userName:widget.userName),
+    Padding(padding:const EdgeInsets.fromLTRB(16,12,16,8),child:Row(children:[Expanded(child:TextField(controller:_search,onSubmitted:(_){setState(()=>_page=1);_load();},decoration:InputDecoration(hintText:'Cari permintaan...',prefixIcon:const Icon(Icons.search),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))),const SizedBox(width:8),DropdownButton<int?>(value:_roomId,hint:const Text('Ruangan'),items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua')), ..._rooms.map((r)=>DropdownMenuItem<int?>(value:_int(r['id']),child:Text(r['nama_ruangan']?.toString()??'-')))],onChanged:(v){setState(()=>{_roomId=v,_page=1});_load();}),const SizedBox(width:8),DropdownButton<String>(value:_status,hint:const Text('Status'),items:const [DropdownMenuItem(value:'belum',child:Text('Belum')),DropdownMenuItem(value:'terkirim',child:Text('Terkirim')),DropdownMenuItem(value:'selesai',child:Text('Selesai'))],onChanged:(v){setState(()=>{_status=v,_page=1});_load();}),const SizedBox(width:8),ElevatedButton.icon(onPressed:_saving?null:_create,icon:const Icon(Icons.add),label:const Text('Buat Permintaan'))])),
+    Expanded(child:RefreshIndicator(onRefresh:_load,child:SingleChildScrollView(physics:const AlwaysScrollableScrollPhysics(),padding:const EdgeInsets.fromLTRB(16,8,16,20),child:_loading?const Padding(padding:EdgeInsets.all(50),child:Center(child:CircularProgressIndicator())):_error!=null?Center(child:Text(_error!)):rows.isEmpty?const Padding(padding:EdgeInsets.all(40),child:Center(child:Text('Tidak ada permintaan linen.'))):Column(children:[
+      Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),clipBehavior:Clip.antiAlias,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(fontSize:9),columns:const [DataColumn(label:Text('No.')),DataColumn(label:Text('Tanggal')),DataColumn(label:Text('Ruangan')),DataColumn(label:Text('Kepala Ruangan')),DataColumn(label:Text('Alasan')),DataColumn(label:Text('Status')),DataColumn(label:Text('Aksi'))],rows:rows.asMap().entries.map((e){final i=e.value;final n=(_response!.meta.currentPage-1)*_response!.meta.perPage+e.key+1;return DataRow(cells:[DataCell(Text('$n')),DataCell(Text(i.tanggalPermintaan)),DataCell(Text(i.namaRuangan)),DataCell(Text(i.namaKepalaRuangan)),DataCell(Text(i.alasanPermintaan)),DataCell(Text(i.status)),DataCell(Row(mainAxisSize:MainAxisSize.min,children:[IconButton(tooltip:'Detail',onPressed:()=>_detail(i.id),icon:const Icon(Icons.visibility)),IconButton(tooltip:'Ubah status',onPressed:()=>_status(i.id),icon:const Icon(Icons.local_shipping))]))]);}).toList()))),
+      const SizedBox(height:10),_MetaPagination(meta:_response!.meta,onPage:(p){setState(()=>_page=p);_load();}),Row(mainAxisAlignment:MainAxisAlignment.center,children:[10,25,50,100].map((n)=>Padding(padding:const EdgeInsets.symmetric(horizontal:3),child:ChoiceChip(label:Text('$n'),selected:_perPage==n,onSelected:(_){setState(()=>{_perPage=n,_page=1});_load();}))).toList()),
+    ]))),
+  ]));}
+}
+
 
 class LinenBelumKembaliPage extends StatefulWidget { const LinenBelumKembaliPage({super.key, required this.userName}); final String userName; @override State<LinenBelumKembaliPage> createState()=>_LinenBelumKembaliPageState(); }
 class _LinenBelumKembaliPageState extends State<LinenBelumKembaliPage> { bool _loading=true; String? _error; LinenBelumKembaliResponse? _response; List<LinenRoomOption> _rooms=const []; int? _roomId; DateTimeRange? _range; int _page=1; final _searchController=TextEditingController(); @override void initState(){super.initState();_load();_loadRooms();} @override void dispose(){_searchController.dispose();super.dispose();} String _date(DateTime d)=>d.day.toString()+'/'+d.month.toString()+'/'+d.year.toString(); String? get _daterange=>_range==null?null:_date(_range!.start)+' - '+_date(_range!.end);
