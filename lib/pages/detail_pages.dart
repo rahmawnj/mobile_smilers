@@ -440,8 +440,103 @@ Future<void> _loadRooms() async {try{final rooms=await ApiService.instance.getLi
 Future<void> _load() async {setState((){_loading=true;_error=null;});try{final r=await ApiService.instance.getLinenBelumKembali(perPage:10,search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),ruangan:_roomId,daterange:_daterange);if(!mounted)return;setState((){_response=r;_loading=false;});}on ApiException catch(e){if(mounted)setState((){_error=e.message;_loading=false;});}catch(_){if(mounted)setState((){_error='Tidak dapat mengambil data Linen Belum Kembali.';_loading=false;});}}
 Future<void> _pickRange() async {final r=await showDateRangePicker(context:context,firstDate:DateTime(2020),lastDate:DateTime(2100),initialDateRange:_range);if(r!=null){setState(()=>_range=r);_load();}}
 @override Widget build(BuildContext context){final rows=_response?.data??const <LinenBelumKembaliItem>[];return AppShell(userName:widget.userName,activeIndex:4,body:Column(children:[DetailHeader(title:'Linen Belum Kembali',userName:widget.userName),Padding(padding:const EdgeInsets.fromLTRB(16,14,16,8),child:Row(children:[Expanded(child:TextField(controller:_searchController,onSubmitted:(_)=>_load(),decoration:InputDecoration(hintText:'Cari linen / ruangan...',prefixIcon:const Icon(Icons.search_rounded,size:20),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))),const SizedBox(width:8),IconButton(onPressed:_pickRange,style:IconButton.styleFrom(backgroundColor:const Color(0xff1261dc),foregroundColor:Colors.white),icon:const Icon(Icons.date_range_rounded,size:20))])),Padding(padding:const EdgeInsets.fromLTRB(16,0,16,6),child:DropdownButtonFormField<int?>(value:_roomId,isExpanded:true,decoration:InputDecoration(hintText:'Semua Ruangan',prefixIcon:const Icon(Icons.meeting_room_rounded,size:19),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)),items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua Ruangan')),..._rooms.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.nama)))],onChanged:(v){setState(()=>_roomId=v);_load();})),if(_range!=null)Padding(padding:const EdgeInsets.symmetric(horizontal:16),child:Row(children:[Expanded(child:Text('Periode: '+_date(_range!.start)+' - '+_date(_range!.end),style:const TextStyle(fontSize:9,color:Color(0xff6f7f8d)))),TextButton(onPressed:(){setState(()=>_range=null);_load();},child:const Text('Reset'))])),Expanded(child:RefreshIndicator(onRefresh:_load,child:SingleChildScrollView(physics:const AlwaysScrollableScrollPhysics(),padding:const EdgeInsets.fromLTRB(16,8,16,20),child:_loading?const Padding(padding:EdgeInsets.all(50),child:Center(child:CircularProgressIndicator())):_error!=null?_BelumKembaliError(message:_error!,onRetry:_load):rows.isEmpty?const Padding(padding:EdgeInsets.all(40),child:Center(child:Text('Tidak ada linen yang belum kembali.'))):_BelumKembaliTable(rows:rows))))]));}}
-class _BelumKembaliTable extends StatelessWidget { const _BelumKembaliTable({required this.rows}); final List<LinenBelumKembaliItem> rows; @override Widget build(BuildContext context)=>Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),clipBehavior:Clip.antiAlias,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:24,columns:const [DataColumn(label:Text('ID')),DataColumn(label:Text('QR Code')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('RFID')),DataColumn(label:Text('Ruangan')),DataColumn(label:Text('Kategori')),DataColumn(label:Text('Tanggal Keluar')),DataColumn(label:Text('Jam'))],rows:rows.map((x)=>DataRow(cells:[DataCell(Text(x.id.toString())),DataCell(Text(x.qrCode.isEmpty?'-':x.qrCode)),DataCell(Text(x.namaLinen.isEmpty?'-':x.namaLinen)),DataCell(Text(x.tagRfid.isEmpty?'-':x.tagRfid)),DataCell(Text(x.namaRuangan.isEmpty?'-':x.namaRuangan)),DataCell(Text(x.namaKategori.isEmpty?'-':x.namaKategori)),DataCell(Text(x.tanggalKeluar.isEmpty?'-':x.tanggalKeluar)),DataCell(Text(x.jamKeluar.isEmpty?'-':x.jamKeluar))])).toList())))); }
-class _BelumKembaliError extends StatelessWidget { const _BelumKembaliError({required this.message,required this.onRetry}); final String message; final VoidCallback onRetry; @override Widget build(BuildContext context)=>Center(child:Column(children:[const SizedBox(height:40),const Icon(Icons.cloud_off_rounded,size:36,color:Color(0xffef6c6c)),const SizedBox(height:10),Text(message,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:onRetry,child:const Text('Coba Lagi'))])); }
+class _BelumKembaliTable extends StatelessWidget {
+  const _BelumKembaliTable({required this.rows});
+
+  final List<LinenBelumKembaliItem> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .05),
+            blurRadius: 18,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
+          headingTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 9,
+            fontWeight: FontWeight.w700,
+          ),
+          dataTextStyle: const TextStyle(
+            color: Color(0xff465564),
+            fontSize: 9,
+          ),
+          columnSpacing: 24,
+          columns: const [
+            DataColumn(label: Text('ID')),
+            DataColumn(label: Text('QR Code')),
+            DataColumn(label: Text('Nama Linen')),
+            DataColumn(label: Text('RFID')),
+            DataColumn(label: Text('Ruangan')),
+            DataColumn(label: Text('Kategori')),
+            DataColumn(label: Text('Tanggal Keluar')),
+            DataColumn(label: Text('Jam')),
+          ],
+          rows: rows.map((item) {
+            return DataRow(
+              cells: [
+                DataCell(Text(item.id.toString())),
+                DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
+                DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+                DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
+                DataCell(Text(item.namaRuangan.isEmpty ? '-' : item.namaRuangan)),
+                DataCell(Text(item.namaKategori.isEmpty ? '-' : item.namaKategori)),
+                DataCell(Text(item.tanggalKeluar.isEmpty ? '-' : item.tanggalKeluar)),
+                DataCell(Text(item.jamKeluar.isEmpty ? '-' : item.jamKeluar)),
+              ],
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class _BelumKembaliError extends StatelessWidget {
+  const _BelumKembaliError({
+    required this.message,
+    required this.onRetry,
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          const SizedBox(height: 40),
+          const Icon(
+            Icons.cloud_off_rounded,
+            size: 36,
+            color: Color(0xffef6c6c),
+          ),
+          const SizedBox(height: 10),
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: onRetry,
+            child: const Text('Coba Lagi'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class RekapanTransaksiPage extends StatefulWidget {
   const RekapanTransaksiPage({super.key, required this.userName});
   final String userName;
