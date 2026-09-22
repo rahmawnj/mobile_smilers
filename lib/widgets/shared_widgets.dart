@@ -1190,15 +1190,11 @@ class BottomNavigation extends StatelessWidget {
                   label: 'Rekap',
                   active: activeIndex == 3,
                   onTap: () {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Endpoint Rekap belum tersedia di API yang diberikan.',
-                          ),
-                        ),
-                      );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => RekapanTransaksiPage(userName: userName),
+                      ),
+                    );
                   },
                 ),
               ),
