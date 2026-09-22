@@ -11,7 +11,7 @@ class ApiConfigPage extends StatefulWidget {
 }
 
 class _ApiConfigPageState extends State<ApiConfigPage> {
-  final _controller = TextEditingController(text: 'https://');
+  final _controller = TextEditingController(text: 'https://smilers.co.id');
   bool _saving = false;
 
   @override
