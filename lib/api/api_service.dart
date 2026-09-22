@@ -309,9 +309,62 @@ class RekapanTransaksiResponse {
   );
 }
 class LinenBelumKembaliItem {
-  const LinenBelumKembaliItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
-  final int id,linenId; final String namaLinen,ruangan,tanggal,jam;
-  factory LinenBelumKembaliItem.fromJson(Map<String,dynamic> j)=>LinenBelumKembaliItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',ruangan:j['ruangan']?.toString()??'',tanggal:j['tanggal']?.toString()??'',jam:j['jam']?.toString()??'');
+  const LinenBelumKembaliItem({
+    required this.id,
+    required this.qrCode,
+    required this.namaLinen,
+    required this.tagRfid,
+    required this.namaRuangan,
+    required this.namaKategori,
+    required this.tanggalKeluar,
+    required this.jamKeluar,
+  });
+
+  final int id;
+  final String qrCode;
+  final String namaLinen;
+  final String tagRfid;
+  final String namaRuangan;
+  final String namaKategori;
+  final String tanggalKeluar;
+  final String jamKeluar;
+
+  factory LinenBelumKembaliItem.fromJson(Map<String, dynamic> j) {
+    return LinenBelumKembaliItem(
+      id: _toInt(j['id']),
+      qrCode: j['qr_code']?.toString() ?? '',
+      namaLinen: j['nama_linen']?.toString() ?? '',
+      tagRfid: j['tag_rfid']?.toString() ?? '',
+      namaRuangan: j['nama_ruangan']?.toString() ?? '',
+      namaKategori: j['nama_kategori']?.toString() ?? '',
+      tanggalKeluar: j['tanggal_keluar']?.toString() ?? '',
+      jamKeluar: j['jam_keluar']?.toString() ?? '',
+    );
+  }
+}
+
+class LinenBelumKembaliResponse {
+  const LinenBelumKembaliResponse({
+    required this.data,
+    required this.meta,
+  });
+
+  final List<LinenBelumKembaliItem> data;
+  final LinenMeta meta;
+
+  factory LinenBelumKembaliResponse.fromJson(Map<String, dynamic> j) {
+    return LinenBelumKembaliResponse(
+      data: (j['data'] as List? ?? const [])
+          .whereType<Map>()
+          .map((e) => LinenBelumKembaliItem.fromJson(
+                Map<String, dynamic>.from(e),
+              ))
+          .toList(),
+      meta: LinenMeta.fromJson(
+        Map<String, dynamic>.from((j['meta'] as Map?) ?? const {}),
+      ),
+    );
+  }
 }
 
 class ApiService {
@@ -536,6 +589,30 @@ class ApiService {
 
   Future<InOutResponse> getInOut({String? search,int? perPage,int? ruangan,String? date,String? daterange}) async=>InOutResponse.fromJson(await _get('/inout',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange})));
   Future<Map<String,dynamic>> getInOutDetail(int ruangan,{String? date,String? daterange})=>_get('/inout/$ruangan',query:_query({'date':date,'daterange':daterange}));
+  Future<LinenBelumKembaliResponse> getLinenBelumKembali({
+    String? search,
+    int? perPage,
+    int? ruangan,
+    String? date,
+    String? daterange,
+  }) async {
+    final data = await _get(
+      '/linen-belum-kembali',
+      query: _query({
+        'per_page': perPage,
+        'search': search,
+        'ruangan': ruangan,
+        'date': date,
+        'daterange': daterange,
+      }),
+    );
+    return LinenBelumKembaliResponse.fromJson(data);
+  }
+
+  Future<List<LinenRoomOption>> getLinenBelumKembaliRuangan() async {
+    return _roomOptions(await _get('/linen-belum-kembali/ruangan'));
+  }
+
   Future<RekapanTransaksiResponse> getRekapanTransaksi({String? daterange,int? ruangan}) async=>RekapanTransaksiResponse.fromJson(await _get('/rekapan-transaksi',query:_query({'daterange':daterange,'ruangan':ruangan})));
   Future<List<LinenRoomOption>> getRekapanTransaksiRuangan() async=>_roomOptions(await _get('/rekapan-transaksi/ruangan'));
 
