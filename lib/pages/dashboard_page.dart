@@ -117,67 +117,73 @@ class _DashboardPageState extends State<DashboardPage> {
                 offset: const Offset(0, -28),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: DashboardCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: 'Data Linen & Tirai Ready'),
-                        const SizedBox(height: 8),
-                        if (_loading)
-                          const Padding(
-                            padding: EdgeInsets.all(28),
-                            child: Center(child: CircularProgressIndicator()),
-                          )
-                        else if (_error != null)
-                          _ErrorCard(message: _error!, onRetry: _loadLinen)
-                        else if (_linen.isEmpty)
-                          const _EmptyCard(
-                            message: 'Tidak ada data Linen & Tirai Ready.',
-                          )
-                        else
-                          ..._linen.map(
-                            (item) => _LinenCategoryCard(
-                              item: item,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => LinenCategoryDetailPage(
-                                      category: item,
-                                      userName: widget.userName,
-                                    ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: DashboardCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SectionTitle(title: 'Data Linen & Tirai Ready'),
+                              const SizedBox(height: 8),
+                              if (_loading)
+                                const Padding(
+                                  padding: EdgeInsets.all(28),
+                                  child: Center(child: CircularProgressIndicator()),
+                                )
+                              else if (_error != null)
+                                _ErrorCard(message: _error!, onRetry: _loadLinen)
+                              else if (_linen.isEmpty)
+                                const _EmptyCard(
+                                  message: 'Tidak ada data Linen & Tirai Ready.',
+                                )
+                              else
+                                ..._linen.map(
+                                  (item) => _LinenCategoryCard(
+                                    item: item,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => LinenCategoryDetailPage(
+                                            category: item,
+                                            userName: widget.userName,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                            ],
                           ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, -14),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: DashboardCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: 'Data Linen & Tirai'),
-                        const SizedBox(height: 10),
-                        _DashboardDataMenu(
-                          icon: Icons.broken_image_rounded,
-                          title: 'Linen & Tirai Rusak',
-                          subtitle: 'Data linen dan tirai yang rusak',
                         ),
-                        const SizedBox(height: 10),
-                        _DashboardDataMenu(
-                          icon: Icons.report_problem_rounded,
-                          title: 'Linen & Tirai Hilang',
-                          subtitle: 'Data linen dan tirai yang hilang',
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        flex: 1,
+                        child: DashboardCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SectionTitle(title: 'Data Linen & Tirai'),
+                              const SizedBox(height: 10),
+                              _DashboardDataMenu(
+                                icon: Icons.broken_image_rounded,
+                                title: 'Linen & Tirai Rusak',
+                                subtitle: 'Data linen dan tirai yang rusak',
+                              ),
+                              const SizedBox(height: 10),
+                              _DashboardDataMenu(
+                                icon: Icons.report_problem_rounded,
+                                title: 'Linen & Tirai Hilang',
+                                subtitle: 'Data linen dan tirai yang hilang',
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
