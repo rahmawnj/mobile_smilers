@@ -886,10 +886,15 @@ class _HospitalLogo extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Image.network(
-        '$url',
+        'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
         width: 120,
         height: 120,
         fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => const Icon(
+          Icons.local_hospital_rounded,
+          color: Colors.white,
+          size: 42,
+        ),
       ),
     );
   }
