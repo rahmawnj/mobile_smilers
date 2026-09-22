@@ -150,6 +150,15 @@ class _DashboardPageState extends State<DashboardPage> {
                                     icon: Icons.report_problem_rounded,
                                     title: 'Linen & Tirai Hilang',
                                     subtitle: 'Data linen dan tirai yang hilang',
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => LinenHilangPage(
+                                            userName: widget.userName,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
