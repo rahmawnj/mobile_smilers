@@ -2213,7 +2213,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                         columnSpacing: 24,
                                         horizontalMargin: 16,
                                         columns: const [
-                                          DataColumn(label: Text('ID')),
+                                          DataColumn(label: Text('No.')),
                                           DataColumn(label: Text('Linen ID')),
                                           DataColumn(label: Text('Nama Linen')),
                                           DataColumn(label: Text('RFID')),
@@ -2222,16 +2222,25 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                           DataColumn(label: Text('Tanggal')),
                                           DataColumn(label: Text('Tahun Pembuatan')),
                                         ],
-                                        rows: _items.map((item) => DataRow(cells: [
-                                          DataCell(Text(item.id.toString())),
-                                          DataCell(Text(item.linenId.toString())),
-                                          DataCell(Text(item.namaLinen)),
-                                          DataCell(Text(item.tagRfid)),
-                                          DataCell(Text(item.qrCode)),
-                                          DataCell(Text(item.jam)),
-                                          DataCell(Text(item.tanggal)),
-                                          DataCell(Text(item.tahunPembuatan)),
-                                        ])).toList(),
+                                        rows: _items.asMap().entries.map((entry) {
+                                          final index = entry.key;
+                                          final item = entry.value;
+                                          final number = ((_meta?.currentPage ?? _page) - 1) *
+                                                  (_meta?.perPage ?? 10) +
+                                              index +
+                                              1;
+
+                                          return DataRow(cells: [
+                                            DataCell(Text(number.toString())),
+                                            DataCell(Text(item.linenId.toString())),
+                                            DataCell(Text(item.namaLinen)),
+                                            DataCell(Text(item.tagRfid)),
+                                            DataCell(Text(item.qrCode)),
+                                            DataCell(Text(item.jam)),
+                                            DataCell(Text(item.tanggal)),
+                                            DataCell(Text(item.tahunPembuatan)),
+                                          ]);
+                                        }).toList(),
                                       ),
                                     ),
                                   );
