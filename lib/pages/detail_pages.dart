@@ -1,3 +1,5 @@
+import 'dart:ui' show PointerDeviceKind;
+
 import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
@@ -1665,10 +1667,19 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                   final tableWidth = constraints.maxWidth < 900
                                       ? 900.0
                                       : constraints.maxWidth;
-                                  return SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: SizedBox(
-                                      width: tableWidth,
+                                  return ScrollConfiguration(
+                                    behavior: ScrollConfiguration.of(context).copyWith(
+                                      dragDevices: {
+                                        PointerDeviceKind.touch,
+                                        PointerDeviceKind.mouse,
+                                        PointerDeviceKind.trackpad,
+                                      },
+                                    ),
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: const ClampingScrollPhysics(),
+                                      child: SizedBox(
+                                        width: tableWidth,
                                       child: DataTable(
                                         headingRowColor: WidgetStateProperty.all(
                                           const Color(0xff1261dc),
