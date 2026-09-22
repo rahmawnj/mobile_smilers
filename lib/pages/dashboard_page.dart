@@ -98,15 +98,15 @@ class _DashboardPageState extends State<DashboardPage> {
                       'action': 'Lihat Data',
                     },
                     {
-                      'value': _loading ? '...' : _linen.length.toString(),
+                      'value': _loading ? '...' : _laundryCount.toString(),
                       'unit': 'Linen',
                       'title': 'Linen & Tirai di Laundry',
                       'action': 'Lihat Data',
                     },
                     {
-                      'value': _loading ? '...' : totalMissing.toString(),
+                      'value': _loading ? '...' : _roomCount.toString(),
                       'unit': 'Linen',
-                      'title': 'Linen Hilang',
+                      'title': 'Linen & Tirai di Ruangan',
                       'action': 'Lihat Data',
                     },
                   ],
