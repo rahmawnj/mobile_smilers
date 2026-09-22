@@ -109,8 +109,8 @@ class LinenCategory {
       id: (json['id'] as num?)?.toInt() ?? 0,
       namaKategoriLinen: json['nama_kategori_linen']?.toString() ?? '',
       subKategoriLinen: json['sub_kategori_linen']?.toString() ?? '',
-      jumlahStok: (json['jumlah_stok'] as num?)?.toInt() ?? 0,
-      jumlahHilang: (json['jumlah_hilang'] as num?)?.toInt() ?? 0,
+      jumlahStok: _toInt(json['jumlah_stok']),
+      jumlahHilang: _toInt(json['jumlah_hilang']),
     );
   }
 }
@@ -164,10 +164,10 @@ class LinenMeta {
   }
 }
 
-class LinenListResponse {
+class LinenListResponse<T> {
   const LinenListResponse({required this.data, required this.meta});
 
-  final List<LinenCategory> data;
+  final List<T> data;
   final LinenMeta meta;
 }
 
@@ -272,7 +272,7 @@ class ApiService {
     return user;
   }
 
-  Future<LinenListResponse> getLinen({
+  Future<LinenListResponse<LinenCategory>> getLinen({
     String? search,
     int? perPage,
   }) async {
@@ -345,6 +345,88 @@ class ApiService {
             ))
         .toList();
   }
+
+
+  Future<LinenListResponse<LinenLaundryItem>> getLinenLaundry({String? search,int? perPage}) async {
+    final d=await _get('/linen-laundry',query:_query({'search':search,'per_page':perPage}));
+    return _listResponse(d,(e)=>LinenLaundryItem.fromJson(e));
+  }
+  Future<LinenListResponse<LinenRuanganItem>> getLinenRuangan({String? search,int? perPage}) async {
+    final d=await _get('/linen-ruangan',query:_query({'search':search,'per_page':perPage}));
+    return _listResponse(d,(e)=>LinenRuanganItem.fromJson(e));
+  }
+  Future<LinenRuanganDetailResponse> getLinenRuanganDetail(int ruangan,{int? perPage}) async => LinenRuanganDetailResponse.fromJson(await _get('/linen-ruangan/$ruangan',query:_query({'per_page':perPage})));
+  Future<LinenRuanganBaHilangResponse> getLinenRuanganBaHilang(int ruangan,{int? perPage}) async => LinenRuanganBaHilangResponse.fromJson(await _get('/linen-ruangan/$ruangan/ba-hilang',query:_query({'per_page':perPage})));
+  Future<LinenListResponse<LinenRusakItem>> getLinenRusak({String? search,int? perPage}) async {
+    final d=await _get('/linen-rusak',query:_query({'search':search,'per_page':perPage}));
+    return _listResponse(d,(e)=>LinenRusakItem.fromJson(e));
+  }
+  Future<Map<String,dynamic>> scanLinenRusak(String rfid)=>_post('/linen-rusak/scan',{'rfid':rfid});
+
+  Future<LinenListResponse<LinenHilangItem>> getLinenHilang({String? search,int? perPage,int? filterRuangan,int? filterKategori,String? daterange}) async {
+    final d=await _get('/linen-hilang',query:_query({'per_page':perPage,'search':search,'filter_ruangan':filterRuangan,'filter_kategori':filterKategori,'daterange':daterange}));
+    return _listResponse(d,(e)=>LinenHilangItem.fromJson(e));
+  }
+  Future<LinenListResponse<LinenHilangRuanganItem>> getLinenHilangRuanganList({required int ruanganId,int? perPage}) async {
+    final d=await _get('/linen-hilang/ruangan-list',query:_query({'ruangan_id':ruanganId,'per_page':perPage??20}));
+    return _listResponse(d,(e)=>LinenHilangRuanganItem.fromJson(e));
+  }
+  Future<Map<String,dynamic>> createLinenHilang({required String tanggal,required int ruanganId,required List<int> linenIds,String? beritaAcaraPath}) async {
+    final token=await _requiredToken();
+    final r=http.MultipartRequest('POST',Uri.parse('\${await ApiConfig.getMobileUrl()}/linen-hilang'));
+    r.headers['Authorization']='Bearer \$token'; r.headers['Accept']='application/json';
+    r.fields['tanggal']=tanggal; r.fields['ruangan_id']=ruanganId.toString();
+    for(var i=0;i<linenIds.length;i++){r.fields['linen_id[\$i]']=linenIds[i].toString();}
+    if(beritaAcaraPath!=null&&beritaAcaraPath.trim().isNotEmpty){r.files.add(await http.MultipartFile.fromPath('berita_acara',beritaAcaraPath));}
+    return _handleResponse(await http.Response.fromStream(await r.send()));
+  }
+
+  Future<LinenListResponse<LinenKeluarItem>> getLinenKeluar({String? search,int? perPage,int? ruangan,String? date,String? daterange}) async {
+    final d=await _get('/linen-keluar',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange}));
+    return _listResponse(d,(e)=>LinenKeluarItem.fromJson(e));
+  }
+  Future<LinenKeluarOptions> getLinenKeluarOptions() async {
+    final d=await _get('/linen-keluar/options'); return LinenKeluarOptions.fromJson(Map<String,dynamic>.from((d['data'] as Map?)??const {}));
+  }
+  Future<LinenScanQueueResponse> getLinenKeluarScanQueue() async=>LinenScanQueueResponse.fromJson(await _get('/linen-keluar/scan-queue'));
+  Future<Map<String,dynamic>> scanLinenKeluar(String rfid)=>_post('/linen-keluar/scan',{'rfid':rfid});
+  Future<Map<String,dynamic>> deleteLinenKeluarScan(int linenKeluar)=>_delete('/linen-keluar/scan/\$linenKeluar');
+  Future<Map<String,dynamic>> saveLinenKeluar({required List<int> linens,required int ruanganId,required int userId})=>_post('/linen-keluar/save',{'linens':linens,'ruangan_id':ruanganId,'user_id':userId});
+
+  Future<LinenListResponse<LinenMasukItem>> getLinenMasuk({String? search,int? perPage,int? ruangan,String? date,String? daterange}) async {
+    final d=await _get('/linen-masuk',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange}));
+    return _listResponse(d,(e)=>LinenMasukItem.fromJson(e));
+  }
+  Future<List<LinenRoomOption>> getLinenMasukRuangan() async=>_roomOptions(await _get('/linen-masuk/ruangan'));
+  Future<Map<String,dynamic>> scanLinenMasuk(String rfid)=>_post('/linen-masuk/scan',{'rfid':rfid});
+
+  Future<LinenListResponse<PermintaanLinenItem>> getPermintaanLinen({String? search,int? perPage,int? ruangan,String? status}) async {
+    final d=await _get('/permintaan-linen',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'status':status}));
+    return _listResponse(d,(e)=>PermintaanLinenItem.fromJson(e));
+  }
+  Future<PermintaanLinenFormData> getPermintaanLinenFormData() async=>PermintaanLinenFormData.fromJson(Map<String,dynamic>.from((await _get('/permintaan-linen/form-data'))['data'] as Map));
+  Future<Map<String,dynamic>> createPermintaanLinen({required String tanggalPermintaan,required int ruanganId,required String alasanPermintaan,required List<Map<String,dynamic>> items})=>_post('/permintaan-linen',{'tanggal_permintaan':tanggalPermintaan,'ruangan_id':ruanganId,'alasan_permintaan':alasanPermintaan,'items':items});
+  Future<PermintaanLinenDetail> getPermintaanLinenDetail(int id) async=>PermintaanLinenDetail.fromJson(Map<String,dynamic>.from((await _get('/permintaan-linen/\$id'))['data'] as Map));
+  Future<Map<String,dynamic>> updatePermintaanLinenStatus(int id)=>_patch('/permintaan-linen/\$id/status');
+
+  Future<InOutResponse> getInOut({String? search,int? perPage,int? ruangan,String? date,String? daterange}) async=>InOutResponse.fromJson(await _get('/inout',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange})));
+  Future<Map<String,dynamic>> getInOutDetail(int ruangan,{String? date,String? daterange})=>_get('/inout/\$ruangan',query:_query({'date':date,'daterange':daterange}));
+  Future<RekapanTransaksiResponse> getRekapanTransaksi({String? daterange,int? ruangan}) async=>RekapanTransaksiResponse.fromJson(await _get('/rekapan-transaksi',query:_query({'daterange':daterange,'ruangan':ruangan})));
+  Future<List<LinenRoomOption>> getRekapanTransaksiRuangan() async=>_roomOptions(await _get('/rekapan-transaksi/ruangan'));
+
+  Future<LinenListResponse<LinenBelumKembaliItem>> getLinenBelumKembali({String? search,int? perPage,int? ruangan,String? date,String? daterange}) async {
+    final d=await _get('/linen-belum-kembali',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange}));
+    return _listResponse(d,(e)=>LinenBelumKembaliItem.fromJson(e));
+  }
+  Future<List<LinenRoomOption>> getLinenBelumKembaliRuangan() async=>_roomOptions(await _get('/linen-belum-kembali/ruangan'));
+
+  Map<String,String>? _query(Map<String,dynamic> v){final q=<String,String>{};v.forEach((k,x){if(x!=null&&x.toString().trim().isNotEmpty)q[k]=x.toString();});return q.isEmpty?null:q;}
+  Future<String> _requiredToken() async {final t=await getToken();if(t==null||t.isEmpty)throw const ApiException('Token autentikasi tidak ditemukan.',statusCode:401);return t;}
+  Future<Map<String,dynamic>> _post(String path,Map<String,dynamic> body) async {final r=await http.post(Uri.parse('\${await ApiConfig.getMobileUrl()}$path'),headers:_authHeaders(await _requiredToken()),body:jsonEncode(body));return _handleResponse(r);}
+  Future<Map<String,dynamic>> _patch(String path) async {final r=await http.patch(Uri.parse('\${await ApiConfig.getMobileUrl()}$path'),headers:_authHeaders(await _requiredToken()));return _handleResponse(r);}
+  Future<Map<String,dynamic>> _delete(String path) async {final r=await http.delete(Uri.parse('\${await ApiConfig.getMobileUrl()}$path'),headers:_authHeaders(await _requiredToken()));return _handleResponse(r);}
+  List<LinenRoomOption> _roomOptions(Map<String,dynamic> d)=>(d['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenRoomOption.fromJson(Map<String,dynamic>.from(e))).toList();
+  LinenListResponse<T> _listResponse<T>(Map<String,dynamic> d,T Function(Map<String,dynamic>) parser)=>LinenListResponse<T>(data:(d['data'] as List? ?? const []).whereType<Map>().map((e)=>parser(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((d['meta'] as Map?)??const {})));
 
   Future<Map<String, dynamic>> _get(
     String path, {
