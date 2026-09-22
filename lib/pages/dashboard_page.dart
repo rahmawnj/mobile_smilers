@@ -133,6 +133,15 @@ class _DashboardPageState extends State<DashboardPage> {
                                     icon: Icons.broken_image_rounded,
                                     title: 'Linen & Tirai Rusak',
                                     subtitle: 'Data linen dan tirai yang rusak',
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => LinenRusakPage(
+                                            userName: widget.userName,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -165,15 +174,20 @@ class _DashboardDataMenu extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
@@ -219,6 +233,7 @@ class _DashboardDataMenu extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
