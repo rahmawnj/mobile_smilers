@@ -299,15 +299,23 @@ class MetricCard extends StatelessWidget {
                 metric: entry.value as Map<String, dynamic>,
                 index: entry.key,
                 onTap: () {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Pilih kategori Linen & Tirai pada daftar di bawah.',
-                        ),
+                  if (entry.key == 0) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => LinenReadyPage(userName: userName),
                       ),
                     );
+                  } else {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Menu ini akan dihubungkan ke data detail.',
+                          ),
+                        ),
+                      );
+                  }
                 },
               );
             },
