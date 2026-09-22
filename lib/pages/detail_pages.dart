@@ -738,10 +738,38 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
 
   Future<void> _loadFormData() async {
     try {
-      final result = await ApiService.instance.getPermintaanLinenFormData();
+      // Gunakan endpoint sumber data yang memang sudah menyediakan
+      // daftar ruangan dan linen untuk transaksi mobile.
+      final results = await Future.wait([
+        ApiService.instance.getLinenKeluarOptions(),
+        ApiService.instance.getLinenLaundry(
+          perPage: 100,
+          page: 1,
+        ),
+      ]);
+
+      final options = results[0] as LinenKeluarOptions;
+      final laundry = results[1] as LinenListResponse<LinenLaundryItem>;
+
       if (!mounted) return;
+
       setState(() {
-        _formData = result.data;
+        _formData = {
+          'ruangan': options.ruangan
+              .map((room) => {
+                    'id': room.id,
+                    'nama_ruangan': room.namaRuangan,
+                  })
+              .toList(),
+          'linen': laundry.data
+              .map((linen) => {
+                    'id': linen.id,
+                    'nama_linen': linen.namaLinen,
+                    'nama_kategori_linen': linen.namaKategoriLinen,
+                    'ready': linen.ready,
+                  })
+              .toList(),
+        };
       });
     } catch (_) {}
   }
