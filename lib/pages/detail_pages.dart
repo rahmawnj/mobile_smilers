@@ -1796,10 +1796,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                                   clipBehavior: Clip.antiAlias,
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      final tableWidth =
-                                          constraints.maxWidth < 680
-                                              ? 680.0
-                                              : constraints.maxWidth;
+                                      const tableWidth = 900.0;
 
                                       return SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
@@ -2318,9 +2315,7 @@ class _RoomDetailTable extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final tableWidth = constraints.maxWidth < 820
-                  ? 820.0
-                  : constraints.maxWidth;
+              const tableWidth = 1100.0;
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
