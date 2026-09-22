@@ -691,6 +691,60 @@ class _RekapTable extends StatelessWidget {
 }
 
 
+class LinenLaundryPage extends StatefulWidget {
+  const LinenLaundryPage({super.key, required this.userName});
+  final String userName;
+  @override State<LinenLaundryPage> createState() => _LinenLaundryPageState();
+}
+
+class _LinenLaundryPageState extends State<LinenLaundryPage> {
+  bool _loading = true; String? _error; List<LinenLaundryItem> _items = const []; String? _selectedCategory;
+  @override void initState() { super.initState(); _load(); }
+  Future<void> _load() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      final response = await ApiService.instance.getLinenLaundry(perPage: 1000);
+      if (!mounted) return;
+      setState(() { _items = response.data; _loading = false; });
+    } on ApiException catch (e) {
+      if (!mounted) return; setState(() { _error = e.message; _loading = false; });
+    } catch (_) {
+      if (!mounted) return; setState(() { _error = 'Tidak dapat mengambil data Linen & Tirai di Laundry.'; _loading = false; });
+    }
+  }
+  void _openDetail(LinenLaundryItem item) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => LinenLaundryDetailPage(categoryId: item.id, categoryName: item.namaKategoriLinen, userName: widget.userName)));
+  }
+  @override Widget build(BuildContext context) {
+    final categoryNames = _items.map((i) => i.namaKategoriLinen.trim()).where((n) => n.isNotEmpty).toSet().toList()..sort();
+    final filtered = _selectedCategory == null ? _items : _items.where((i) => i.namaKategoriLinen.trim() == _selectedCategory).toList();
+    return AppShell(userName: widget.userName, activeIndex: 0, body: Column(children: [
+      DetailHeader(title: 'Linen & Tirai di Laundry', userName: widget.userName),
+      Expanded(child: RefreshIndicator(onRefresh: _load, child: _loading ? const Center(child: CircularProgressIndicator()) : _error != null ? ListView(children: [Padding(padding: const EdgeInsets.all(24), child: Column(children: [const Icon(Icons.cloud_off_rounded), const SizedBox(height: 10), Text('_error!', textAlign: TextAlign.center), const SizedBox(height: 12), ElevatedButton(onPressed: _load, child: const Text('Coba Lagi'))]))]) : ListView(padding: const EdgeInsets.fromLTRB(16,14,16,24), children: [
+        Container(width: double.infinity, padding: const EdgeInsets.fromLTRB(14,4,14,4), decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(14)), child: DropdownButtonHideUnderline(child: DropdownButton<String?>(value: _selectedCategory,isExpanded:true,hint:const Text('Filter Kategori'),items:[const DropdownMenuItem<String?>(value:null,child:Text('Semua Kategori')),...categoryNames.map((n)=>DropdownMenuItem<String?>(value:n,child:Text(n)))],onChanged:(v)=>setState(()=>_selectedCategory=v)))),
+        const SizedBox(height: 12),
+        Container(width: double.infinity, decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(18),boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:18,offset:const Offset(0,7))]),clipBehavior:Clip.antiAlias, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth<680?680.0:constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
+        if(filtered.isEmpty) const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data untuk kategori ini.'))),
+      ]))),
+    ]));
+  }
+}
+
+class LinenLaundryDetailPage extends StatefulWidget {
+  const LinenLaundryDetailPage({super.key,required this.categoryId,required this.categoryName,required this.userName});
+  final int categoryId; final String categoryName; final String userName;
+  @override State<LinenLaundryDetailPage> createState()=>_LinenLaundryDetailPageState();
+}
+class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
+  bool _loading=true; String? _error; LinenLaundryDetailResponse? _response;
+  @override void initState(){super.initState();_load();}
+  Future<void> _load() async {
+    setState(()=>_loading=true);
+    try { final r=await ApiService.instance.getLinenLaundryCategory(widget.categoryId,perPage:1000); if(!mounted)return; setState(()=>{_response=r,_loading=false}); }
+    on ApiException catch(e){if(mounted)setState(()=>{_error=e.message,_loading=false});} catch(_){if(mounted)setState(()=>{_error='Tidak dapat mengambil detail Linen & Tirai di Laundry.',_loading=false});}
+  }
+  @override Widget build(BuildContext context){ final rows=_response?.data??const <LinenLaundryDetailItem>[]; return AppShell(userName:widget.userName,activeIndex:0,body:Column(children:[DetailHeader(title:'Detail Laundry - '+widget.categoryName,userName:widget.userName),Expanded(child:RefreshIndicator(onRefresh:_load,child:_loading?const Center(child:CircularProgressIndicator()):_error!=null?ListView(children:[Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text('_error!',textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))]):rows.isEmpty?ListView(children:[const Padding(padding:EdgeInsets.all(24),child:Text('Belum ada detail linen di laundry.',textAlign:TextAlign.center))]):ListView(padding:const EdgeInsets.fromLTRB(16,14,16,24),children:[Container(width:double.infinity,decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),clipBehavior:Clip.antiAlias,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,columns:const [DataColumn(label:Text('ID')),DataColumn(label:Text('Kode Linen')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Jumlah Pencucian'))],rows:rows.map((i)=>DataRow(cells:[DataCell(Text(i.id.toString())),DataCell(Text(i.kodeLinen.isEmpty?'-':i.kodeLinen)),DataCell(Text(i.namaLinen.isEmpty?'-':i.namaLinen)),DataCell(Text(i.namaKategoriLinen.isEmpty?'-':i.namaKategoriLinen)),DataCell(Text(i.jumlahPencucian.toString()))])).toList())))])))])); }
+}
 class LinenReadyPage extends StatefulWidget {
   const LinenReadyPage({super.key, required this.userName});
   final String userName;
