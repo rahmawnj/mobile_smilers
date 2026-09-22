@@ -190,6 +190,116 @@ class LinenDropdownSubCategory {
   }
 }
 
+
+int _toInt(dynamic value) {
+  if (value is num) return value.toInt();
+  return int.tryParse(value?.toString() ?? '') ?? 0;
+}
+
+class LinenLaundryItem {
+  const LinenLaundryItem({required this.id, required this.namaLinen, required this.namaKategoriLinen, required this.ready});
+  final int id; final String namaLinen; final String namaKategoriLinen; final dynamic ready;
+  factory LinenLaundryItem.fromJson(Map<String,dynamic> j) => LinenLaundryItem(id:_toInt(j['id']),namaLinen:j['nama_linen']?.toString()??'',namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',ready:j['ready']);
+}
+class LinenLaundryDetailItem {
+  const LinenLaundryDetailItem({required this.id,required this.kodeLinen,required this.namaLinen,required this.namaKategoriLinen,required this.jumlahPencucian});
+  final int id; final String kodeLinen; final String namaLinen; final String namaKategoriLinen; final int jumlahPencucian;
+  factory LinenLaundryDetailItem.fromJson(Map<String,dynamic> j)=>LinenLaundryDetailItem(id:_toInt(j['id']),kodeLinen:j['kode_linen']?.toString()??'',namaLinen:j['nama_linen']?.toString()??'',namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',jumlahPencucian:_toInt(j['jumlah_pencucian']));
+}
+class LinenLaundryDetailResponse {
+  const LinenLaundryDetailResponse({required this.data,required this.meta});
+  final List<LinenLaundryDetailItem> data; final LinenMeta meta;
+  factory LinenLaundryDetailResponse.fromJson(Map<String,dynamic> j)=>LinenLaundryDetailResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenLaundryDetailItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
+}
+class LinenRuanganItem {
+  const LinenRuanganItem({required this.id,required this.namaRuangan,required this.stokAwal,required this.hilang,required this.linenDiRuangan});
+  final int id; final String namaRuangan; final int stokAwal; final int hilang; final int linenDiRuangan;
+  factory LinenRuanganItem.fromJson(Map<String,dynamic> j)=>LinenRuanganItem(id:_toInt(j['id']),namaRuangan:j['nama_ruangan']?.toString()??'',stokAwal:_toInt(j['stok_awal']),hilang:_toInt(j['hilang']),linenDiRuangan:_toInt(j['linen_di_ruangan']));
+}
+class LinenRuanganDetailItem {
+  const LinenRuanganDetailItem({required this.id,required this.linenId,required this.namaLinen,required this.namaKategoriLinen,required this.status,required this.tanggalKeluar,required this.jamKeluar});
+  final int id,linenId; final String namaLinen,namaKategoriLinen,status,tanggalKeluar,jamKeluar;
+  factory LinenRuanganDetailItem.fromJson(Map<String,dynamic> j)=>LinenRuanganDetailItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',status:j['status']?.toString()??'',tanggalKeluar:j['tanggal_keluar']?.toString()??'',jamKeluar:j['jam_keluar']?.toString()??'');
+}
+class LinenRuanganDetailResponse {
+  const LinenRuanganDetailResponse({required this.ruangan,required this.data,required this.meta});
+  final String ruangan; final List<LinenRuanganDetailItem> data; final LinenMeta meta;
+  factory LinenRuanganDetailResponse.fromJson(Map<String,dynamic> j)=>LinenRuanganDetailResponse(ruangan:j['ruangan']?.toString()??'',data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenRuanganDetailItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
+}
+class LinenRuanganBaHilangItem {
+  const LinenRuanganBaHilangItem({required this.id,required this.waktuHilang,required this.fileUrl});
+  final int id; final String waktuHilang,fileUrl;
+  factory LinenRuanganBaHilangItem.fromJson(Map<String,dynamic> j)=>LinenRuanganBaHilangItem(id:_toInt(j['id']),waktuHilang:j['waktu_hilang']?.toString()??'',fileUrl:j['file_url']?.toString()??'');
+}
+class LinenRuanganBaHilangResponse {
+  const LinenRuanganBaHilangResponse({required this.ruangan,required this.data,required this.meta});
+  final String ruangan; final List<LinenRuanganBaHilangItem> data; final LinenMeta meta;
+  factory LinenRuanganBaHilangResponse.fromJson(Map<String,dynamic> j)=>LinenRuanganBaHilangResponse(ruangan:j['ruangan']?.toString()??'',data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenRuanganBaHilangItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
+}
+class LinenRusakItem {
+  const LinenRusakItem({required this.id,required this.linenId,required this.namaLinen,required this.tagRfid,required this.qrCode,required this.jam,required this.tanggal,required this.tahunPembuatan});
+  final int id,linenId,tahunPembuatan; final String namaLinen,tagRfid,qrCode,jam,tanggal;
+  factory LinenRusakItem.fromJson(Map<String,dynamic> j)=>LinenRusakItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',qrCode:j['qr_code']?.toString()??'',jam:j['jam']?.toString()??'',tanggal:j['tanggal']?.toString()??'',tahunPembuatan:_toInt(j['tahun_pembuatan']));
+}
+class LinenHilangItem {
+  const LinenHilangItem({required this.id,required this.linenId,required this.namaLinen,required this.tagRfid,required this.qrCode,required this.waktuHilang,required this.ruangan});
+  final int id,linenId; final String namaLinen,tagRfid,qrCode,waktuHilang,ruangan;
+  factory LinenHilangItem.fromJson(Map<String,dynamic> j)=>LinenHilangItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',qrCode:j['qr_code']?.toString()??'',waktuHilang:j['waktu_hilang']?.toString()??'',ruangan:j['ruangan']?.toString()??'');
+}
+class LinenHilangRuanganItem {
+  const LinenHilangRuanganItem({required this.id,required this.linenId,required this.namaLinen,required this.jumlah});
+  final int id,linenId,jumlah; final String namaLinen;
+  factory LinenHilangRuanganItem.fromJson(Map<String,dynamic> j)=>LinenHilangRuanganItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',jumlah:_toInt(j['jumlah']??j['jumlah_hilang']));
+}
+class LinenKeluarItem {
+  const LinenKeluarItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
+  final int id,linenId; final String namaLinen,ruangan,tanggal,jam;
+  factory LinenKeluarItem.fromJson(Map<String,dynamic> j)=>LinenKeluarItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',ruangan:j['ruangan']?.toString()??'',tanggal:j['tanggal']?.toString()??'',jam:j['jam']?.toString()??'');
+}
+class LinenKeluarOptions {
+  const LinenKeluarOptions({required this.data}); final Map<String,dynamic> data;
+  factory LinenKeluarOptions.fromJson(Map<String,dynamic> j)=>LinenKeluarOptions(data:j);
+}
+class LinenScanQueueResponse {
+  const LinenScanQueueResponse({required this.data}); final List<Map<String,dynamic>> data;
+  factory LinenScanQueueResponse.fromJson(Map<String,dynamic> j)=>LinenScanQueueResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>Map<String,dynamic>.from(e)).toList());
+}
+class LinenMasukItem {
+  const LinenMasukItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
+  final int id,linenId; final String namaLinen,ruangan,tanggal,jam;
+  factory LinenMasukItem.fromJson(Map<String,dynamic> j)=>LinenMasukItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',ruangan:j['ruangan']?.toString()??'',tanggal:j['tanggal']?.toString()??'',jam:j['jam']?.toString()??'');
+}
+class LinenRoomOption {
+  const LinenRoomOption({required this.id,required this.nama}); final int id; final String nama;
+  factory LinenRoomOption.fromJson(Map<String,dynamic> j)=>LinenRoomOption(id:_toInt(j['id']??j['ruangan_id']),nama:j['nama_ruangan']?.toString()??j['ruangan']?.toString()??j['nama']?.toString()??'');
+}
+class PermintaanLinenItem {
+  const PermintaanLinenItem({required this.id,required this.tanggalPermintaan,required this.ruangan,required this.status});
+  final int id; final String tanggalPermintaan,ruangan,status;
+  factory PermintaanLinenItem.fromJson(Map<String,dynamic> j)=>PermintaanLinenItem(id:_toInt(j['id']),tanggalPermintaan:j['tanggal_permintaan']?.toString()??'',ruangan:j['ruangan']?.toString()??j['nama_ruangan']?.toString()??'',status:j['status']?.toString()??'');
+}
+class PermintaanLinenFormData {
+  const PermintaanLinenFormData({required this.data}); final Map<String,dynamic> data;
+  factory PermintaanLinenFormData.fromJson(Map<String,dynamic> j)=>PermintaanLinenFormData(data:j);
+}
+class PermintaanLinenDetail {
+  const PermintaanLinenDetail({required this.data}); final Map<String,dynamic> data;
+  factory PermintaanLinenDetail.fromJson(Map<String,dynamic> j)=>PermintaanLinenDetail(data:j);
+}
+class InOutResponse {
+  const InOutResponse({required this.data,required this.meta}); final List<Map<String,dynamic>> data; final LinenMeta meta;
+  factory InOutResponse.fromJson(Map<String,dynamic> j)=>InOutResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>Map<String,dynamic>.from(e)).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
+}
+class RekapanTransaksiResponse {
+  const RekapanTransaksiResponse({required this.data}); final List<Map<String,dynamic>> data;
+  factory RekapanTransaksiResponse.fromJson(Map<String,dynamic> j)=>RekapanTransaksiResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>Map<String,dynamic>.from(e)).toList());
+}
+class LinenBelumKembaliItem {
+  const LinenBelumKembaliItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
+  final int id,linenId; final String namaLinen,ruangan,tanggal,jam;
+  factory LinenBelumKembaliItem.fromJson(Map<String,dynamic> j)=>LinenBelumKembaliItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',ruangan:j['ruangan']?.toString()??'',tanggal:j['tanggal']?.toString()??'',jam:j['jam']?.toString()??'');
+}
+
 class ApiService {
   static final ApiService instance = ApiService._();
 
@@ -514,6 +624,14 @@ class ApiService {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     };
+  }
+
+  Map<String, dynamic> _handleResponse(http.Response response) {
+    final data = _decode(response);
+    if (response.statusCode < 200 || response.statusCode >= 300 || data['status'] == 'error') {
+      throw ApiException(data['message']?.toString() ?? 'Request API gagal.', statusCode: response.statusCode);
+    }
+    return data;
   }
 
   Map<String, dynamic> _decode(http.Response response) {
