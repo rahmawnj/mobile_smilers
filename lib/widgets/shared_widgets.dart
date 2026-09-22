@@ -1181,6 +1181,15 @@ class BottomNavigation extends StatelessWidget {
                 ),
               ),
 
+              Expanded(
+                child: _NavItem(
+                  icon: Icons.outbox_rounded,
+                  label: 'Keluar',
+                  active: activeIndex == 5,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => LinenKeluarPage(userName: userName))),
+                ),
+              ),
+
               _QRNavButton(
                 active: activeIndex == 2,
                 onTap: () {
