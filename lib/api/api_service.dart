@@ -311,17 +311,41 @@ class LinenHilangRuanganItem {
   );
 }
 class LinenKeluarItem {
-  const LinenKeluarItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
-  final int id,linenId; final String namaLinen,ruangan,tanggal,jam;
-  factory LinenKeluarItem.fromJson(Map<String,dynamic> j)=>LinenKeluarItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',ruangan:j['ruangan']?.toString()??'',tanggal:j['tanggal']?.toString()??'',jam:j['jam']?.toString()??'');
+  const LinenKeluarItem({required this.id,required this.namaLinen,required this.qrCode,required this.tagRfid,required this.keRuangan,required this.jam,required this.tanggal,required this.user});
+  final int id; final String namaLinen,qrCode,tagRfid,keRuangan,jam,tanggal,user;
+  factory LinenKeluarItem.fromJson(Map<String,dynamic> j)=>LinenKeluarItem(
+    id:_toInt(j['id']),namaLinen:j['nama_linen']?.toString()??'',qrCode:j['qr_code']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',
+    keRuangan:j['ke_ruangan']?.toString()??j['ruangan']?.toString()??'',jam:j['jam']?.toString()??'',tanggal:j['tanggal']?.toString()??'',user:j['user']?.toString()??'');
+}
+class LinenKeluarRoomOption {
+  const LinenKeluarRoomOption({required this.id,required this.namaRuangan}); final int id; final String namaRuangan;
+  factory LinenKeluarRoomOption.fromJson(Map<String,dynamic> j)=>LinenKeluarRoomOption(id:_toInt(j['id']),namaRuangan:j['nama_ruangan']?.toString()??'');
+}
+class LinenKeluarUserOption {
+  const LinenKeluarUserOption({required this.id,required this.name,required this.username}); final int id; final String name,username;
+  factory LinenKeluarUserOption.fromJson(Map<String,dynamic> j)=>LinenKeluarUserOption(id:_toInt(j['id']),name:j['name']?.toString()??'',username:j['username']?.toString()??'');
 }
 class LinenKeluarOptions {
-  const LinenKeluarOptions({required this.data}); final Map<String,dynamic> data;
-  factory LinenKeluarOptions.fromJson(Map<String,dynamic> j)=>LinenKeluarOptions(data:j);
+  const LinenKeluarOptions({required this.ruangan,required this.users}); final List<LinenKeluarRoomOption> ruangan; final List<LinenKeluarUserOption> users;
+  factory LinenKeluarOptions.fromJson(Map<String,dynamic> j){
+    final d=Map<String,dynamic>.from((j['data'] as Map?)??j);
+    return LinenKeluarOptions(
+      ruangan:(d['ruangan'] as List? ?? const []).whereType<Map>().map((e)=>LinenKeluarRoomOption.fromJson(Map<String,dynamic>.from(e))).toList(),
+      users:(d['users'] as List? ?? const []).whereType<Map>().map((e)=>LinenKeluarUserOption.fromJson(Map<String,dynamic>.from(e))).toList());
+  }
+}
+class LinenScanQueueItem {
+  const LinenScanQueueItem({required this.linenKeluarId,required this.linenId,required this.namaKategoriLinen,required this.qrCode,required this.tagRfid,required this.waktuScan});
+  final int linenKeluarId,linenId; final String namaKategoriLinen,qrCode,tagRfid,waktuScan;
+  factory LinenScanQueueItem.fromJson(Map<String,dynamic> j)=>LinenScanQueueItem(
+    linenKeluarId:_toInt(j['linen_keluar_id']),linenId:_toInt(j['linen_id']),namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',
+    qrCode:j['qr_code']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',waktuScan:j['waktu_scan']?.toString()??'');
 }
 class LinenScanQueueResponse {
-  const LinenScanQueueResponse({required this.data}); final List<Map<String,dynamic>> data;
-  factory LinenScanQueueResponse.fromJson(Map<String,dynamic> j)=>LinenScanQueueResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>Map<String,dynamic>.from(e)).toList());
+  const LinenScanQueueResponse({required this.total,required this.data}); final int total; final List<LinenScanQueueItem> data;
+  factory LinenScanQueueResponse.fromJson(Map<String,dynamic> j)=>LinenScanQueueResponse(
+    total:_toInt(j['total']),
+    data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenScanQueueItem.fromJson(Map<String,dynamic>.from(e))).toList());
 }
 class LinenMasukItem {
   const LinenMasukItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
