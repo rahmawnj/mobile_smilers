@@ -1721,6 +1721,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                         }).toList(),
                                       ),
                                     ),
+                                    ),
                                   );
                                 },
                               ),
@@ -1975,6 +1976,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                                           );
                                         }).toList(),
                                       ),
+                                    ),
                                     ),
                                   );
                                 },
