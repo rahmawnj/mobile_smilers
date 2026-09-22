@@ -847,19 +847,19 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                                         ),
                                       ],
                                       rows: _categories.map((category) {
-                                        final namaLinen =
+                                        final namaCategory =
                                             category.subKategoriLinen.trim().isEmpty
                                                 ? '-'
                                                 : category.subKategoriLinen;
 
                                         return DataRow(
                                           cells: [
+                                            DataCell(Text(namaCategory)),
                                             DataCell(
                                               Text(
                                                 category.namaKategoriLinen,
                                               ),
                                             ),
-                                            DataCell(Text(namaLinen)),
                                             DataCell(
                                               Text(
                                                 category.jumlahStok.toString(),
