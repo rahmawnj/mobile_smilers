@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+
+import '../api/api_service.dart';
+import '../widgets/shared_widgets.dart';
 
 class _MetaPagination extends StatelessWidget {
   const _MetaPagination({required this.meta, required this.onPage});
@@ -31,11 +35,6 @@ class _MetaPagination extends StatelessWidget {
     );
   }
 }
-
-import 'package:flutter/material.dart';
-
-import '../api/api_service.dart';
-import '../widgets/shared_widgets.dart';
 
 class LinenCategoryDetailPage extends StatefulWidget {
   const LinenCategoryDetailPage({
