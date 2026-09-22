@@ -348,9 +348,30 @@ class LinenScanQueueResponse {
     data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenScanQueueItem.fromJson(Map<String,dynamic>.from(e))).toList());
 }
 class LinenMasukItem {
-  const LinenMasukItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
-  final int id,linenId; final String namaLinen,ruangan,tanggal,jam;
-  factory LinenMasukItem.fromJson(Map<String,dynamic> j)=>LinenMasukItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',ruangan:j['ruangan']?.toString()??'',tanggal:j['tanggal']?.toString()??'',jam:j['jam']?.toString()??'');
+  const LinenMasukItem({
+    required this.id,
+    required this.namaLinen,
+    required this.namaKategoriLinen,
+    required this.qrCode,
+    required this.tagRfid,
+    required this.dariRuangan,
+    required this.jam,
+    required this.tanggal,
+    required this.keterangan,
+  });
+  final int id;
+  final String namaLinen, namaKategoriLinen, qrCode, tagRfid, dariRuangan, jam, tanggal, keterangan;
+  factory LinenMasukItem.fromJson(Map<String,dynamic> j)=>LinenMasukItem(
+    id:_toInt(j['id']),
+    namaLinen:j['nama_linen']?.toString()??'',
+    namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',
+    qrCode:j['qr_code']?.toString()??'',
+    tagRfid:j['tag_rfid']?.toString()??'',
+    dariRuangan:j['dari_ruangan']?.toString()??'',
+    jam:j['jam']?.toString()??'',
+    tanggal:j['tanggal']?.toString()??'',
+    keterangan:j['keterangan']?.toString()??'',
+  );
 }
 class LinenRoomOption {
   const LinenRoomOption({required this.id,required this.nama}); final int id; final String nama;
@@ -670,7 +691,7 @@ class ApiService {
   Future<Map<String,dynamic>> saveLinenKeluar({required List<int> linens,required int ruanganId,required int userId})=>_post('/linen-keluar/save',{'linens':linens,'ruangan_id':ruanganId,'user_id':userId});
 
   Future<LinenListResponse<LinenMasukItem>> getLinenMasuk({String? search,int? perPage,int? ruangan,String? date,String? daterange,int? page}) async {
-    final d=await _get('/linen-masuk',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange}));
+    final d=await _get('/linen-masuk',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange,'page':page}));
     return _listResponse(d,(e)=>LinenMasukItem.fromJson(e));
   }
   Future<List<LinenRoomOption>> getLinenMasukRuangan() async=>_roomOptions(await _get('/linen-masuk/ruangan'));
