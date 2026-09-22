@@ -260,8 +260,8 @@ class LinenRuanganBaHilangResponse {
 }
 class LinenRusakItem {
   const LinenRusakItem({required this.id,required this.linenId,required this.namaLinen,required this.tagRfid,required this.qrCode,required this.jam,required this.tanggal,required this.tahunPembuatan});
-  final int id,linenId,tahunPembuatan; final String namaLinen,tagRfid,qrCode,jam,tanggal;
-  factory LinenRusakItem.fromJson(Map<String,dynamic> j)=>LinenRusakItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',qrCode:j['qr_code']?.toString()??'',jam:j['jam']?.toString()??'',tanggal:j['tanggal']?.toString()??'',tahunPembuatan:_toInt(j['tahun_pembuatan']));
+  final int id,linenId; final String namaLinen,tagRfid,qrCode,jam,tanggal,tahunPembuatan;
+  factory LinenRusakItem.fromJson(Map<String,dynamic> j)=>LinenRusakItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',qrCode:j['qr_code']?.toString()??'',jam:j['jam']?.toString()??'',tanggal:j['tanggal']?.toString()??'',tahunPembuatan:j['tahun_pembuatan']?.toString()??'');
 }
 class LinenHilangItem {
   const LinenHilangItem({required this.id,required this.linenId,required this.namaLinen,required this.tagRfid,required this.qrCode,required this.waktuHilang,required this.ruangan});
