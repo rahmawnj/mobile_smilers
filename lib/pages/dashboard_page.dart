@@ -167,6 +167,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     icon: Icons.assignment_rounded,
                                     title: 'Permintaan Ruangan',
                                     subtitle: 'Permintaan linen dari ruangan',
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => PermintaanLinenPage(userName: widget.userName)));
+                                    },
                                   ),
                                 ),
                               ],
