@@ -1934,18 +1934,10 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   const tableWidth = 980.0;
-                                  return ScrollConfiguration(
-                                    behavior: ScrollConfiguration.of(context).copyWith(
-                                      dragDevices: {
-                                        PointerDeviceKind.touch,
-                                        PointerDeviceKind.mouse,
-                                        PointerDeviceKind.trackpad,
-                                      },
-                                    ),
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      physics: const ClampingScrollPhysics(),
-                                      child: SizedBox(
+                                  return SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    physics: const ClampingScrollPhysics(),
+                                    child: SizedBox(
                                         width: constraints.maxWidth < tableWidth ? tableWidth : constraints.maxWidth,
                                         child: DataTable(
                                           headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
@@ -2211,18 +2203,10 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                   final tableWidth = constraints.maxWidth < 900
                                       ? 900.0
                                       : constraints.maxWidth;
-                                  return ScrollConfiguration(
-                                    behavior: ScrollConfiguration.of(context).copyWith(
-                                      dragDevices: {
-                                        PointerDeviceKind.touch,
-                                        PointerDeviceKind.mouse,
-                                        PointerDeviceKind.trackpad,
-                                      },
-                                    ),
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      physics: const ClampingScrollPhysics(),
-                                      child: SizedBox(
+                                  return SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    physics: const ClampingScrollPhysics(),
+                                    child: SizedBox(
                                         width: tableWidth,
                                       child: DataTable(
                                         headingRowColor: WidgetStateProperty.all(
