@@ -685,7 +685,7 @@ class ApiService {
   Future<PermintaanLinenDetail> getPermintaanLinenDetail(int id) async=>PermintaanLinenDetail.fromJson(Map<String,dynamic>.from((await _get('/permintaan-linen/$id'))['data'] as Map));
   Future<Map<String,dynamic>> updatePermintaanLinenStatus(int id)=>_patch('/permintaan-linen/$id/status');
 
-  Future<InOutResponse> getInOut({String? search,int? perPage,int? ruangan,String? date,String? daterange,int? page}) async=>InOutResponse.fromJson(await _get('/inout',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange})));
+  Future<InOutResponse> getInOut({String? search,int? perPage,int? ruangan,String? date,String? daterange,int? page}) async=>InOutResponse.fromJson(await _get('/inout',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange,'page':page})));
   Future<Map<String,dynamic>> getInOutDetail(int ruangan,{String? date,String? daterange})=>_get('/inout/$ruangan',query:_query({'date':date,'daterange':daterange}));
   Future<LinenBelumKembaliResponse> getLinenBelumKembali({
     String? search,
