@@ -1933,45 +1933,44 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                               clipBehavior: Clip.antiAlias,
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  const tableWidth = 980.0;
+                                  final tableWidth = constraints.maxWidth < 980 ? 980.0 : constraints.maxWidth;
                                   return SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     physics: const ClampingScrollPhysics(),
                                     child: SizedBox(
-                                        width: constraints.maxWidth < tableWidth ? tableWidth : constraints.maxWidth,
-                                        child: DataTable(
-                                          headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-                                          headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
-                                          dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
-                                          columnSpacing: 22,
-                                          horizontalMargin: 16,
-                                          columns: const [
-                                            DataColumn(label: Text('ID')),
-                                            DataColumn(label: Text('Ruangan')),
-                                            DataColumn(label: Text('Kategori')),
-                                            DataColumn(label: Text('Jenis Linen')),
-                                            DataColumn(label: Text('QR Code')),
-                                            DataColumn(label: Text('RFID')),
-                                            DataColumn(label: Text('Transaksi Terakhir')),
-                                            DataColumn(label: Text('Tanggal Hilang')),
-                                          ],
-                                          rows: _items.map((item) => DataRow(cells: [
-                                            DataCell(Text(item.id.toString())),
-                                            DataCell(Text(item.namaRuangan)),
-                                            DataCell(Text(item.kategoriLinen)),
-                                            DataCell(Text(item.jenisLinen)),
-                                            DataCell(Text(item.qrCode)),
-                                            DataCell(Text(item.tagRfid)),
-                                            DataCell(Text(item.tanggalTerakhirTransaksi)),
-                                            DataCell(Text(item.tanggalHilang)),
-                                          ])).toList(),
-                                        ),
+                                      width: tableWidth,
+                                      child: DataTable(
+                                        headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
+                                        headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
+                                        dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
+                                        columnSpacing: 22,
+                                        horizontalMargin: 16,
+                                        columns: const [
+                                          DataColumn(label: Text('ID')),
+                                          DataColumn(label: Text('Ruangan')),
+                                          DataColumn(label: Text('Kategori')),
+                                          DataColumn(label: Text('Jenis Linen')),
+                                          DataColumn(label: Text('QR Code')),
+                                          DataColumn(label: Text('RFID')),
+                                          DataColumn(label: Text('Transaksi Terakhir')),
+                                          DataColumn(label: Text('Tanggal Hilang')),
+                                        ],
+                                        rows: _items.map((item) => DataRow(cells: [
+                                          DataCell(Text(item.id.toString())),
+                                          DataCell(Text(item.namaRuangan)),
+                                          DataCell(Text(item.kategoriLinen)),
+                                          DataCell(Text(item.jenisLinen)),
+                                          DataCell(Text(item.qrCode)),
+                                          DataCell(Text(item.tagRfid)),
+                                          DataCell(Text(item.tanggalTerakhirTransaksi)),
+                                          DataCell(Text(item.tanggalHilang)),
+                                        ])).toList(),
                                       ),
                                     ),
-                                  ),
+                                  );
                                 },
                               ),
-                            ),
+
                             if (_items.isEmpty)
                               const Padding(
                                 padding: EdgeInsets.all(24),
@@ -2200,27 +2199,16 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                               clipBehavior: Clip.antiAlias,
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  final tableWidth = constraints.maxWidth < 900
-                                      ? 900.0
-                                      : constraints.maxWidth;
+                                  final tableWidth = constraints.maxWidth < 980 ? 980.0 : constraints.maxWidth;
                                   return SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     physics: const ClampingScrollPhysics(),
                                     child: SizedBox(
-                                        width: tableWidth,
+                                      width: tableWidth,
                                       child: DataTable(
-                                        headingRowColor: WidgetStateProperty.all(
-                                          const Color(0xff1261dc),
-                                        ),
-                                        headingTextStyle: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        dataTextStyle: const TextStyle(
-                                          color: Color(0xff465564),
-                                          fontSize: 9,
-                                        ),
+                                        headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
+                                        headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
+                                        dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
                                         columnSpacing: 24,
                                         horizontalMargin: 16,
                                         columns: const [
@@ -2233,26 +2221,22 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                           DataColumn(label: Text('Tanggal')),
                                           DataColumn(label: Text('Tahun Pembuatan')),
                                         ],
-                                        rows: _items.map((item) {
-                                          return DataRow(
-                                            cells: [
-                                              DataCell(Text(item.id.toString())),
-                                              DataCell(Text(item.linenId.toString())),
-                                              DataCell(Text(item.namaLinen)),
-                                              DataCell(Text(item.tagRfid)),
-                                              DataCell(Text(item.qrCode)),
-                                              DataCell(Text(item.jam)),
-                                              DataCell(Text(item.tanggal)),
-                                              DataCell(Text(item.tahunPembuatan)),
-                                            ],
-                                          );
-                                        }).toList(),
+                                        rows: _items.map((item) => DataRow(cells: [
+                                          DataCell(Text(item.id.toString())),
+                                          DataCell(Text(item.linenId.toString())),
+                                          DataCell(Text(item.namaLinen)),
+                                          DataCell(Text(item.tagRfid)),
+                                          DataCell(Text(item.qrCode)),
+                                          DataCell(Text(item.jam)),
+                                          DataCell(Text(item.tanggal)),
+                                          DataCell(Text(item.tahunPembuatan)),
+                                        ])).toList(),
                                       ),
                                     ),
                                   );
                                 },
                               ),
-                            ),
+
                             if (_items.isEmpty)
                               const Padding(
                                 padding: EdgeInsets.all(24),
