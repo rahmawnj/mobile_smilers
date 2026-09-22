@@ -474,12 +474,14 @@ class ApiService {
   Future<LinenListResponse<LinenCategory>> getLinen({
     String? search,
     int? perPage,
+    int? page,
   }) async {
     final query = <String, String>{};
     if (search != null && search.trim().isNotEmpty) {
       query['search'] = search.trim();
     }
     if (perPage != null) query['per_page'] = perPage.toString();
+    if (page != null) query['page'] = page.toString();
 
     final data = await _get('/linen', query: query);
     final items = (data['data'] as List? ?? const [])
@@ -509,9 +511,11 @@ class ApiService {
   Future<LinenItemsResponse> getLinenItems(
     int kategoriLinen, {
     int? perPage,
+    int? page,
   }) async {
     final query = <String, String>{};
     if (perPage != null) query['per_page'] = perPage.toString();
+    if (page != null) query['page'] = page.toString();
 
     final data = await _get('/linen/$kategoriLinen/items', query: query);
     final items = (data['data'] as List? ?? const [])
@@ -555,16 +559,16 @@ class ApiService {
     final d=await _get('/linen-ruangan',query:_query({'search':search,'per_page':perPage,'page':page}));
     return _listResponse(d,(e)=>LinenRuanganItem.fromJson(e));
   }
-  Future<LinenRuanganDetailResponse> getLinenRuanganDetail(int ruangan,{int? perPage,int? page}) async => LinenRuanganDetailResponse.fromJson(await _get('/linen-ruangan/$ruangan',query:_query({'per_page':perPage})));
+  Future<LinenRuanganDetailResponse> getLinenRuanganDetail(int ruangan,{int? perPage,int? page}) async => LinenRuanganDetailResponse.fromJson(await _get('/linen-ruangan/$ruangan',query:_query({'per_page':perPage,'page':page})));
   Future<LinenRuanganBaHilangResponse> getLinenRuanganBaHilang(int ruangan,{int? perPage,int? page}) async => LinenRuanganBaHilangResponse.fromJson(await _get('/linen-ruangan/$ruangan/ba-hilang',query:_query({'per_page':perPage})));
   Future<LinenListResponse<LinenRusakItem>> getLinenRusak({String? search,int? perPage,int? page}) async {
-    final d=await _get('/linen-rusak',query:_query({'search':search,'per_page':perPage}));
+    final d=await _get('/linen-rusak',query:_query({'search':search,'per_page':perPage,'page':page}));
     return _listResponse(d,(e)=>LinenRusakItem.fromJson(e));
   }
   Future<Map<String,dynamic>> scanLinenRusak(String rfid)=>_post('/linen-rusak/scan',{'rfid':rfid});
 
   Future<LinenListResponse<LinenHilangItem>> getLinenHilang({String? search,int? perPage,int? filterRuangan,int? filterKategori,String? daterange,int? page}) async {
-    final d=await _get('/linen-hilang',query:_query({'per_page':perPage,'search':search,'filter_ruangan':filterRuangan,'filter_kategori':filterKategori,'daterange':daterange}));
+    final d=await _get('/linen-hilang',query:_query({'per_page':perPage,'search':search,'filter_ruangan':filterRuangan,'filter_kategori':filterKategori,'daterange':daterange,'page':page}));
     return _listResponse(d,(e)=>LinenHilangItem.fromJson(e));
   }
   Future<LinenListResponse<LinenHilangRuanganItem>> getLinenHilangRuanganList({required int ruanganId,int? perPage,int? page}) async {
@@ -582,7 +586,7 @@ class ApiService {
   }
 
   Future<LinenListResponse<LinenKeluarItem>> getLinenKeluar({String? search,int? perPage,int? ruangan,String? date,String? daterange,int? page}) async {
-    final d=await _get('/linen-keluar',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange}));
+    final d=await _get('/linen-keluar',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange,'page':page}));
     return _listResponse(d,(e)=>LinenKeluarItem.fromJson(e));
   }
   Future<LinenKeluarOptions> getLinenKeluarOptions() async {
@@ -617,6 +621,7 @@ class ApiService {
     int? ruangan,
     String? date,
     String? daterange,
+    int? page,
   }) async {
     final data = await _get(
       '/linen-belum-kembali',
@@ -626,6 +631,7 @@ class ApiService {
         'ruangan': ruangan,
         'date': date,
         'daterange': daterange,
+        'page': page,
       }),
     );
     return LinenBelumKembaliResponse.fromJson(data);
