@@ -156,10 +156,10 @@ class LinenMeta {
 
   factory LinenMeta.fromJson(Map<String, dynamic> json) {
     return LinenMeta(
-      currentPage: (json['current_page'] as num?)?.toInt() ?? 1,
-      perPage: (json['per_page'] as num?)?.toInt() ?? 10,
-      total: (json['total'] as num?)?.toInt() ?? 0,
-      lastPage: (json['last_page'] as num?)?.toInt() ?? 1,
+      currentPage: _toInt(json['current_page']) == 0 ? 1 : _toInt(json['current_page']),
+      perPage: _toInt(json['per_page']) == 0 ? 10 : _toInt(json['per_page']),
+      total: _toInt(json['total']),
+      lastPage: _toInt(json['last_page']) == 0 ? 1 : _toInt(json['last_page']),
     );
   }
 }
