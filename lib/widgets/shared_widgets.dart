@@ -1205,15 +1205,13 @@ class BottomNavigation extends StatelessWidget {
                   label: 'Belum Kembali',
                   active: activeIndex == 4,
                   onTap: () {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Endpoint Belum Kembali belum tersedia di API yang diberikan.',
-                          ),
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => LinenBelumKembaliPage(
+                          userName: userName,
                         ),
-                      );
+                      ),
+                    );
                   },
                 ),
               ),
