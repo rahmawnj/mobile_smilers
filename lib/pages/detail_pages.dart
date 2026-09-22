@@ -1,7 +1,7 @@
 import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_picker/file_picker.dart' as file_picker;
 
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
@@ -1482,7 +1482,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
   String? _dateRange;
   final _searchController = TextEditingController();
   final Set<int> _selectedLinenIds = {};
-  PlatformFile? _beritaAcara;
+  file_picker.PlatformFile? _beritaAcara;
 
   @override
   void initState() {
@@ -1586,8 +1586,8 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
   }
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
+    final result = await file_picker.FilePicker.platform.pickFiles(
+      type: file_picker.FileType.custom,
       allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
       withData: true,
     );
@@ -1601,7 +1601,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
     DateTime tanggal = DateTime.now();
     List<LinenHilangRuanganItem> roomItems = const [];
     final selected = <int>{};
-    PlatformFile? file;
+    file_picker.PlatformFile? file;
 
     await showDialog(
       context: context,
@@ -1701,8 +1701,8 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                       const SizedBox(height: 8),
                       OutlinedButton.icon(
                         onPressed: () async {
-                          final result = await FilePicker.platform.pickFiles(
-                            type: FileType.custom,
+                          final result = await file_picker.FilePicker.platform.pickFiles(
+                            type: file_picker.FileType.custom,
                             allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
                             withData: true,
                           );
@@ -1758,7 +1758,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
     DateTime tanggal,
     int roomId,
     List<int> linenIds,
-    PlatformFile? file,
+    file_picker.PlatformFile? file,
   ) async {
     setState(() => _submitting = true);
     try {
