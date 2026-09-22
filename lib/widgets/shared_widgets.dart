@@ -1160,15 +1160,11 @@ class BottomNavigation extends StatelessWidget {
                   label: 'Keluar Masuk',
                   active: activeIndex == 1,
                   onTap: () {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Endpoint Keluar Masuk belum tersedia di API yang diberikan.',
-                          ),
-                        ),
-                      );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => InOutPage(userName: userName),
+                      ),
+                    );
                   },
                 ),
               ),
