@@ -1172,7 +1172,7 @@ class BottomNavigation extends StatelessWidget {
                   label: 'Keluar Masuk',
                   active: activeIndex == 1,
                   onTap: () {
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute(
                         builder: (_) => InOutPage(userName: userName),
                       ),
