@@ -1867,7 +1867,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: DropdownButtonFormField<int>(
+                                  child: DropdownButtonFormField<int?>(
                                     value: _selectedRoom,
                                     decoration: const InputDecoration(
                                       labelText: 'Filter Ruangan',
@@ -1876,7 +1876,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                                       border: OutlineInputBorder(borderSide: BorderSide.none),
                                     ),
                                     items: [
-                                      const DropdownMenuItem<int>(value: null, child: Text('Semua Ruangan')),
+                                      const DropdownMenuItem<int?>(value: null, child: Text('Semua Ruangan')),
                                       ..._rooms.map((r) => DropdownMenuItem(value: r.id, child: Text(r.namaRuangan))),
                                     ],
                                     onChanged: (v) {
@@ -1887,7 +1887,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
-                                  child: DropdownButtonFormField<int>(
+                                  child: DropdownButtonFormField<int?>(
                                     value: _selectedCategory,
                                     decoration: const InputDecoration(
                                       labelText: 'Filter Kategori',
@@ -1896,7 +1896,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                                       border: OutlineInputBorder(borderSide: BorderSide.none),
                                     ),
                                     items: [
-                                      const DropdownMenuItem<int>(value: null, child: Text('Semua Kategori')),
+                                      const DropdownMenuItem<int?>(value: null, child: Text('Semua Kategori')),
                                       ..._categories.map((c) => DropdownMenuItem(value: c.id, child: Text(c.namaKategoriLinen))),
                                     ],
                                     onChanged: (v) {
