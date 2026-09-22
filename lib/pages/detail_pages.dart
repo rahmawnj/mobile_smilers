@@ -1970,6 +1970,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                                   );
                                 },
                               ),
+                            ),
 
                             if (_items.isEmpty)
                               const Padding(
@@ -2236,6 +2237,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                   );
                                 },
                               ),
+                            ),
 
                             if (_items.isEmpty)
                               const Padding(
