@@ -490,7 +490,7 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
     final rows = _response?.data ?? const <RekapanTransaksiItem>[];
     return AppShell(
       userName: widget.userName,
-      activeIndex: 1,
+      activeIndex: 3,
       body: Column(
         children: [
           DetailHeader(title: 'Rekapan Transaksi', userName: widget.userName),
