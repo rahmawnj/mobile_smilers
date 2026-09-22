@@ -694,6 +694,7 @@ class _RekapTable extends StatelessWidget {
 class LinenReadyPage extends StatefulWidget {
   const LinenReadyPage({super.key, required this.userName});
   final String userName;
+
   @override
   State<LinenReadyPage> createState() => _LinenReadyPageState();
 }
@@ -710,14 +711,25 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   }
 
   Future<void> _load() async {
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
     try {
       final response = await ApiService.instance.getLinen(perPage: 1000);
       if (!mounted) return;
-      setState(() { _categories = response.data; _loading = false; });
+
+      setState(() {
+        _categories = response.data;
+        _loading = false;
+      });
     } on ApiException catch (e) {
       if (!mounted) return;
-      setState(() { _error = e.message; _loading = false; });
+      setState(() {
+        _error = e.message;
+        _loading = false;
+      });
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -727,6 +739,17 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     }
   }
 
+  void _openDetail(LinenCategory category) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => LinenCategoryDetailPage(
+          category: category,
+          userName: widget.userName,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppShell(
@@ -734,63 +757,128 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
       activeIndex: 0,
       body: Column(
         children: [
-          DetailHeader(title: 'Linen & Tirai Ready', userName: widget.userName),
+          DetailHeader(
+            title: 'Linen & Tirai Ready',
+            userName: widget.userName,
+          ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: _load,
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
                   : _error != null
-                      ? ListView(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Text(_error!, textAlign: TextAlign.center),
-                          ),
-                        ])
-                      : _categories.isEmpty
-                          ? ListView(children: const [
-                              Padding(
-                                padding: EdgeInsets.all(24),
-                                child: Text(
-                                  'Belum ada data Linen & Tirai Ready.',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ])
-                          : ListView.separated(
-                              padding: const EdgeInsets.all(20),
-                              itemCount: _categories.length,
-                              separatorBuilder: (_, __) => const SizedBox(height: 10),
-                              itemBuilder: (context, index) {
-                                final category = _categories[index];
-                                return Material(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(18),
-                                  child: ListTile(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18),
-                                    ),
-                                    title: Text(
-                                      category.namaKategoriLinen,
-                                      style: const TextStyle(fontWeight: FontWeight.w700),
-                                    ),
-                                    subtitle: Text(
-                                      '\${category.subKategoriLinen} • \${category.jumlahStok} Linen Ready',
-                                    ),
-                                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => LinenCategoryDetailPage(
-                                            category: category,
-                                            userName: widget.userName,
-                                          ),
-                                        ),
-                                      );
-                                    },
+                      ? ListView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                children: [
+                                  const Icon(Icons.cloud_off_rounded),
+                                  const SizedBox(height: 10),
+                                  Text(_error!, textAlign: TextAlign.center),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: _load,
+                                    child: const Text('Coba Lagi'),
                                   ),
-                                );
-                              },
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : _categories.isEmpty
+                          ? ListView(
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.all(24),
+                                  child: Text(
+                                    'Belum ada data Linen & Tirai Ready.',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : ListView(
+                              padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(18),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: .05),
+                                        blurRadius: 18,
+                                        offset: const Offset(0, 7),
+                                      ),
+                                    ],
+                                  ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: DataTable(
+                                      headingRowColor:
+                                          WidgetStateProperty.all(
+                                        const Color(0xff1261dc),
+                                      ),
+                                      headingTextStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      dataTextStyle: const TextStyle(
+                                        color: Color(0xff465564),
+                                        fontSize: 9,
+                                      ),
+                                      columnSpacing: 28,
+                                      horizontalMargin: 16,
+                                      columns: const [
+                                        DataColumn(
+                                          label: Text('Nama Category'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('Nama Linen'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('Stock Ready'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('Action'),
+                                        ),
+                                      ],
+                                      rows: _categories.map((category) {
+                                        final namaLinen =
+                                            category.subKategoriLinen.trim().isEmpty
+                                                ? '-'
+                                                : category.subKategoriLinen;
+
+                                        return DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Text(
+                                                category.namaKategoriLinen,
+                                              ),
+                                            ),
+                                            DataCell(Text(namaLinen)),
+                                            DataCell(
+                                              Text(
+                                                category.jumlahStok.toString(),
+                                              ),
+                                            ),
+                                            DataCell(
+                                              TextButton(
+                                                onPressed: () =>
+                                                    _openDetail(category),
+                                                child: const Text('Detail'),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
             ),
           ),
