@@ -5,11 +5,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiConfig {
   static const defaultBaseUrl = 'https://smilers.co.id';
+  static const _baseUrlKey = 'api_base_url';
 
-  static Future<String> getBaseUrl() async => normalize(defaultBaseUrl);
+  static Future<String> getBaseUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_baseUrlKey)?.trim();
 
-  // Dipertahankan untuk kompatibilitas halaman konfigurasi lama.
-  static Future<void> saveBaseUrl(String value) async {}
+    if (saved == null || saved.isEmpty) {
+      return defaultBaseUrl;
+    }
+
+    return normalize(saved);
+  }
+
+  static Future<void> saveBaseUrl(String value) async {
+    final normalized = normalize(value);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_baseUrlKey, normalized);
+  }
 
   static String normalize(String value) {
     var url = value.trim();
@@ -24,7 +37,10 @@ class ApiConfig {
     return url;
   }
 
-  static Future<String> getMobileUrl() async => '${await getBaseUrl()}/api/mobile';
+  static Future<String> getMobileUrl() async {
+    final baseUrl = await getBaseUrl();
+    return '$baseUrl/api/mobile';
+  }
 }
 
 class ApiException implements Exception {
