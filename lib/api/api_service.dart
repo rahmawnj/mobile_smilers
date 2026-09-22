@@ -378,9 +378,13 @@ class LinenRoomOption {
   factory LinenRoomOption.fromJson(Map<String,dynamic> j)=>LinenRoomOption(id:_toInt(j['id']??j['ruangan_id']),nama:j['nama_ruangan']?.toString()??j['ruangan']?.toString()??j['nama']?.toString()??'');
 }
 class PermintaanLinenItem {
-  const PermintaanLinenItem({required this.id,required this.tanggalPermintaan,required this.ruangan,required this.status});
-  final int id; final String tanggalPermintaan,ruangan,status;
-  factory PermintaanLinenItem.fromJson(Map<String,dynamic> j)=>PermintaanLinenItem(id:_toInt(j['id']),tanggalPermintaan:j['tanggal_permintaan']?.toString()??'',ruangan:j['ruangan']?.toString()??j['nama_ruangan']?.toString()??'',status:j['status']?.toString()??'');
+  const PermintaanLinenItem({required this.id,required this.tanggalPermintaan,required this.namaRuangan,required this.namaKepalaRuangan,required this.alasanPermintaan,required this.status});
+  final int id;
+  final String tanggalPermintaan,namaRuangan,namaKepalaRuangan,alasanPermintaan,status;
+  factory PermintaanLinenItem.fromJson(Map<String,dynamic> j)=>PermintaanLinenItem(
+    id:_toInt(j['id']), tanggalPermintaan:j['tanggal_permintaan']?.toString()??'',
+    namaRuangan:j['nama_ruangan']?.toString()??'', namaKepalaRuangan:j['nama_kepala_ruangan']?.toString()??'',
+    alasanPermintaan:j['alasan_permintaan']?.toString()??'', status:j['status']?.toString()??'');
 }
 class PermintaanLinenFormData {
   const PermintaanLinenFormData({required this.data}); final Map<String,dynamic> data;
@@ -698,7 +702,7 @@ class ApiService {
   Future<Map<String,dynamic>> scanLinenMasuk(String rfid)=>_post('/linen-masuk/scan',{'rfid':rfid});
 
   Future<LinenListResponse<PermintaanLinenItem>> getPermintaanLinen({String? search,int? perPage,int? ruangan,String? status,int? page}) async {
-    final d=await _get('/permintaan-linen',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'status':status}));
+    final d=await _get('/permintaan-linen',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'status':status,'page':page}));
     return _listResponse(d,(e)=>PermintaanLinenItem.fromJson(e));
   }
   Future<PermintaanLinenFormData> getPermintaanLinenFormData() async=>PermintaanLinenFormData.fromJson(Map<String,dynamic>.from((await _get('/permintaan-linen/form-data'))['data'] as Map));
