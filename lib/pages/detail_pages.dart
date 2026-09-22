@@ -730,7 +730,7 @@ class LinenLaundryPage extends StatefulWidget {
 }
 
 class _LinenLaundryPageState extends State<LinenLaundryPage> {
-  bool _loading = true; String? _error; List<LinenLaundryItem> _items = const []; String? _selectedCategory;
+  bool _loading = true; String? _error; List<LinenLaundryItem> _items = const []; String? _selectedCategory; LinenMeta? _meta; int _page = 1;
   @override void initState() { super.initState(); _load(); }
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
