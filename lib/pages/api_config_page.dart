@@ -11,8 +11,20 @@ class ApiConfigPage extends StatefulWidget {
 }
 
 class _ApiConfigPageState extends State<ApiConfigPage> {
-  final _controller = TextEditingController(text: 'https://smilers.co.id');
+  final _controller = TextEditingController();
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBaseUrl();
+  }
+
+  Future<void> _loadBaseUrl() async {
+    final baseUrl = await ApiConfig.getBaseUrl();
+    if (!mounted) return;
+    _controller.text = baseUrl;
+  }
 
   @override
   void dispose() {
@@ -32,7 +44,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
     }
 
     setState(() => _saving = true);
-    await ApiConfig.saveBaseUrl(value);
+    await ApiConfig.saveBaseUrl(normalized);
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const ApiLoginPage()),
