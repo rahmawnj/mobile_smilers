@@ -616,12 +616,6 @@ class ApiService {
   Future<RekapanTransaksiResponse> getRekapanTransaksi({String? daterange,int? ruangan}) async=>RekapanTransaksiResponse.fromJson(await _get('/rekapan-transaksi',query:_query({'daterange':daterange,'ruangan':ruangan})));
   Future<List<LinenRoomOption>> getRekapanTransaksiRuangan() async=>_roomOptions(await _get('/rekapan-transaksi/ruangan'));
 
-  Future<LinenListResponse<LinenBelumKembaliItem>> getLinenBelumKembali({String? search,int? perPage,int? ruangan,String? date,String? daterange}) async {
-    final d=await _get('/linen-belum-kembali',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange}));
-    return _listResponse(d,(e)=>LinenBelumKembaliItem.fromJson(e));
-  }
-  Future<List<LinenRoomOption>> getLinenBelumKembaliRuangan() async=>_roomOptions(await _get('/linen-belum-kembali/ruangan'));
-
   Map<String,String>? _query(Map<String,dynamic> v){final q=<String,String>{};v.forEach((k,x){if(x!=null&&x.toString().trim().isNotEmpty)q[k]=x.toString();});return q.isEmpty?null:q;}
   Future<String> _requiredToken() async {final t=await getToken();if(t==null||t.isEmpty)throw const ApiException('Token autentikasi tidak ditemukan.',statusCode:401);return t;}
   Future<Map<String,dynamic>> _post(String path,Map<String,dynamic> body) async {final r=await http.post(Uri.parse('${await ApiConfig.getMobileUrl()}$path'),headers:_authHeaders(await _requiredToken()),body:jsonEncode(body));return _handleResponse(r);}
