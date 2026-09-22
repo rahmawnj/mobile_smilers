@@ -222,9 +222,31 @@ class LinenRuanganDetailItem {
   factory LinenRuanganDetailItem.fromJson(Map<String,dynamic> j)=>LinenRuanganDetailItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',status:j['status']?.toString()??'',tanggalKeluar:j['tanggal_keluar']?.toString()??'',jamKeluar:j['jam_keluar']?.toString()??'');
 }
 class LinenRuanganDetailResponse {
-  const LinenRuanganDetailResponse({required this.ruangan,required this.data,required this.meta});
-  final String ruangan; final List<LinenRuanganDetailItem> data; final LinenMeta meta;
-  factory LinenRuanganDetailResponse.fromJson(Map<String,dynamic> j)=>LinenRuanganDetailResponse(ruangan:j['ruangan']?.toString()??'',data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenRuanganDetailItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
+  const LinenRuanganDetailResponse({
+    required this.ruanganId,
+    required this.ruanganName,
+    required this.data,
+    required this.meta,
+  });
+  final int ruanganId;
+  final String ruanganName;
+  final List<LinenRuanganDetailItem> data;
+  final LinenMeta meta;
+
+  factory LinenRuanganDetailResponse.fromJson(Map<String,dynamic> j) {
+    final room = Map<String,dynamic>.from((j['ruangan'] as Map?) ?? const {});
+    return LinenRuanganDetailResponse(
+      ruanganId: _toInt(room['id']),
+      ruanganName: room['nama_ruangan']?.toString() ?? '',
+      data: (j['data'] as List? ?? const [])
+          .whereType<Map>()
+          .map((e) => LinenRuanganDetailItem.fromJson(Map<String,dynamic>.from(e)))
+          .toList(),
+      meta: LinenMeta.fromJson(
+        Map<String,dynamic>.from((j['meta'] as Map?) ?? const {}),
+      ),
+    );
+  }
 }
 class LinenRuanganBaHilangItem {
   const LinenRuanganBaHilangItem({required this.id,required this.waktuHilang,required this.fileUrl});
