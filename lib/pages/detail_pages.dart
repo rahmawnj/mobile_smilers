@@ -1486,11 +1486,12 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     });
 
     try {
-      final response = await ApiService.instance.getLinen(perPage: 1000);
+      final response = await ApiService.instance.getLinen(perPage: 10, page: _page);
       if (!mounted) return;
 
       setState(() {
         _categories = response.data;
+        _meta = response.meta;
         _loading = false;
       });
     } on ApiException catch (e) {
@@ -1695,6 +1696,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                                   child: Text('Tidak ada data untuk kategori ini.'),
                                 ),
                               ),
+                            if (_meta != null) _MetaPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
                           ],
                         ),
             ),
