@@ -170,6 +170,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     onTap: () {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (_) => PermintaanLinenPage(userName: widget.userName)));
                                     },
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => PermintaanLinenPage(userName: widget.userName)));
+                                    },
                                   ),
                                 ),
                               ],
