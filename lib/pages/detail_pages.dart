@@ -703,6 +703,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   bool _loading = true;
   String? _error;
   List<LinenCategory> _categories = const [];
+  String? _selectedCategory;
 
   @override
   void initState() {
@@ -752,6 +753,19 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final categoryNames = _categories
+        .map((item) => item.namaKategoriLinen.trim())
+        .where((name) => name.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
+    final filteredCategories = _selectedCategory == null
+        ? _categories
+        : _categories
+            .where((item) => item.namaKategoriLinen.trim() == _selectedCategory)
+            .toList();
+
     return AppShell(
       userName: widget.userName,
       activeIndex: 0,
@@ -786,100 +800,135 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                             ),
                           ],
                         )
-                      : _categories.isEmpty
-                          ? ListView(
-                              children: const [
-                                Padding(
-                                  padding: EdgeInsets.all(24),
-                                  child: Text(
-                                    'Belum ada data Linen & Tirai Ready.',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : ListView(
-                              padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(18),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: .05),
-                                        blurRadius: 18,
-                                        offset: const Offset(0, 7),
-                                      ),
-                                    ],
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
-                                      headingRowColor:
-                                          WidgetStateProperty.all(
-                                        const Color(0xff1261dc),
-                                      ),
-                                      headingTextStyle: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      dataTextStyle: const TextStyle(
-                                        color: Color(0xff465564),
-                                        fontSize: 9,
-                                      ),
-                                      columnSpacing: 28,
-                                      horizontalMargin: 16,
-                                      columns: const [
-                                        DataColumn(
-                                          label: Text('Nama Category'),
-                                        ),
-                                        DataColumn(
-                                          label: Text('Nama Linen'),
-                                        ),
-                                        DataColumn(
-                                          label: Text('Stock Ready'),
-                                        ),
-                                        DataColumn(
-                                          label: Text('Action'),
-                                        ),
-                                      ],
-                                      rows: _categories.map((category) {
-                                        final namaCategory =
-                                            category.subKategoriLinen.trim().isEmpty
-                                                ? '-'
-                                                : category.subKategoriLinen;
-
-                                        return DataRow(
-                                          cells: [
-                                            DataCell(Text(namaCategory)),
-                                            DataCell(
-                                              Text(
-                                                category.namaKategoriLinen,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              Text(
-                                                category.jumlahStok.toString(),
-                                              ),
-                                            ),
-                                            DataCell(
-                                              TextButton(
-                                                onPressed: () =>
-                                                    _openDetail(category),
-                                                child: const Text('Detail'),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      }).toList(),
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.fromLTRB(14, 4, 14, 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String?>(
+                                  value: _selectedCategory,
+                                  isExpanded: true,
+                                  hint: const Text('Filter Kategori'),
+                                  icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                                  items: [
+                                    const DropdownMenuItem<String?>(
+                                      value: null,
+                                      child: Text('Semua Kategori'),
                                     ),
-                                  ),
+                                    ...categoryNames.map(
+                                      (name) => DropdownMenuItem<String?>(
+                                        value: name,
+                                        child: Text(name),
+                                      ),
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() => _selectedCategory = value);
+                                  },
                                 ),
-                              ],
+                              ),
                             ),
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(18),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: .05),
+                                    blurRadius: 18,
+                                    offset: const Offset(0, 7),
+                                  ),
+                                ],
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final tableWidth = constraints.maxWidth < 680
+                                      ? 680.0
+                                      : constraints.maxWidth;
+
+                                  return SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: SizedBox(
+                                      width: tableWidth,
+                                      child: DataTable(
+                                        headingRowColor:
+                                            WidgetStateProperty.all(
+                                          const Color(0xff1261dc),
+                                        ),
+                                        headingTextStyle: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        dataTextStyle: const TextStyle(
+                                          color: Color(0xff465564),
+                                          fontSize: 9,
+                                        ),
+                                        columnSpacing: 28,
+                                        horizontalMargin: 16,
+                                        columns: const [
+                                          DataColumn(
+                                            label: Text('Nama Category'),
+                                          ),
+                                          DataColumn(
+                                            label: Text('Nama Linen'),
+                                          ),
+                                          DataColumn(
+                                            label: Text('Stock Ready'),
+                                          ),
+                                          DataColumn(
+                                            label: Text('Action'),
+                                          ),
+                                        ],
+                                        rows: filteredCategories.map((category) {
+                                          final namaLinen =
+                                              category.subKategoriLinen.trim().isEmpty
+                                                  ? '-'
+                                                  : category.subKategoriLinen;
+
+                                          return DataRow(
+                                            cells: [
+                                              DataCell(
+                                                Text(category.namaKategoriLinen),
+                                              ),
+                                              DataCell(Text(namaLinen)),
+                                              DataCell(
+                                                Text(category.jumlahStok.toString()),
+                                              ),
+                                              DataCell(
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      _openDetail(category),
+                                                  child: const Text('Detail'),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            if (filteredCategories.isEmpty)
+                              const Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Center(
+                                  child: Text('Tidak ada data untuk kategori ini.'),
+                                ),
+                              ),
+                          ],
+                        ),
             ),
           ),
         ],
