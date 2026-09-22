@@ -264,14 +264,51 @@ class LinenRusakItem {
   factory LinenRusakItem.fromJson(Map<String,dynamic> j)=>LinenRusakItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',qrCode:j['qr_code']?.toString()??'',jam:j['jam']?.toString()??'',tanggal:j['tanggal']?.toString()??'',tahunPembuatan:j['tahun_pembuatan']?.toString()??'');
 }
 class LinenHilangItem {
-  const LinenHilangItem({required this.id,required this.linenId,required this.namaLinen,required this.tagRfid,required this.qrCode,required this.waktuHilang,required this.ruangan});
-  final int id,linenId; final String namaLinen,tagRfid,qrCode,waktuHilang,ruangan;
-  factory LinenHilangItem.fromJson(Map<String,dynamic> j)=>LinenHilangItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',qrCode:j['qr_code']?.toString()??'',waktuHilang:j['waktu_hilang']?.toString()??'',ruangan:j['ruangan']?.toString()??'');
+  const LinenHilangItem({
+    required this.id,
+    required this.namaRuangan,
+    required this.kategoriLinen,
+    required this.jenisLinen,
+    required this.qrCode,
+    required this.tagRfid,
+    required this.tanggalTerakhirTransaksi,
+    required this.tanggalHilang,
+  });
+  final int id;
+  final String namaRuangan, kategoriLinen, jenisLinen, qrCode, tagRfid;
+  final String tanggalTerakhirTransaksi, tanggalHilang;
+  factory LinenHilangItem.fromJson(Map<String,dynamic> j)=>LinenHilangItem(
+    id:_toInt(j['id']),
+    namaRuangan:j['nama_ruangan']?.toString()??'',
+    kategoriLinen:j['kategori_linen']?.toString()??'',
+    jenisLinen:j['jenis_linen']?.toString()??'',
+    qrCode:j['qr_code']?.toString()??'',
+    tagRfid:j['tag_rfid']?.toString()??'',
+    tanggalTerakhirTransaksi:j['tanggal_terakhir_transaksi']?.toString()??'',
+    tanggalHilang:j['tanggal_hilang']?.toString()??'',
+  );
 }
 class LinenHilangRuanganItem {
-  const LinenHilangRuanganItem({required this.id,required this.linenId,required this.namaLinen,required this.jumlah});
-  final int id,linenId,jumlah; final String namaLinen;
-  factory LinenHilangRuanganItem.fromJson(Map<String,dynamic> j)=>LinenHilangRuanganItem(id:_toInt(j['id']),linenId:_toInt(j['linen_id']),namaLinen:j['nama_linen']?.toString()??'',jumlah:_toInt(j['jumlah']??j['jumlah_hilang']));
+  const LinenHilangRuanganItem({
+    required this.transaksiId,
+    required this.linenId,
+    required this.namaLinen,
+    required this.kategoriLinen,
+    required this.qrCode,
+    required this.tagRfid,
+    required this.tanggalKeluar,
+  });
+  final int transaksiId, linenId;
+  final String namaLinen, kategoriLinen, qrCode, tagRfid, tanggalKeluar;
+  factory LinenHilangRuanganItem.fromJson(Map<String,dynamic> j)=>LinenHilangRuanganItem(
+    transaksiId:_toInt(j['transaksi_id']),
+    linenId:_toInt(j['linen_id']),
+    namaLinen:j['nama_linen']?.toString()??'',
+    kategoriLinen:j['kategori_linen']?.toString()??'',
+    qrCode:j['qr_code']?.toString()??'',
+    tagRfid:j['tag_rfid']?.toString()??'',
+    tanggalKeluar:j['tanggal_keluar']?.toString()??'',
+  );
 }
 class LinenKeluarItem {
   const LinenKeluarItem({required this.id,required this.linenId,required this.namaLinen,required this.ruangan,required this.tanggal,required this.jam});
@@ -575,13 +612,24 @@ class ApiService {
     final d=await _get('/linen-hilang/ruangan-list',query:_query({'ruangan_id':ruanganId,'per_page':perPage??20,'page':page}));
     return _listResponse(d,(e)=>LinenHilangRuanganItem.fromJson(e));
   }
-  Future<Map<String,dynamic>> createLinenHilang({required String tanggal,required int ruanganId,required List<int> linenIds,String? beritaAcaraPath}) async {
+  Future<Map<String,dynamic>> createLinenHilang({
+    required String tanggal,
+    required int ruanganId,
+    required List<int> linenIds,
+    List<int>? beritaAcaraBytes,
+    String? beritaAcaraName,
+    String? beritaAcaraPath,
+  }) async {
     final token=await _requiredToken();
     final r=http.MultipartRequest('POST',Uri.parse('${await ApiConfig.getMobileUrl()}/linen-hilang'));
     r.headers['Authorization']='Bearer $token'; r.headers['Accept']='application/json';
     r.fields['tanggal']=tanggal; r.fields['ruangan_id']=ruanganId.toString();
     for(var i=0;i<linenIds.length;i++){r.fields['linen_id[$i]']=linenIds[i].toString();}
-    if(beritaAcaraPath!=null&&beritaAcaraPath.trim().isNotEmpty){r.files.add(await http.MultipartFile.fromPath('berita_acara',beritaAcaraPath));}
+    if(beritaAcaraBytes!=null&&beritaAcaraBytes.isNotEmpty){
+      r.files.add(http.MultipartFile.fromBytes('berita_acara',beritaAcaraBytes,filename:beritaAcaraName??'berita_acara'));
+    } else if(beritaAcaraPath!=null&&beritaAcaraPath.trim().isNotEmpty){
+      r.files.add(await http.MultipartFile.fromPath('berita_acara',beritaAcaraPath));
+    }
     return _handleResponse(await http.Response.fromStream(await r.send()));
   }
 
