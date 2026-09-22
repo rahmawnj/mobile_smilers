@@ -98,6 +98,11 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                           width: 66,
                           height: 66,
                           fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.local_hospital_rounded,
+                            color: Color(0xff118D9A),
+                            size: 34,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 18),
