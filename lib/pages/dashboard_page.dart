@@ -125,17 +125,25 @@ class _DashboardPageState extends State<DashboardPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SectionTitle(title: 'Data Linen & Tirai'),
-                            const SizedBox(height: 10),
-                            _DashboardDataMenu(
-                              icon: Icons.broken_image_rounded,
-                              title: 'Linen & Tirai Rusak',
-                              subtitle: 'Data linen dan tirai yang rusak',
-                            ),
-                            const SizedBox(height: 10),
-                            _DashboardDataMenu(
-                              icon: Icons.report_problem_rounded,
-                              title: 'Linen & Tirai Hilang',
-                              subtitle: 'Data linen dan tirai yang hilang',
+                            const SizedBox(height: 14),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _DashboardDataMenu(
+                                    icon: Icons.broken_image_rounded,
+                                    title: 'Linen & Tirai Rusak',
+                                    subtitle: 'Data linen dan tirai yang rusak',
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _DashboardDataMenu(
+                                    icon: Icons.report_problem_rounded,
+                                    title: 'Linen & Tirai Hilang',
+                                    subtitle: 'Data linen dan tirai yang hilang',
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -167,7 +175,7 @@ class _DashboardDataMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
         color: const Color(0xfff7fafc),
         borderRadius: BorderRadius.circular(14),
@@ -175,11 +183,12 @@ class _DashboardDataMenu extends StatelessWidget {
           color: const Color(0xffe7edf2),
         ),
       ),
-      child: Row(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 42,
-            height: 42,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: const Color(0xff159cf1).withValues(alpha: .10),
               borderRadius: BorderRadius.circular(12),
@@ -187,36 +196,27 @@ class _DashboardDataMenu extends StatelessWidget {
             child: Icon(
               icon,
               color: const Color(0xff159cf1),
-              size: 21,
+              size: 22,
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Color(0xff34495e),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: Color(0xff8b99a5),
-                    fontSize: 9,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 8),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xff34495e),
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: Color(0xff9aa8b5),
+          const SizedBox(height: 3),
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xff8b99a5),
+              fontSize: 8,
+            ),
           ),
         ],
       ),
