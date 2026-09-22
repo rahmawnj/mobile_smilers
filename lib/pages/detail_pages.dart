@@ -12,8 +12,10 @@ class _MetaPagination extends StatelessWidget {
   Widget build(BuildContext context) {
     if (meta.lastPage <= 1) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 4),
-      child: Row(
+      padding: const EdgeInsets.only(top: 12, bottom: 100),
+      child: Material(
+        color: Colors.transparent,
+        child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           OutlinedButton(
@@ -31,6 +33,7 @@ class _MetaPagination extends StatelessWidget {
             child: const Text('Berikutnya'),
           ),
         ],
+        ),
       ),
     );
   }
