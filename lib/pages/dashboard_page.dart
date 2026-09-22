@@ -155,9 +155,107 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
               ),
+              Transform.translate(
+                offset: const Offset(0, -14),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: DashboardCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: 'Data Linen & Tirai'),
+                        const SizedBox(height: 10),
+                        _DashboardDataMenu(
+                          icon: Icons.broken_image_rounded,
+                          title: 'Linen & Tirai Rusak',
+                          subtitle: 'Data linen dan tirai yang rusak',
+                        ),
+                        const SizedBox(height: 10),
+                        _DashboardDataMenu(
+                          icon: Icons.report_problem_rounded,
+                          title: 'Linen & Tirai Hilang',
+                          subtitle: 'Data linen dan tirai yang hilang',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _DashboardDataMenu extends StatelessWidget {
+  const _DashboardDataMenu({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xfff7fafc),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: const Color(0xffe7edf2),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: const Color(0xff159cf1).withValues(alpha: .10),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xff159cf1),
+              size: 21,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Color(0xff34495e),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Color(0xff8b99a5),
+                    fontSize: 9,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.chevron_right_rounded,
+            color: Color(0xff9aa8b5),
+          ),
+        ],
       ),
     );
   }
