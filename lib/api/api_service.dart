@@ -560,7 +560,7 @@ class ApiService {
     return _listResponse(d,(e)=>LinenRuanganItem.fromJson(e));
   }
   Future<LinenRuanganDetailResponse> getLinenRuanganDetail(int ruangan,{int? perPage,int? page}) async => LinenRuanganDetailResponse.fromJson(await _get('/linen-ruangan/$ruangan',query:_query({'per_page':perPage,'page':page})));
-  Future<LinenRuanganBaHilangResponse> getLinenRuanganBaHilang(int ruangan,{int? perPage,int? page}) async => LinenRuanganBaHilangResponse.fromJson(await _get('/linen-ruangan/$ruangan/ba-hilang',query:_query({'per_page':perPage})));
+  Future<LinenRuanganBaHilangResponse> getLinenRuanganBaHilang(int ruangan,{int? perPage,int? page}) async => LinenRuanganBaHilangResponse.fromJson(await _get('/linen-ruangan/$ruangan/ba-hilang',query:_query({'per_page':perPage,'page':page})));
   Future<LinenListResponse<LinenRusakItem>> getLinenRusak({String? search,int? perPage,int? page}) async {
     final d=await _get('/linen-rusak',query:_query({'search':search,'per_page':perPage,'page':page}));
     return _listResponse(d,(e)=>LinenRusakItem.fromJson(e));
