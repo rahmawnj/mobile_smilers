@@ -1454,6 +1454,286 @@ class _RoomDetailTable extends StatelessWidget {
   }
 }
 
+class LinenRusakPage extends StatefulWidget {
+  const LinenRusakPage({super.key, required this.userName});
+
+  final String userName;
+
+  @override
+  State<LinenRusakPage> createState() => _LinenRusakPageState();
+}
+
+class _LinenRusakPageState extends State<LinenRusakPage> {
+  bool _loading = true;
+  String? _error;
+  List<LinenRusakItem> _items = const [];
+  LinenMeta? _meta;
+  int _page = 1;
+  final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      final response = await ApiService.instance.getLinenRusak(
+        search: _searchController.text,
+        perPage: 10,
+        page: _page,
+      );
+      if (!mounted) return;
+      setState(() {
+        _items = response.data;
+        _meta = response.meta;
+        _loading = false;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.message;
+        _loading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _error = 'Tidak dapat mengambil data Linen & Tirai Rusak.';
+        _loading = false;
+      });
+    }
+  }
+
+  void _search() {
+    setState(() => _page = 1);
+    _load();
+  }
+
+  Future<void> _scan() async {
+    final controller = TextEditingController();
+    final rfid = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Scan Linen Rusak'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'RFID / QR Code',
+            hintText: 'Masukkan RFID atau QR Code',
+          ),
+          onSubmitted: (value) => Navigator.of(context).pop(value.trim()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: const Text('Scan'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+
+    if (rfid == null || rfid.isEmpty) return;
+
+    try {
+      final result = await ApiService.instance.scanLinenRusak(rfid);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message']?.toString() ?? 'Linen rusak berhasil ditambahkan.')),
+      );
+      setState(() => _page = 1);
+      await _load();
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShell(
+      userName: widget.userName,
+      activeIndex: 0,
+      body: Column(
+        children: [
+          DetailHeader(
+            title: 'Linen & Tirai Rusak',
+            userName: widget.userName,
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _load,
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _error != null
+                      ? ListView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                children: [
+                                  const Icon(Icons.cloud_off_rounded),
+                                  const SizedBox(height: 10),
+                                  Text(_error!, textAlign: TextAlign.center),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: _load,
+                                    child: const Text('Coba Lagi'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _searchController,
+                                    onSubmitted: (_) => _search(),
+                                    decoration: InputDecoration(
+                                      hintText: 'Cari nama linen, RFID, atau QR Code',
+                                      prefixIcon: const Icon(Icons.search_rounded),
+                                      suffixIcon: _searchController.text.isEmpty
+                                          ? null
+                                          : IconButton(
+                                              onPressed: () {
+                                                _searchController.clear();
+                                                _search();
+                                              },
+                                              icon: const Icon(Icons.clear_rounded),
+                                            ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                ElevatedButton.icon(
+                                  onPressed: _scan,
+                                  icon: const Icon(Icons.qr_code_scanner_rounded),
+                                  label: const Text('Scan'),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(18),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: .05),
+                                    blurRadius: 18,
+                                    offset: const Offset(0, 7),
+                                  ),
+                                ],
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final tableWidth = constraints.maxWidth < 900
+                                      ? 900.0
+                                      : constraints.maxWidth;
+                                  return SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: SizedBox(
+                                      width: tableWidth,
+                                      child: DataTable(
+                                        headingRowColor: WidgetStateProperty.all(
+                                          const Color(0xff1261dc),
+                                        ),
+                                        headingTextStyle: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        dataTextStyle: const TextStyle(
+                                          color: Color(0xff465564),
+                                          fontSize: 9,
+                                        ),
+                                        columnSpacing: 24,
+                                        horizontalMargin: 16,
+                                        columns: const [
+                                          DataColumn(label: Text('ID')),
+                                          DataColumn(label: Text('Linen ID')),
+                                          DataColumn(label: Text('Nama Linen')),
+                                          DataColumn(label: Text('RFID')),
+                                          DataColumn(label: Text('QR Code')),
+                                          DataColumn(label: Text('Jam')),
+                                          DataColumn(label: Text('Tanggal')),
+                                          DataColumn(label: Text('Tahun Pembuatan')),
+                                        ],
+                                        rows: _items.map((item) {
+                                          return DataRow(
+                                            cells: [
+                                              DataCell(Text(item.id.toString())),
+                                              DataCell(Text(item.linenId.toString())),
+                                              DataCell(Text(item.namaLinen)),
+                                              DataCell(Text(item.tagRfid)),
+                                              DataCell(Text(item.qrCode)),
+                                              DataCell(Text(item.jam)),
+                                              DataCell(Text(item.tanggal)),
+                                              DataCell(Text(item.tahunPembuatan)),
+                                            ],
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            if (_items.isEmpty)
+                              const Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Center(child: Text('Tidak ada data Linen & Tirai Rusak.')),
+                              ),
+                            if (_meta != null)
+                              _MetaPagination(
+                                meta: _meta!,
+                                onPage: (page) {
+                                  setState(() => _page = page);
+                                  _load();
+                                },
+                              ),
+                          ],
+                        ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class LinenReadyPage extends StatefulWidget {
   const LinenReadyPage({super.key, required this.userName});
   final String userName;
