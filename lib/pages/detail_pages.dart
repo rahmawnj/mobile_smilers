@@ -784,9 +784,39 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   }
 
   Future<void> _create() async {
+    // Form data bisa saja belum selesai dimuat ketika tombol ditekan.
+    // Pastikan data form tersedia sebelum membuka dialog.
+    if (_rooms.isEmpty || _linens.isEmpty) {
+      try {
+        final result = await ApiService.instance.getPermintaanLinenFormData();
+        if (!mounted) return;
+        setState(() {
+          _formData = result.data;
+        });
+      } on ApiException catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.message)),
+          );
+        }
+        return;
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Data form Permintaan Linen belum dapat dimuat.'),
+            ),
+          );
+        }
+        return;
+      }
+    }
+
     if (_rooms.isEmpty || _linens.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Data ruangan atau linen untuk form belum tersedia.')),
+        const SnackBar(
+          content: Text('Data ruangan atau linen untuk form belum tersedia.'),
+        ),
       );
       return;
     }
