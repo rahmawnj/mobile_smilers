@@ -133,6 +133,15 @@ class _DashboardPageState extends State<DashboardPage> {
                                     icon: Icons.output_rounded,
                                     title: 'Data Linen & Tirai Keluar',
                                     subtitle: 'Data linen dan tirai yang keluar',
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => LinenKeluarPage(
+                                            userName: widget.userName,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -141,6 +150,15 @@ class _DashboardPageState extends State<DashboardPage> {
                                     icon: Icons.input_rounded,
                                     title: 'Data Linen & Tirai Masuk',
                                     subtitle: 'Data linen dan tirai yang masuk',
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => InOutPage(
+                                            userName: widget.userName,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                                 const SizedBox(width: 12),
