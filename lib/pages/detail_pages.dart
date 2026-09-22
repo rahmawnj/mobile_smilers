@@ -689,3 +689,113 @@ class _RekapTable extends StatelessWidget {
     rows:rows.map((r)=>DataRow(cells:[DataCell(Text(r.tanggal)),DataCell(Text('${r.jumlahLinenKeluar}')),DataCell(Text('${r.jumlahLinenMasuk}')),DataCell(Text('${r.beratLinenMasuk}'))])).toList(),
   )));
 }
+
+
+class LinenReadyPage extends StatefulWidget {
+  const LinenReadyPage({super.key, required this.userName});
+  final String userName;
+  @override
+  State<LinenReadyPage> createState() => _LinenReadyPageState();
+}
+
+class _LinenReadyPageState extends State<LinenReadyPage> {
+  bool _loading = true;
+  String? _error;
+  List<LinenCategory> _categories = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      final response = await ApiService.instance.getLinen(perPage: 1000);
+      if (!mounted) return;
+      setState(() { _categories = response.data; _loading = false; });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() { _error = e.message; _loading = false; });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _error = 'Tidak dapat mengambil data Linen & Tirai Ready.';
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShell(
+      userName: widget.userName,
+      activeIndex: 0,
+      body: Column(
+        children: [
+          DetailHeader(title: 'Linen & Tirai Ready', userName: widget.userName),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _load,
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _error != null
+                      ? ListView(children: [
+                          Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(_error!, textAlign: TextAlign.center),
+                          ),
+                        ])
+                      : _categories.isEmpty
+                          ? ListView(children: const [
+                              Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Text(
+                                  'Belum ada data Linen & Tirai Ready.',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ])
+                          : ListView.separated(
+                              padding: const EdgeInsets.all(20),
+                              itemCount: _categories.length,
+                              separatorBuilder: (_, __) => const SizedBox(height: 10),
+                              itemBuilder: (context, index) {
+                                final category = _categories[index];
+                                return Material(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(18),
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    ),
+                                    title: Text(
+                                      category.namaKategoriLinen,
+                                      style: const TextStyle(fontWeight: FontWeight.w700),
+                                    ),
+                                    subtitle: Text(
+                                      '\${category.subKategoriLinen} • \${category.jumlahStok} Linen Ready',
+                                    ),
+                                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => LinenCategoryDetailPage(
+                                            category: category,
+                                            userName: widget.userName,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
