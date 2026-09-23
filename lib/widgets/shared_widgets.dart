@@ -1340,14 +1340,14 @@ class BottomNavigation extends StatelessWidget {
       height: 54,
       clipBehavior: Clip.none,
       decoration: BoxDecoration(
-        color: const Color(0xff116ea5),
+        color: const Color(0xff116ea5).withValues(alpha: .78),
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .24),
-            blurRadius: 16,
+            color: Colors.black.withValues(alpha: .18),
+            blurRadius: 22,
             spreadRadius: 1,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
