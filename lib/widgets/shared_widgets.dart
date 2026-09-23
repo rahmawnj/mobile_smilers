@@ -169,14 +169,30 @@ class AppShellState extends State<AppShell> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  PageView.builder(
-                    controller: _pageController,
-                    itemCount: _indexes.length,
-                    physics: const ClampingScrollPhysics(),
-                    onPageChanged: _onPageChanged,
-                    itemBuilder: (context, position) {
-                      return _pageForPosition(position);
-                    },
+                  Column(
+                    children: [
+                      if (_currentIndex != 0)
+                        DetailHeader(
+                          title: switch (_currentIndex) {
+                            1 => 'Keluar Masuk Linen & Tirai',
+                            3 => 'Rekap Transaksi',
+                            4 => 'Linen & Tirai Belum Kembali',
+                            _ => '',
+                          },
+                          userName: widget.userName,
+                        ),
+                      Expanded(
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: _indexes.length,
+                          physics: const ClampingScrollPhysics(),
+                          onPageChanged: _onPageChanged,
+                          itemBuilder: (context, position) {
+                            return _pageForPosition(position);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
