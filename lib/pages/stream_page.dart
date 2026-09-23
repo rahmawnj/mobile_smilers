@@ -29,14 +29,6 @@ class _StreamPageState extends State<StreamPage> {
 
   Future<void> _loadAppInfo() async {
     try {
-      final info = await ApiService.instance.getAppInfo();
-      final baseUrl = await ApiConfig.getBaseUrl();
-      if (!mounted) return;
-      setState(() {
-        _appInfo = info;
-        _appLogoUrl = info.logoUrl(baseUrl);
-      });
-    } catch (_) {
       final info = await ApiService.instance.getStoredAppInfo();
       final baseUrl = await ApiConfig.getBaseUrl();
       if (!mounted) return;
@@ -46,48 +38,7 @@ class _StreamPageState extends State<StreamPage> {
           _appLogoUrl = info.logoUrl(baseUrl);
         });
       }
-    }
-  }
-
-  void _updateClock() {
-    if (!mounted) return;
-    final now = DateTime.now();
-    const months = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
-    ];
-    final hh = now.hour.toString().padLeft(2, '0');
-    final mm = now.minute.toString().padLeft(2, '0');
-    final ss = now.second.toString().padLeft(2, '0');
-    setState(() {
-      _liveClock = now.day.toString() + ' ' + months[now.month - 1] + ' ' +
-          now.year.toString() + ' ' + hh + ':' + mm + ':' + ss;
-    });
-    Future.delayed(const Duration(seconds: 1), _updateClock);
-  }
-
-  Future<void> _listenLoop() async {
-    while (mounted) {
-      try {
-        final data = await ApiService.instance.getStream();
-        if (!mounted) return;
-
-        setState(() {
-          _data = data;
-          _error = null;
-          _loading = false;
-        });
-      } catch (e) {
-        if (!mounted) return;
-
-        setState(() {
-          _error = e.toString();
-          _loading = false;
-        });
-      }
-
-      await Future.delayed(const Duration(seconds: 1));
-    }
+    } catch (_) {}
   }
 
   @override
