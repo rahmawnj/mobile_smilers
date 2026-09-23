@@ -53,14 +53,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
   Future<void> _loadAppInfo() async {
     try {
-      final info = await ApiService.instance.getAppInfo();
-      final baseUrl = await ApiConfig.getBaseUrl();
-      if (!mounted) return;
-      setState(() {
-        _appInfo = info;
-        _appLogoUrl = info.logoUrl(baseUrl);
-      });
-    } catch (_) {
       final info = await ApiService.instance.getStoredAppInfo();
       final baseUrl = await ApiConfig.getBaseUrl();
       if (!mounted) return;
@@ -70,7 +62,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           _appLogoUrl = info.logoUrl(baseUrl);
         });
       }
-    }
+    } catch (_) {}
   }
 
   @override
