@@ -1331,14 +1331,18 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
+    return Container(
+      height: 54,
+      clipBehavior: Clip.none,
+      decoration: BoxDecoration(
+        color: const Color(0xff116ea5),
+        borderRadius: BorderRadius.circular(28),
+      ),
       child: Container(
         height: 54,
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        decoration: BoxDecoration(
-          color: const Color(0xff116ea5),
-          borderRadius: BorderRadius.circular(28),
+        decoration: const BoxDecoration(
+          color: Colors.transparent,
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -1463,7 +1467,7 @@ class _QRNavButton extends StatelessWidget {
         child: Container(
           width: 58,
           height: 58,
-        decoration: BoxDecoration(
+          decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
