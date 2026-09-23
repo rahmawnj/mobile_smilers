@@ -148,13 +148,12 @@ class AppShellState extends State<AppShell> {
         child: Scaffold(
           backgroundColor: widget.backgroundColor,
           extendBody: true,
-        body: SafeArea(
-          bottom: false,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                bottom: 82,
-                child: PageView.builder(
+          body: SafeArea(
+            bottom: false,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                PageView.builder(
                   controller: _pageController,
                   itemCount: _indexes.length,
                   physics: const ClampingScrollPhysics(),
@@ -163,19 +162,28 @@ class AppShellState extends State<AppShell> {
                     return _pageForPosition(position);
                   },
                 ),
-              ),
 
-              Positioned(
-                left: 18,
-                right: 18,
-                bottom: 18,
-                child: BottomNavigation(
-                  userName: widget.userName,
-                  activeIndex: _currentIndex,
+                // BottomBar-style floating layer:
+                // the body stays full-height while the bar is painted above it.
+                IgnorePointer(
+                  ignoring: false,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 18,
+                        right: 18,
+                        bottom: 10,
+                      ),
+                      child: BottomNavigation(
+                        userName: widget.userName,
+                        activeIndex: _currentIndex,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           ),
         ),
       ),
@@ -1266,12 +1274,12 @@ class BottomNavigation extends StatelessWidget {
           color: const Color(0xff116ea5),
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: Colors.white.withValues(alpha: .24),
+            color: Colors.white,
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xff0b4770).withValues(alpha: .28),
+              color: const Color(0xff0b4770).withValues(alpha: .32),
               blurRadius: 25,
               offset: const Offset(0, 10),
             ),
