@@ -1116,22 +1116,37 @@ class RoomTable extends StatelessWidget {
 /// BOTTOM NAVIGATION
 /// ===============================================================
 
+/// Transisi dibuat lebih halus: halaman hanya bergeser sedikit sambil
+/// fade-in, jadi tidak terasa seperti halaman baru "menabrak" dari samping.
 PageRoute<T> _slideNavRoute<T>({
   required Widget page,
   required bool forward,
 }) {
   return PageRouteBuilder<T>(
     pageBuilder: (context, animation, secondaryAnimation) => page,
-    transitionDuration: const Duration(milliseconds: 320),
-    reverseTransitionDuration: const Duration(milliseconds: 280),
+    transitionDuration: const Duration(milliseconds: 360),
+    reverseTransitionDuration: const Duration(milliseconds: 300),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final begin = Offset(forward ? 1.0 : -1.0, 0);
-      final tween = Tween<Offset>(begin: begin, end: Offset.zero).chain(
+      final begin = Offset(forward ? .12 : -.12, 0);
+
+      final slide = Tween<Offset>(
+        begin: begin,
+        end: Offset.zero,
+      ).chain(
         CurveTween(curve: Curves.easeOutCubic),
       );
+
+      final fade = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOut,
+      );
+
       return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
+        position: animation.drive(slide),
+        child: FadeTransition(
+          opacity: fade,
+          child: child,
+        ),
       );
     },
   );
@@ -1174,86 +1189,86 @@ class BottomNavigation extends StatelessWidget {
           ],
         ),
         child: Row(
-            children: [
-              Expanded(
-                child: _NavItem(
-                  icon: Icons.home_rounded,
-                  label: 'Beranda',
-                  active: activeIndex == 0,
-                  onTap: () {
-                    Navigator.of(context)
-                        .popUntil((route) => route.isFirst);
-                  },
-                ),
-              ),
-
-              Expanded(
-                child: _NavItem(
-                  icon: Icons.swap_horiz_rounded,
-                  label: 'Keluar Masuk',
-                  active: activeIndex == 1,
-                  onTap: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      _slideNavRoute(
-                        page: InOutPage(userName: userName),
-                        forward: activeIndex < 1,
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              _QRNavButton(
-                active: activeIndex == 2,
+          children: [
+            Expanded(
+              child: _NavItem(
+                icon: Icons.home_rounded,
+                label: 'Beranda',
+                active: activeIndex == 0,
                 onTap: () {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Endpoint QR Check belum tersedia di API yang diberikan.',
-                        ),
-                      ),
-                    );
+                  Navigator.of(context)
+                      .popUntil((route) => route.isFirst);
                 },
               ),
+            ),
 
-              Expanded(
-                child: _NavItem(
-                  icon: Icons.receipt_long_rounded,
-                  label: 'Rekap',
-                  active: activeIndex == 3,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      _slideNavRoute(
-                        page: RekapanTransaksiPage(userName: userName),
-                        forward: activeIndex < 3,
-                      ),
-                    );
-                  },
-                ),
+            Expanded(
+              child: _NavItem(
+                icon: Icons.swap_horiz_rounded,
+                label: 'Keluar Masuk',
+                active: activeIndex == 1,
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    _slideNavRoute(
+                      page: InOutPage(userName: userName),
+                      forward: activeIndex < 1,
+                    ),
+                  );
+                },
               ),
+            ),
 
-              Expanded(
-                child: _NavItem(
-                  icon: Icons.assignment_late_rounded,
-                  label: 'Belum Kembali',
-                  active: activeIndex == 4,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      _slideNavRoute(
-                        page: LinenBelumKembaliPage(
-                          userName: userName,
-                        ),
-                        forward: activeIndex < 4,
+            _QRNavButton(
+              active: activeIndex == 2,
+              onTap: () {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Endpoint QR Check belum tersedia di API yang diberikan.',
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+              },
+            ),
+
+            Expanded(
+              child: _NavItem(
+                icon: Icons.receipt_long_rounded,
+                label: 'Rekap',
+                active: activeIndex == 3,
+                onTap: () {
+                  Navigator.of(context).push(
+                    _slideNavRoute(
+                      page: RekapanTransaksiPage(userName: userName),
+                      forward: activeIndex < 3,
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+
+            Expanded(
+              child: _NavItem(
+                icon: Icons.assignment_late_rounded,
+                label: 'Belum Kembali',
+                active: activeIndex == 4,
+                onTap: () {
+                  Navigator.of(context).push(
+                    _slideNavRoute(
+                      page: LinenBelumKembaliPage(
+                        userName: userName,
+                      ),
+                      forward: activeIndex < 4,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }
