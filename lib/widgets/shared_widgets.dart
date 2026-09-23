@@ -158,9 +158,9 @@ class AppShellState extends State<AppShell> {
               ),
 
               Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
+                left: 8,
+                right: 8,
+                bottom: 10,
                 child: BottomNavigation(
                   userName: widget.userName,
                   activeIndex: _currentIndex,
@@ -1251,8 +1251,8 @@ class BottomNavigation extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
       child: Container(
-        height: 70,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        height: 66,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
         decoration: BoxDecoration(
           color: const Color(0xff116ea5),
           borderRadius: BorderRadius.circular(28),
