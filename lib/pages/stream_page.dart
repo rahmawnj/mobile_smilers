@@ -41,6 +41,43 @@ class _StreamPageState extends State<StreamPage> {
     } catch (_) {}
   }
 
+  void _updateClock() {
+    if (!mounted) return;
+    final now = DateTime.now();
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    ];
+    final hh = now.hour.toString().padLeft(2, '0');
+    final mm = now.minute.toString().padLeft(2, '0');
+    final ss = now.second.toString().padLeft(2, '0');
+    setState(() {
+      _liveClock = '\${now.day} \${months[now.month - 1]} \${now.year} \$hh:\$mm:\$ss';
+    });
+    Future.delayed(const Duration(seconds: 1), _updateClock);
+  }
+
+  Future<void> _listenLoop() async {
+    while (mounted) {
+      try {
+        final data = await ApiService.instance.getStream();
+        if (!mounted) return;
+        setState(() {
+          _data = data;
+          _error = null;
+          _loading = false;
+        });
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _error = e.toString();
+          _loading = false;
+        });
+      }
+      await Future.delayed(const Duration(seconds: 1));
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
