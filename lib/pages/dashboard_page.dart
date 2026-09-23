@@ -266,8 +266,8 @@ class _DashboardDataMenu extends StatelessWidget {
     return SizedBox(
       height: 118,
       child: Material(
-      color: Colors.transparent,
-      child: Ink(
+        color: Colors.transparent,
+        child: Ink(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -313,6 +313,7 @@ class _DashboardDataMenu extends StatelessWidget {
             ),
           ),
         ),
+          ),
         ),
       ),
     );
