@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -1336,8 +1338,32 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 54,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        child: Container(
+          height: 54,
+          clipBehavior: Clip.none,
+          decoration: BoxDecoration(
+            color: const Color(0xff116ea5).withValues(alpha: .58),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: .10),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: .18),
+                blurRadius: 22,
+                spreadRadius: 1,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Container(
+            height: 54,
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),      height: 54,
       clipBehavior: Clip.none,
       decoration: BoxDecoration(
         color: const Color(0xff116ea5).withValues(alpha: .78),
