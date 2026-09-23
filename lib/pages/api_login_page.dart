@@ -30,14 +30,6 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
 
   Future<void> _loadAppInfo() async {
     try {
-      final info = await ApiService.instance.getAppInfo();
-      final baseUrl = await ApiConfig.getBaseUrl();
-      if (!mounted) return;
-      setState(() {
-        _appInfo = info;
-        _appLogoUrl = info.logoUrl(baseUrl);
-      });
-    } catch (_) {
       final info = await ApiService.instance.getStoredAppInfo();
       final baseUrl = await ApiConfig.getBaseUrl();
       if (!mounted) return;
@@ -47,7 +39,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
           _appLogoUrl = info.logoUrl(baseUrl);
         });
       }
-    }
+    } catch (_) {}
   }
 
   @override
