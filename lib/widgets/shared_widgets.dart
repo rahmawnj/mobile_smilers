@@ -200,25 +200,30 @@ class AppShellState extends State<AppShell> {
                                       _showBottomNavigation = true;
                                     });
                                   },
-                                  child: Container(
-                                    width: 42,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xff116ea5),
-                                      borderRadius: BorderRadius.circular(16),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color(0xff0b4770)
-                                              .withValues(alpha: .32),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 5),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Icon(
-                                      Icons.keyboard_arrow_up_rounded,
-                                      color: Colors.white,
-                                      size: 25,
+                                  child: AnimatedScale(
+                                    scale: _showBottomNavigation ? .55 : 1,
+                                    duration: const Duration(milliseconds: 220),
+                                    curve: Curves.easeOutCubic,
+                                    child: Container(
+                                      width: 42,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xff116ea5),
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xff0b4770)
+                                                .withValues(alpha: .32),
+                                            blurRadius: 12,
+                                            offset: const Offset(0, 5),
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Icon(
+                                        Icons.keyboard_arrow_up_rounded,
+                                        color: Colors.white,
+                                        size: 25,
+                                      ),
                                     ),
                                   ),
                                 ),
