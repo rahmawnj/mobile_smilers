@@ -106,18 +106,17 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                   ),
                   child: Column(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: Image.network(
-                          'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
-                          width: 66,
-                          height: 66,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.local_hospital_rounded,
-                            color: Color(0xff118D9A),
-                            size: 34,
-                          ),
+                      Container(
+                        width: 66,
+                        height: 66,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff118D9A).withValues(alpha: .10),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Icon(
+                          Icons.dns_rounded,
+                          color: Color(0xff118D9A),
+                          size: 32,
                         ),
                       ),
                       const SizedBox(height: 18),
@@ -139,7 +138,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                         onSubmitted: (_) => _save(),
                         decoration: InputDecoration(
                           labelText: 'Base URL',
-                          hintText: 'https://smilers.co.id',
+                          hintText: 'https://server-rumah-sakit.com',
                           prefixIcon: const Icon(Icons.dns_outlined, color: Color(0xff118D9A)),
                           filled: true,
                           fillColor: const Color(0xffF5F8FA),
