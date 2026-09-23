@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../pages/account_settings_page.dart';
+import '../pages/dashboard_page.dart';
 import '../pages/detail_pages.dart';
 import '../app_navigation.dart';
 
