@@ -1339,13 +1339,6 @@ class BottomNavigation extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xff116ea5),
           borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xff0b4770).withValues(alpha: .32),
-              blurRadius: 25,
-              offset: const Offset(0, 10),
-            ),
-          ],
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -1488,13 +1481,6 @@ class _QRNavButton extends StatelessWidget {
             color: Colors.white.withValues(alpha: .9),
             width: 3,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xffffa000).withValues(alpha: .40),
-              blurRadius: 16,
-              spreadRadius: 2,
-            ),
-          ],
         ),
         child: const Icon(
           Icons.qr_code_scanner_rounded,
