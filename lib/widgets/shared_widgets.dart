@@ -1374,9 +1374,9 @@ class BottomNavigation extends StatelessWidget {
                             ? activePosition * itemWidth
                             : activePosition * itemWidth + qrWidth) +
                         itemWidth * .11,
-                    top: 5,
+                    top: 4,
                     width: itemWidth * .78,
-                    height: 44,
+                    height: 46,
                     child: IgnorePointer(
                       child: Container(
                         decoration: BoxDecoration(
