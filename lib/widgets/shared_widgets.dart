@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../pages/account_settings_page.dart';
 import '../pages/detail_pages.dart';
+import '../app_navigation.dart';
 
 /// ===============================================================
 /// APP SHELL
@@ -51,28 +52,36 @@ class _AppShellState extends State<AppShell>
   }
 
   void _onDragUpdate(DragUpdateDetails details) {
-    if (_isNavigating) return;
-
+    if (_isNavigating || widget.activeIndex < 0) return;
     final width = MediaQuery.sizeOf(context).width;
     if (width <= 0) return;
-
     setState(() {
       _dragOffset += details.delta.dx / width;
       _dragOffset = _dragOffset.clamp(-1.0, 1.0);
     });
   }
 
+  Future<void> _animateBackToCenter() async {
+    final start = _dragOffset;
+    if (start == 0) return;
+    final animation = Tween<double>(begin: start, end: 0).animate(
+      CurvedAnimation(parent: _swipeController, curve: Curves.easeOutCubic),
+    );
+    _swipeController..reset()..duration = const Duration(milliseconds: 180);
+    void listener() {
+      if (mounted) setState(() => _dragOffset = animation.value);
+    }
+    animation.addListener(listener);
+    await _swipeController.forward();
+    animation.removeListener(listener);
+  }
+
   Future<void> _onDragEnd(DragEndDetails details) async {
-    if (_isNavigating) return;
-
-    final width = MediaQuery.sizeOf(context).width;
+    if (_isNavigating || widget.activeIndex < 0) return;
     final velocity = details.primaryVelocity ?? 0;
-    final passedThreshold = _dragOffset.abs() > .20;
-    final fastSwipe = velocity.abs() > 650;
-
     int? targetIndex;
 
-    if ((passedThreshold || fastSwipe) && widget.activeIndex >= 0) {
+    if (_dragOffset.abs() > .18 || velocity.abs() > 550) {
       if (_dragOffset < 0 && widget.activeIndex < 4) {
         targetIndex = widget.activeIndex + 1;
       } else if (_dragOffset > 0 && widget.activeIndex > 0) {
@@ -81,102 +90,29 @@ class _AppShellState extends State<AppShell>
     }
 
     if (targetIndex == null) {
-      final start = _dragOffset;
-      final animation = Tween<double>(
-        begin: start,
-        end: 0,
-      ).animate(
-        CurvedAnimation(
-          parent: _swipeController,
-          curve: Curves.easeOutCubic,
-        ),
-      );
-
-      _swipeController
-        ..reset()
-        ..duration = const Duration(milliseconds: 220);
-
-      void listener() {
-        if (mounted) {
-          setState(() => _dragOffset = animation.value);
-        }
-      }
-
-      animation.addListener(listener);
-      await _swipeController.forward();
-      animation.removeListener(listener);
+      await _animateBackToCenter();
       return;
     }
 
     _isNavigating = true;
-
     final direction = _dragOffset < 0 ? -1.0 : 1.0;
-    final animation = Tween<double>(
-      begin: _dragOffset,
-      end: direction,
-    ).animate(
-      CurvedAnimation(
-        parent: _swipeController,
-        curve: Curves.easeInOutCubic,
-      ),
+    final animation = Tween<double>(begin: _dragOffset, end: direction).animate(
+      CurvedAnimation(parent: _swipeController, curve: Curves.easeInCubic),
     );
-
-    _swipeController
-      ..reset()
-      ..duration = const Duration(milliseconds: 180);
-
+    _swipeController..reset()..duration = const Duration(milliseconds: 120);
     void listener() {
-      if (mounted) {
-        setState(() => _dragOffset = animation.value);
-      }
+      if (mounted) setState(() => _dragOffset = animation.value);
     }
-
     animation.addListener(listener);
     await _swipeController.forward();
     animation.removeListener(listener);
 
     if (!mounted) return;
-
-    _pushPageForIndex(targetIndex);
-  }
-
-  void _pushPageForIndex(int index) {
-    Widget? page;
-
-    switch (index) {
-      case 0:
-        // Saat swipe kembali dari menu utama seperti Keluar Masuk,
-        // cukup pop route aktif agar Dashboard yang sudah ada di bawahnya
-        // ditampilkan kembali. Jangan popUntil karena AppShell setiap halaman
-        // punya state/gesture sendiri dan itu bisa membuat layar terlihat blank.
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        } else {
-          _isNavigating = false;
-          _dragOffset = 0;
-        }
-        return;
-      case 1:
-        page = InOutPage(userName: widget.userName);
-        break;
-      case 3:
-        page = RekapanTransaksiPage(userName: widget.userName);
-        break;
-      case 4:
-        page = LinenBelumKembaliPage(userName: widget.userName);
-        break;
-      default:
-        _isNavigating = false;
-        _dragOffset = 0;
-        return;
-    }
-
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => page!,
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
+    AppNavigation.goToIndex(
+      context,
+      targetIndex,
+      widget.userName,
+      currentIndex: widget.activeIndex,
     );
   }
 
@@ -1363,7 +1299,7 @@ class BottomNavigation extends StatelessWidget {
                 label: 'Beranda',
                 active: activeIndex == 0,
                 onTap: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  AppNavigation.goToIndex(context, 0, userName, currentIndex: activeIndex);
                 },
               ),
             ),
@@ -1373,11 +1309,7 @@ class BottomNavigation extends StatelessWidget {
                 label: 'Keluar Masuk',
                 active: activeIndex == 1,
                 onTap: () {
-                  Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute(
-                      builder: (_) => InOutPage(userName: userName),
-                    ),
-                  );
+                  AppNavigation.goToIndex(context, 1, userName, currentIndex: activeIndex);
                 },
               ),
             ),
@@ -1401,11 +1333,7 @@ class BottomNavigation extends StatelessWidget {
                 label: 'Rekap',
                 active: activeIndex == 3,
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => RekapanTransaksiPage(userName: userName),
-                    ),
-                  );
+                  AppNavigation.goToIndex(context, 3, userName, currentIndex: activeIndex);
                 },
               ),
             ),
@@ -1415,11 +1343,7 @@ class BottomNavigation extends StatelessWidget {
                 label: 'Belum Kembali',
                 active: activeIndex == 4,
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LinenBelumKembaliPage(userName: userName),
-                    ),
-                  );
+                  AppNavigation.goToIndex(context, 4, userName, currentIndex: activeIndex);
                 },
               ),
             ),
