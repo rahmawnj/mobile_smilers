@@ -496,6 +496,33 @@ class StreamResponse {
   }
 }
 
+class AppInfo {
+  const AppInfo({
+    required this.appName,
+    required this.appLogo,
+  });
+
+  final String appName;
+  final String appLogo;
+
+  factory AppInfo.fromJson(Map<String, dynamic> json) {
+    return AppInfo(
+      appName: json['app_name']?.toString() ?? '',
+      appLogo: json['app_logo']?.toString() ?? '',
+    );
+  }
+
+  String logoUrl(String baseUrl) {
+    if (appLogo.isEmpty) return '';
+    if (appLogo.startsWith('http://') || appLogo.startsWith('https://')) {
+      return appLogo;
+    }
+
+    final path = appLogo.replaceFirst(RegExp(r'^/+'), '');
+    return '$baseUrl/storage/$path';
+  }
+}
+
 class ApiService {
   static final ApiService instance = ApiService._();
 
@@ -518,6 +545,44 @@ class ApiService {
     }
 
     return StreamResponse.fromJson(data);
+  }
+
+  Future<AppInfo> getAppInfo() async {
+    final baseUrl = await ApiConfig.getBaseUrl();
+    final response = await http.get(
+      Uri.parse('$baseUrl/app-info'),
+      headers: const {'Accept': 'application/json'},
+    ).timeout(const Duration(seconds: 10));
+
+    final data = _decode(response);
+
+    if (response.statusCode != 200) {
+      throw ApiException(
+        data['message']?.toString() ?? 'Gagal mengambil informasi aplikasi.',
+        statusCode: response.statusCode,
+      );
+    }
+
+    final appInfo = AppInfo.fromJson(data);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('app_info', jsonEncode(data));
+
+    return appInfo;
+  }
+
+  Future<AppInfo?> getStoredAppInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('app_info');
+
+    if (raw == null || raw.isEmpty) return null;
+
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return null;
+      return AppInfo.fromJson(Map<String, dynamic>.from(decoded));
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<AuthResponse> login({
