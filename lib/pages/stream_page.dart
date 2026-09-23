@@ -260,7 +260,7 @@ class _StreamPageState extends State<StreamPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : '',
                         style: TextStyle(
                           color: Color(0xffA0ADB6),
