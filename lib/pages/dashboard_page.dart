@@ -263,7 +263,9 @@ class _DashboardDataMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return SizedBox(
+      height: 118,
+      child: Material(
       color: Colors.transparent,
       child: Ink(
         decoration: BoxDecoration(
@@ -310,6 +312,7 @@ class _DashboardDataMenu extends StatelessWidget {
               ],
             ),
           ),
+        ),
         ),
       ),
     );
