@@ -1116,6 +1116,27 @@ class RoomTable extends StatelessWidget {
 /// BOTTOM NAVIGATION
 /// ===============================================================
 
+PageRoute<T> _slideNavRoute<T>({
+  required Widget page,
+  required bool forward,
+}) {
+  return PageRouteBuilder<T>(
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    transitionDuration: const Duration(milliseconds: 320),
+    reverseTransitionDuration: const Duration(milliseconds: 280),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final begin = Offset(forward ? 1.0 : -1.0, 0);
+      final tween = Tween<Offset>(begin: begin, end: Offset.zero).chain(
+        CurveTween(curve: Curves.easeOutCubic),
+      );
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
 class BottomNavigation extends StatelessWidget {
   const BottomNavigation({
     super.key,
@@ -1173,8 +1194,9 @@ class BottomNavigation extends StatelessWidget {
                   active: activeIndex == 1,
                   onTap: () {
                     Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (_) => InOutPage(userName: userName),
+                      _slideNavRoute(
+                        page: InOutPage(userName: userName),
+                        forward: activeIndex < 1,
                       ),
                     );
                   },
@@ -1203,8 +1225,9 @@ class BottomNavigation extends StatelessWidget {
                   active: activeIndex == 3,
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => RekapanTransaksiPage(userName: userName),
+                      _slideNavRoute(
+                        page: RekapanTransaksiPage(userName: userName),
+                        forward: activeIndex < 3,
                       ),
                     );
                   },
@@ -1218,10 +1241,11 @@ class BottomNavigation extends StatelessWidget {
                   active: activeIndex == 4,
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => LinenBelumKembaliPage(
+                      _slideNavRoute(
+                        page: LinenBelumKembaliPage(
                           userName: userName,
                         ),
+                        forward: activeIndex < 4,
                       ),
                     );
                   },
