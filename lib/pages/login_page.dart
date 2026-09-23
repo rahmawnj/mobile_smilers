@@ -408,14 +408,14 @@ class _TopBrand extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: const CustomPaint(
+          child: CustomPaint(
             child: _HospitalLogo(logoUrl: _appLogoUrl),
           ),
         ),
 
         const SizedBox(height: 14),
 
-        const Text(
+        Text(
           _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : 'APLIKASI',
           style: TextStyle(
             color: Colors.white,
