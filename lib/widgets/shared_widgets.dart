@@ -1338,8 +1338,12 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
+    return Container(
+      height: 66,
+      clipBehavior: Clip.none,
+      decoration: const BoxDecoration(color: Colors.transparent),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: Container(
@@ -1485,6 +1489,7 @@ class BottomNavigation extends StatelessWidget {
           ),
         ),
       ),
+      ),
     );
   }
 }
@@ -1507,7 +1512,7 @@ class _QRNavButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Transform.translate(
-        offset: const Offset(0, -11),
+        offset: const Offset(0, -9),
         child: Container(
           width: 58,
           height: 58,
