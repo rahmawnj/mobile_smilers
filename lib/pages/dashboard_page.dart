@@ -269,7 +269,13 @@ class _DashboardDataMenu extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xfff7fafc),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xffe7edf2)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .07),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: InkWell(
           onTap: onTap,
@@ -300,14 +306,7 @@ class _DashboardDataMenu extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color(0xff8b99a5),
-                    fontSize: 8,
-                  ),
-                ),
+
               ],
             ),
           ),
