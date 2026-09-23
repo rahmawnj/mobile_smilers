@@ -1252,7 +1252,7 @@ class BottomNavigation extends StatelessWidget {
       borderRadius: BorderRadius.circular(28),
       child: Container(
         height: 70,
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
         decoration: BoxDecoration(
           color: const Color(0xff116ea5),
           borderRadius: BorderRadius.circular(28),
@@ -1451,7 +1451,7 @@ class _NavItem extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
