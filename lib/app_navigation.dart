@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'pages/dashboard_page.dart';
 import 'pages/detail_pages.dart';
+import 'widgets/shared_widgets.dart';
 
 class AppNavigation {
   const AppNavigation._();
