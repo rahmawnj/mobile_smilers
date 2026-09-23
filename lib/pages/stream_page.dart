@@ -58,117 +58,181 @@ class _StreamPageState extends State<StreamPage> {
     final data = _data;
 
     return Scaffold(
-      backgroundColor: const Color(0xfff4f8fb),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 520),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(28, 30, 28, 32),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(28),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: .08),
-                          blurRadius: 30,
-                          offset: const Offset(0, 14),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xff0D7F83),
+              Color(0xff167FA5),
+              Color(0xff174D83),
+              Color(0xff122F58),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 370),
+                child: Container(
+                  padding: const EdgeInsets.all(26),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: .97),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: .20),
+                        blurRadius: 35,
+                        offset: const Offset(0, 18),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Image.network(
+                          'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
+                          width: 66,
+                          height: 66,
+                          fit: BoxFit.cover,
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'STREAM',
-                          style: TextStyle(
-                            color: Color(0xff173A58),
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.5,
-                          ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'STREAM',
+                        style: TextStyle(
+                          color: Color(0xff173A58),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 2,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          data?.waktu ?? 'Menghubungkan...',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Color(0xff7b8b99),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Real-time Linen Monitoring',
+                        style: TextStyle(
+                          color: Color(0xff8291A0),
+                          fontSize: 10,
                         ),
-                        const SizedBox(height: 30),
-                        Row(
+                      ),
+                      const SizedBox(height: 24),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 13,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffF5F8FA),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(
-                              child: _MetricCard(
-                                value: data == null
-                                    ? '—'
-                                    : data.total.toString(),
-                                label: 'JUMLAH LINEN',
-                                icon: Icons.layers_rounded,
-                              ),
+                            const Icon(
+                              Icons.access_time_rounded,
+                              color: Color(0xff118D9A),
+                              size: 17,
                             ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: _MetricCard(
-                                value: data == null
-                                    ? '—'
-                                    : _formatWeight(data.berat),
-                                label: 'BERAT LINEN',
-                                icon: Icons.monitor_weight_rounded,
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                data?.waktu ?? 'Menghubungkan...',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Color(0xff526575),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        if (_error != null) ...[
-                          const SizedBox(height: 18),
-                          Text(
-                            _error!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Color(0xffb05a5a),
-                              fontSize: 10,
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _MetricCard(
+                              value: data == null ? '—' : data.total.toString(),
+                              label: 'JUMLAH LINEN',
+                              icon: Icons.layers_rounded,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _MetricCard(
+                              value: data == null
+                                  ? '—'
+                                  : _formatWeight(data.berat),
+                              label: 'BERAT LINEN',
+                              icon: Icons.monitor_weight_rounded,
                             ),
                           ),
                         ],
-                        if (_loading) ...[
-                          const SizedBox(height: 20),
-                          const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      if (_error != null) ...[
+                        const SizedBox(height: 14),
+                        Text(
+                          _error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Color(0xffb05a5a),
+                            fontSize: 9,
                           ),
-                        ],
+                        ),
                       ],
-                    ),
+                      if (_loading) ...[
+                        const SizedBox(height: 16),
+                        const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color(0xff118D9A),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 46,
+                        child: ElevatedButton.icon(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.home_rounded),
+                          label: const Text('Back to Homepage'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xff1197A2),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'RS ANUGERAH GLOBAL SEHAT',
+                        style: TextStyle(
+                          color: Color(0xffA0ADB6),
+                          fontSize: 8,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: .7,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-            Positioned(
-              left: 20,
-              bottom: 18,
-              child: TextButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.home_rounded, size: 18),
-                label: const Text('Back to Homepage'),
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xff159cf1),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
