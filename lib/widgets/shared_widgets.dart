@@ -1310,7 +1310,7 @@ class BottomNavigation extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: .16),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                       ),
                     ),
