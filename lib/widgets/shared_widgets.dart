@@ -1338,34 +1338,46 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 66,
-      clipBehavior: Clip.none,
-      decoration: const BoxDecoration(color: Colors.transparent),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-        child: Container(
-          height: 54,
-          decoration: BoxDecoration(
-            color: const Color(0xff116ea5).withValues(alpha: .58),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: .10),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: .18),
-                blurRadius: 22,
-                spreadRadius: 1,
-                offset: const Offset(0, 5),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 54,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xff116ea5).withValues(alpha: .58),
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: .10),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: .18),
+                        blurRadius: 22,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
+            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          Positioned(
+            left: 4,
+            right: 4,
+            bottom: 0,
+            height: 54,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 const qrWidth = 58.0;
@@ -1379,6 +1391,7 @@ class BottomNavigation extends StatelessWidget {
                 };
 
                 return Stack(
+                  clipBehavior: Clip.none,
                   children: [
                     if (activePosition >= 0)
                       AnimatedPositioned(
@@ -1436,20 +1449,7 @@ class BottomNavigation extends StatelessWidget {
                             },
                           ),
                         ),
-                        _QRNavButton(
-                          active: activeIndex == 2,
-                          onTap: () {
-                            ScaffoldMessenger.of(context)
-                              ..hideCurrentSnackBar()
-                              ..showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Endpoint QR Check belum tersedia di API yang diberikan.',
-                                  ),
-                                ),
-                              );
-                          },
-                        ),
+                        const SizedBox(width: qrWidth),
                         Expanded(
                           child: _NavItem(
                             icon: Icons.receipt_long_rounded,
@@ -1487,65 +1487,27 @@ class BottomNavigation extends StatelessWidget {
               },
             ),
           ),
-        ),
-      ),
-      ),
-    );
-  }
-}
-
-/// ===============================================================
-/// QR NAV BUTTON
-/// ===============================================================
-
-class _QRNavButton extends StatelessWidget {
-  const _QRNavButton({
-    required this.onTap,
-    required this.active,
-  });
-
-  final VoidCallback onTap;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Transform.translate(
-        offset: const Offset(0, -9),
-        child: Container(
-          width: 58,
-          height: 58,
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: .24),
-                blurRadius: 12,
-                spreadRadius: 1,
-                offset: const Offset(0, 6),
-              ),
-            ],
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: active
-                ? const [
-                    Color(0xffffd54f),
-                    Color(0xffff9800),
-                  ]
-                : const [
-                    Color(0xffffc107),
-                    Color(0xffff9800),
-                  ],
+          Positioned(
+            left: 4 + (((MediaQuery.sizeOf(context).width - 36) - 8 - 58) / 4) * 2,
+            bottom: 7,
+            width: 58,
+            height: 58,
+            child: _QRNavButton(
+              active: activeIndex == 2,
+              onTap: () {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Endpoint QR Check belum tersedia di API yang diberikan.',
+                      ),
+                    ),
+                  );
+              },
             ),
-            borderRadius: BorderRadius.circular(16),
           ),
-          child: const Icon(
-            Icons.qr_code_scanner_rounded,
-            color: Colors.white,
-            size: 28,
-          ),
-        ),
+        ],
       ),
     );
   }
