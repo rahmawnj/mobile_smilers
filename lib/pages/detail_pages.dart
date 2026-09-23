@@ -264,8 +264,9 @@ class _EmptyDetail extends StatelessWidget {
 
 
 class InOutPage extends StatefulWidget {
-  const InOutPage({super.key, required this.userName});
+  const InOutPage({super.key, required this.userName, this.embedded = false});
   final String userName;
+  final bool embedded;
   @override
   State<InOutPage> createState() => _InOutPageState();
 }
@@ -1374,7 +1375,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   }
 }
 
-class LinenBelumKembaliPage extends StatefulWidget { const LinenBelumKembaliPage({super.key, required this.userName}); final String userName; @override State<LinenBelumKembaliPage> createState()=>_LinenBelumKembaliPageState(); }
+class LinenBelumKembaliPage extends StatefulWidget { const LinenBelumKembaliPage({super.key, required this.userName, this.embedded = false}); final String userName; final bool embedded; @override State<LinenBelumKembaliPage> createState()=>_LinenBelumKembaliPageState(); }
 class _LinenBelumKembaliPageState extends State<LinenBelumKembaliPage> { bool _loading=true; String? _error; LinenBelumKembaliResponse? _response; List<LinenRoomOption> _rooms=const []; int? _roomId; DateTimeRange? _range; int _page=1; final _searchController=TextEditingController(); @override void initState(){super.initState();_load();_loadRooms();} @override void dispose(){_searchController.dispose();super.dispose();} String _date(DateTime d)=>d.day.toString()+'/'+d.month.toString()+'/'+d.year.toString(); String? get _daterange=>_range==null?null:_date(_range!.start)+' - '+_date(_range!.end);
 Future<void> _loadRooms() async {try{final rooms=await ApiService.instance.getLinenBelumKembaliRuangan();if(mounted)setState(()=>_rooms=rooms);}catch(_){}}
 Future<void> _load() async {setState((){_loading=true;_error=null;});try{final r=await ApiService.instance.getLinenBelumKembali(perPage:10,page:_page,search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),ruangan:_roomId,daterange:_daterange);if(!mounted)return;setState((){_response=r;_loading=false;});}on ApiException catch(e){if(mounted)setState((){_error=e.message;_loading=false;});}catch(_){if(mounted)setState((){_error='Tidak dapat mengambil data Linen Belum Kembali.';_loading=false;});}}
@@ -1478,8 +1479,9 @@ class _BelumKembaliError extends StatelessWidget {
 }
 
 class RekapanTransaksiPage extends StatefulWidget {
-  const RekapanTransaksiPage({super.key, required this.userName});
+  const RekapanTransaksiPage({super.key, required this.userName, this.embedded = false});
   final String userName;
+  final bool embedded;
   @override
   State<RekapanTransaksiPage> createState() => _RekapanTransaksiPageState();
 }
