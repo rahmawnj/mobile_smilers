@@ -497,8 +497,7 @@ class _MetricTileState extends State<MetricTile> {
           padding: const EdgeInsets.symmetric(
             horizontal: 14,
             vertical: 12,
-          ),          decoration: BoxDecoration(
-            color: _pressed
+          ),          decoration: BoxDecoration(            color: _pressed
                 ? const Color(0xfff3f8fc)
                 : Colors.white,
             borderRadius: BorderRadius.circular(18),
@@ -998,7 +997,6 @@ class DetailTable extends StatelessWidget {
     super.key,
     required this.columns,    required this.rows,
   });
-
   final List<String> columns;
   final List<dynamic> rows;
 
@@ -1270,63 +1268,101 @@ class BottomNavigation extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: _NavItem(
-                icon: Icons.home_rounded,
-                label: 'Beranda',
-                active: activeIndex == 0,
-                onTap: () {
-                  AppNavigation.goToIndex(context, 0, userName, currentIndex: activeIndex);
-                },
-              ),
-            ),
-            Expanded(
-              child: _NavItem(
-                icon: Icons.swap_horiz_rounded,
-                label: 'Keluar Masuk',
-                active: activeIndex == 1,
-                onTap: () {
-                  AppNavigation.goToIndex(context, 1, userName, currentIndex: activeIndex);
-                },
-              ),
-            ),
-            _QRNavButton(
-              active: activeIndex == 2,
-              onTap: () {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Endpoint QR Check belum tersedia di API yang diberikan.',
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            const qrWidth = 58.0;
+            final itemWidth = (constraints.maxWidth - qrWidth) / 4;
+            final activePosition = switch (activeIndex) {
+              0 => 0,
+              1 => 1,
+              3 => 2,
+              4 => 3,
+              _ => -1,
+            };
+
+            return Stack(
+              children: [
+                if (activePosition >= 0)
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 260),
+                    curve: Curves.easeOutCubic,
+                    left: activePosition < 2
+                        ? activePosition * itemWidth
+                        : activePosition * itemWidth + qrWidth,
+                    top: 0,
+                    width: itemWidth,
+                    height: 60,
+                    child: IgnorePointer(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: .16),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
                       ),
                     ),
-                  );
-              },
-            ),
-            Expanded(
-              child: _NavItem(
-                icon: Icons.receipt_long_rounded,
-                label: 'Rekap',
-                active: activeIndex == 3,
-                onTap: () {
-                  AppNavigation.goToIndex(context, 3, userName, currentIndex: activeIndex);
-                },
-              ),
-            ),
-            Expanded(
-              child: _NavItem(
-                icon: Icons.assignment_late_rounded,
-                label: 'Belum Kembali',
-                active: activeIndex == 4,
-                onTap: () {
-                  AppNavigation.goToIndex(context, 4, userName, currentIndex: activeIndex);
-                },
-              ),
-            ),
-          ],
+                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _NavItem(
+                        icon: Icons.home_rounded,
+                        label: 'Beranda',
+                        active: activeIndex == 0,
+                        onTap: () {
+                          AppNavigation.goToIndex(context, 0, userName, currentIndex: activeIndex);
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: _NavItem(
+                        icon: Icons.swap_horiz_rounded,
+                        label: 'Keluar Masuk',
+                        active: activeIndex == 1,
+                        onTap: () {
+                          AppNavigation.goToIndex(context, 1, userName, currentIndex: activeIndex);
+                        },
+                      ),
+                    ),
+                    _QRNavButton(
+                      active: activeIndex == 2,
+                      onTap: () {
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Endpoint QR Check belum tersedia di API yang diberikan.',
+                              ),
+                            ),
+                          );
+                      },
+                    ),
+                    Expanded(
+                      child: _NavItem(
+                        icon: Icons.receipt_long_rounded,
+                        label: 'Rekap',
+                        active: activeIndex == 3,
+                        onTap: () {
+                          AppNavigation.goToIndex(context, 3, userName, currentIndex: activeIndex);
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: _NavItem(
+                        icon: Icons.assignment_late_rounded,
+                        label: 'Belum Kembali',
+                        active: activeIndex == 4,
+                        onTap: () {
+                          AppNavigation.goToIndex(context, 4, userName, currentIndex: activeIndex);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -1337,7 +1373,7 @@ class BottomNavigation extends StatelessWidget {
 /// QR NAV BUTTON
 /// ===============================================================
 
-class _QRNavButton extends StatefulWidget {
+class _QRNavButton extends StatelessWidget {
   const _QRNavButton({
     required this.onTap,
     required this.active,
@@ -1347,80 +1383,44 @@ class _QRNavButton extends StatefulWidget {
   final bool active;
 
   @override
-  State<_QRNavButton> createState() => _QRNavButtonState();
-}
-
-class _QRNavButtonState extends State<_QRNavButton>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(
-        milliseconds: 700,
-      ),
-      lowerBound: .97,
-      upperBound: 1.0,
-    )..repeat(
-        reverse: true,
-      );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _controller,
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: Container(
-          width: 58,
-          height: 58,
-          margin: const EdgeInsets.only(
-            bottom: 7,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 58,
+        height: 58,
+        margin: const EdgeInsets.only(bottom: 7),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: active
+                ? const [
+                    Color(0xffffd54f),
+                    Color(0xffff9800),
+                  ]
+                : const [
+                    Color(0xffffc107),
+                    Color(0xffff9800),
+                  ],
           ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: widget.active
-                  ? const [
-                      Color(0xffffd54f),
-                      Color(0xffff9800),
-                    ]
-                  : const [
-                      Color(0xffffc107),
-                      Color(0xffff9800),
-                    ],
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white.withValues(alpha: .9),
+            width: 3,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xffffa000).withValues(alpha: .40),
+              blurRadius: 16,
+              spreadRadius: 2,
             ),
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white.withValues(alpha: .9),
-              width: 3,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xffffa000)
-                    .withValues(alpha: .40),
-                blurRadius: 16,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.qr_code_scanner_rounded,
-            color: Colors.white,
-            size: 28,
-          ),
+          ],
+        ),
+        child: const Icon(
+          Icons.qr_code_scanner_rounded,
+          color: Colors.white,
+          size: 28,
         ),
       ),
     );
@@ -1452,63 +1452,31 @@ class _NavItem extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 2),
         padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 6),
-        child: Stack(
-          alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Positioned.fill(
-              child: active
-                  ? Hero(
-                      tag: 'bottom-nav-active-indicator',
-                      flightShuttleBuilder: (
-                        flightContext,
-                        animation,
-                        flightDirection,
-                        fromHeroContext,
-                        toHeroContext,
-                      ) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: .16),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: .16),
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+            Icon(
+              icon,
+              color: active
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: .68),
+              size: 19,
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  color: active
-                      ? Colors.white
-                      : Colors.white.withValues(alpha: .68),
-                  size: 19,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: active
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: .68),
-                    fontSize: 7,
-                    fontWeight: active
-                        ? FontWeight.w800
-                        : FontWeight.w500,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 4),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: active
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: .68),
+                fontSize: 7,
+                fontWeight: active
+                    ? FontWeight.w800
+                    : FontWeight.w500,
+              ),
             ),
           ],
         ),
