@@ -1334,8 +1334,8 @@ class BottomNavigation extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
       child: Container(
-        height: 64,
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+        height: 54,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         decoration: BoxDecoration(
           color: const Color(0xff116ea5),
           borderRadius: BorderRadius.circular(28),
@@ -1362,9 +1362,9 @@ class BottomNavigation extends StatelessWidget {
                             ? activePosition * itemWidth
                             : activePosition * itemWidth + qrWidth) +
                         itemWidth * .11,
-                    top: 4,
+                    top: 5,
                     width: itemWidth * .78,
-                    height: 52,
+                    height: 44,
                     child: IgnorePointer(
                       child: Container(
                         decoration: BoxDecoration(
@@ -1458,10 +1458,11 @@ class _QRNavButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 58,
-        height: 58,
-        margin: const EdgeInsets.only(bottom: 7),
+      child: Transform.translate(
+        offset: const Offset(0, -5),
+        child: Container(
+          width: 58,
+          height: 58,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -1476,12 +1477,13 @@ class _QRNavButton extends StatelessWidget {
                     Color(0xffff9800),
                   ],
           ),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
           Icons.qr_code_scanner_rounded,
           color: Colors.white,
           size: 28,
+          ),
         ),
       ),
     );
