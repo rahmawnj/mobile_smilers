@@ -4,8 +4,14 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiConfig {
-  static const defaultBaseUrl = 'https://smilers.co.id';
+  static const defaultBaseUrl = '';
   static const _baseUrlKey = 'api_base_url';
+
+  static Future<bool> hasSavedBaseUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_baseUrlKey)?.trim();
+    return saved != null && saved.isNotEmpty;
+  }
 
   static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
