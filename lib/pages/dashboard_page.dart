@@ -116,6 +116,63 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               Transform.translate(
+                offset: const Offset(0, -28),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 620),
+                      child: DashboardCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SectionTitle(title: 'Data Linen & Tirai'),
+                            const SizedBox(height: 14),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _DashboardDataMenu(
+                                    icon: Icons.broken_image_rounded,
+                                    title: 'Linen & Tirai Rusak',
+                                    subtitle: 'Data linen dan tirai yang rusak',
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => LinenRusakPage(
+                                            userName: widget.userName,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _DashboardDataMenu(
+                                    icon: Icons.report_problem_rounded,
+                                    title: 'Linen & Tirai Hilang',
+                                    subtitle: 'Data linen dan tirai yang hilang',
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => LinenHilangPage(
+                                            userName: widget.userName,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Transform.translate(
                 offset: const Offset(0, -18),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -171,63 +228,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                     subtitle: 'Permintaan linen dari ruangan',
                                     onTap: () {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (_) => PermintaanLinenPage(userName: widget.userName)));
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, -28),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 620),
-                      child: DashboardCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SectionTitle(title: 'Data Linen & Tirai'),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _DashboardDataMenu(
-                                    icon: Icons.broken_image_rounded,
-                                    title: 'Linen & Tirai Rusak',
-                                    subtitle: 'Data linen dan tirai yang rusak',
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => LinenRusakPage(
-                                            userName: widget.userName,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: _DashboardDataMenu(
-                                    icon: Icons.report_problem_rounded,
-                                    title: 'Linen & Tirai Hilang',
-                                    subtitle: 'Data linen dan tirai yang hilang',
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => LinenHilangPage(
-                                            userName: widget.userName,
-                                          ),
-                                        ),
-                                      );
                                     },
                                   ),
                                 ),
