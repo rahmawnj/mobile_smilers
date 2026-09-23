@@ -599,6 +599,11 @@ class ApiService {
     }
   }
 
+  Future<void> clearStoredAppInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('app_info');
+  }
+
   Future<AuthResponse> login({
     required String username,
     required String password,
