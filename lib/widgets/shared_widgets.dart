@@ -29,111 +29,48 @@ class AppShell extends StatefulWidget {
   State<AppShell> createState() => AppShellState();
 }
 
-class AppShellState extends State<AppShell>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _swipeController;
-
+class AppShellState extends State<AppShell> {
+  late final PageController _pageController;
   late int _currentIndex;
-  late Widget _currentBody;
-
-  double _dragOffset = 0;
-  bool _isNavigating = false;
   DateTime? _lastBackPress;
+
+  static const List<int> _indexes = [0, 1, 3, 4];
+
+  int _positionForIndex(int index) => _indexes.indexOf(index);
 
   @override
   void initState() {
     super.initState();
-
     _currentIndex = widget.activeIndex;
-    _currentBody = widget.body;
-
-    _swipeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 280),
+    final initialPosition = _positionForIndex(_currentIndex);
+    _pageController = PageController(
+      initialPage: initialPosition < 0 ? 0 : initialPosition,
     );
   }
 
   @override
   void dispose() {
-    _swipeController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
-  void _onDragUpdate(DragUpdateDetails details) {
-    if (_isNavigating || _currentIndex < 0) return;
-    final width = MediaQuery.sizeOf(context).width;
-    if (width <= 0) return;
-    setState(() {
-      _dragOffset += details.delta.dx / width;
-      _dragOffset = _dragOffset.clamp(-1.0, 1.0);
-    });
-  }
-
-  Future<void> _animateBackToCenter() async {
-    final start = _dragOffset;
-    if (start == 0) return;
-    final animation = Tween<double>(begin: start, end: 0).animate(
-      CurvedAnimation(parent: _swipeController, curve: Curves.easeOutCubic),
-    );
-    _swipeController..reset()..duration = const Duration(milliseconds: 180);
-    void listener() {
-      if (mounted) setState(() => _dragOffset = animation.value);
-    }
-    animation.addListener(listener);
-    await _swipeController.forward();
-    animation.removeListener(listener);
-  }
-
-  Future<void> _onDragEnd(DragEndDetails details) async {
-    if (_isNavigating || _currentIndex < 0) return;
-
-    final velocity = details.primaryVelocity ?? 0;
-    if (_dragOffset.abs() <= .18 && velocity.abs() <= 550) {
-      await _animateBackToCenter();
-      return;
-    }
-
-    final int? targetIndex = _dragOffset < 0
-        ? AppNavigation.nextIndex(_currentIndex)
-        : AppNavigation.previousIndex(_currentIndex);
-
-    if (targetIndex == null) {
-      await _animateBackToCenter();
-      return;
-    }
-
-    _isNavigating = true;
-    final direction = _dragOffset < 0 ? -1.0 : 1.0;
-    final animation = Tween<double>(begin: _dragOffset, end: direction).animate(
-      CurvedAnimation(parent: _swipeController, curve: Curves.easeInCubic),
-    );
-    _swipeController..reset()..duration = const Duration(milliseconds: 120);
-
-    void listener() {
-      if (mounted) setState(() => _dragOffset = animation.value);
-    }
-
-    animation.addListener(listener);
-    await _swipeController.forward();
-    animation.removeListener(listener);
-
-    if (!mounted) return;
-
-    switchTo(targetIndex);
-  }
-
   void switchTo(int index) {
-    if (index == _currentIndex) return;
-    _isNavigating = true;
+    final position = _positionForIndex(index);
+    if (position < 0 || position == _positionForIndex(_currentIndex)) return;
 
-    final page = AppNavigation.pageForIndex(index, widget.userName);
+    setState(() => _currentIndex = index);
 
-    setState(() {
-      _currentIndex = index;
-      _currentBody = page;
-      _dragOffset = 0;
-      _isNavigating = false;
-    });
+    _pageController.animateToPage(
+      position,
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  void _onPageChanged(int position) {
+    if (position < 0 || position >= _indexes.length) return;
+    if (!mounted) return;
+    setState(() => _currentIndex = _indexes[position]);
   }
 
   Future<void> _handleBackPressed() async {
@@ -164,6 +101,33 @@ class AppShellState extends State<AppShell>
     await SystemNavigator.pop();
   }
 
+  Widget _pageForPosition(int position) {
+    switch (_indexes[position]) {
+      case 0:
+        return DashboardPage(
+          userName: widget.userName,
+          embedded: true,
+        );
+      case 1:
+        return InOutPage(
+          userName: widget.userName,
+          embedded: true,
+        );
+      case 3:
+        return RekapanTransaksiPage(
+          userName: widget.userName,
+          embedded: true,
+        );
+      case 4:
+        return LinenBelumKembaliPage(
+          userName: widget.userName,
+          embedded: true,
+        );
+      default:
+        return widget.body;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.embedded) return widget.body;
@@ -171,9 +135,7 @@ class AppShellState extends State<AppShell>
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          _handleBackPressed();
-        }
+        if (!didPop) _handleBackPressed();
       },
       child: Scaffold(
         backgroundColor: widget.backgroundColor,
@@ -181,23 +143,19 @@ class AppShellState extends State<AppShell>
           bottom: false,
           child: Stack(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 88),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onHorizontalDragUpdate: _onDragUpdate,
-                  onHorizontalDragEnd: _onDragEnd,
-                  child: Transform.translate(
-                    offset: Offset(
-                      _dragOffset * MediaQuery.sizeOf(context).width,
-                      0,
-                    ),
-                    child: _currentBody,
-                  ),
+              Positioned.fill(
+                bottom: 82,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: _indexes.length,
+                  physics: const ClampingScrollPhysics(),
+                  onPageChanged: _onPageChanged,
+                  itemBuilder: (context, position) {
+                    return _pageForPosition(position);
+                  },
                 ),
               ),
 
-              // Navbar remains completely fixed while the page content moves.
               Positioned(
                 left: 0,
                 right: 0,
