@@ -26,10 +26,10 @@ class AppShell extends StatefulWidget {
   final bool embedded;
 
   @override
-  State<AppShell> createState() => _AppShellState();
+  State<AppShell> createState() => AppShellState();
 }
 
-class _AppShellState extends State<AppShell>
+class AppShellState extends State<AppShell>
     with SingleTickerProviderStateMixin {
   late final AnimationController _swipeController;
 
