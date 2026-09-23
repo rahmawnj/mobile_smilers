@@ -21,6 +21,20 @@ class AppNavigation {
     }
   }
 
+  static const List<int> mainIndexes = [0, 1, 3, 4];
+
+  static int? nextIndex(int current) {
+    final position = mainIndexes.indexOf(current);
+    if (position < 0 || position >= mainIndexes.length - 1) return null;
+    return mainIndexes[position + 1];
+  }
+
+  static int? previousIndex(int current) {
+    final position = mainIndexes.indexOf(current);
+    if (position <= 0) return null;
+    return mainIndexes[position - 1];
+  }
+
   static void goToIndex(
     BuildContext context,
     int index,
@@ -28,13 +42,7 @@ class AppNavigation {
     int currentIndex = -1,
   }) {
     if (index == currentIndex) return;
-
-    Navigator.of(context).pushReplacement(
-      _route(
-        pageForIndex(index, userName),
-        fromRight: index > currentIndex,
-      ),
-    );
+    Navigator.of(context).pushReplacement(_route(pageForIndex(index, userName)));
   }
 
   static PageRouteBuilder _route(
