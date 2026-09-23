@@ -9,13 +9,13 @@ class AppNavigation {
   static Widget pageForIndex(int index, String userName) {
     switch (index) {
       case 0:
-        return DashboardPage(userName: userName);
+        return DashboardPage(userName: userName, embedded: true);
       case 1:
-        return InOutPage(userName: userName);
+        return InOutPage(userName: userName, embedded: true);
       case 3:
-        return RekapanTransaksiPage(userName: userName);
+        return RekapanTransaksiPage(userName: userName, embedded: true);
       case 4:
-        return LinenBelumKembaliPage(userName: userName);
+        return LinenBelumKembaliPage(userName: userName, embedded: true);
       default:
         return DashboardPage(userName: userName);
     }
