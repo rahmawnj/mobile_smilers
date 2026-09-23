@@ -133,14 +133,21 @@ class AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     if (widget.embedded) return widget.body;
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        systemNavigationBarColor: widget.backgroundColor,
+        systemNavigationBarDividerColor: widget.backgroundColor,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarContrastEnforced: false,
+      ),
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
         if (!didPop) _handleBackPressed();
-      },
-      child: Scaffold(
-        backgroundColor: widget.backgroundColor,
-        extendBody: true,
+        },
+        child: Scaffold(
+          backgroundColor: widget.backgroundColor,
+          extendBody: true,
         body: SafeArea(
           bottom: false,
           child: Stack(
@@ -168,6 +175,7 @@ class AppShellState extends State<AppShell> {
                 ),
               ),
             ],
+          ),
           ),
         ),
       ),
