@@ -34,6 +34,7 @@ class AppShellState extends State<AppShell> {
   late final PageController _pageController;
   late int _currentIndex;
   DateTime? _lastBackPress;
+  bool _showBottomNavigation = true;
 
   static const List<int> _indexes = [0, 1, 3, 4];
 
@@ -59,7 +60,10 @@ class AppShellState extends State<AppShell> {
     final position = _positionForIndex(index);
     if (position < 0 || position == _positionForIndex(_currentIndex)) return;
 
-    setState(() => _currentIndex = index);
+    setState(() {
+      _currentIndex = index;
+      _showBottomNavigation = true;
+    });
 
     _pageController.animateToPage(
       position,
@@ -71,7 +75,24 @@ class AppShellState extends State<AppShell> {
   void _onPageChanged(int position) {
     if (position < 0 || position >= _indexes.length) return;
     if (!mounted) return;
-    setState(() => _currentIndex = _indexes[position]);
+    setState(() {
+      _currentIndex = _indexes[position];
+      _showBottomNavigation = true;
+    });
+  }
+
+  void _handleScrollNotification(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical) return;
+
+    final delta = notification is ScrollUpdateNotification
+        ? notification.scrollDelta ?? 0
+        : 0;
+
+    if (delta > 0 && _showBottomNavigation) {
+      setState(() => _showBottomNavigation = false);
+    } else if (delta < 0 && !_showBottomNavigation) {
+      setState(() => _showBottomNavigation = true);
+    }
   }
 
   Future<void> _handleBackPressed() async {
@@ -105,25 +126,13 @@ class AppShellState extends State<AppShell> {
   Widget _pageForPosition(int position) {
     switch (_indexes[position]) {
       case 0:
-        return DashboardPage(
-          userName: widget.userName,
-          embedded: true,
-        );
+        return DashboardPage(userName: widget.userName, embedded: true);
       case 1:
-        return InOutPage(
-          userName: widget.userName,
-          embedded: true,
-        );
+        return InOutPage(userName: widget.userName, embedded: true);
       case 3:
-        return RekapanTransaksiPage(
-          userName: widget.userName,
-          embedded: true,
-        );
+        return RekapanTransaksiPage(userName: widget.userName, embedded: true);
       case 4:
-        return LinenBelumKembaliPage(
-          userName: widget.userName,
-          embedded: true,
-        );
+        return LinenBelumKembaliPage(userName: widget.userName, embedded: true);
       default:
         return widget.body;
     }
@@ -143,31 +152,31 @@ class AppShellState extends State<AppShell> {
       child: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) _handleBackPressed();
+          if (!didPop) _handleBackPressed();
         },
         child: Scaffold(
           backgroundColor: widget.backgroundColor,
           extendBody: true,
           body: SafeArea(
             bottom: false,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                PageView.builder(
-                  controller: _pageController,
-                  itemCount: _indexes.length,
-                  physics: const ClampingScrollPhysics(),
-                  onPageChanged: _onPageChanged,
-                  itemBuilder: (context, position) {
-                    return _pageForPosition(position);
-                  },
-                ),
-
-                // BottomBar-style floating layer:
-                // the body stays full-height while the bar is painted above it.
-                IgnorePointer(
-                  ignoring: false,
-                  child: Align(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                _handleScrollNotification(notification);
+                return false;
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: _indexes.length,
+                    physics: const ClampingScrollPhysics(),
+                    onPageChanged: _onPageChanged,
+                    itemBuilder: (context, position) {
+                      return _pageForPosition(position);
+                    },
+                  ),
+                  Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(
@@ -175,14 +184,71 @@ class AppShellState extends State<AppShell> {
                         right: 18,
                         bottom: 10,
                       ),
-                      child: BottomNavigation(
-                        userName: widget.userName,
-                        activeIndex: _currentIndex,
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          IgnorePointer(
+                            ignoring: _showBottomNavigation,
+                            child: AnimatedOpacity(
+                              opacity: _showBottomNavigation ? 0 : 1,
+                              duration: const Duration(milliseconds: 180),
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _showBottomNavigation = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 42,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xff116ea5),
+                                      borderRadius: BorderRadius.circular(16),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xff0b4770)
+                                              .withValues(alpha: .32),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 5),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Icon(
+                                      Icons.keyboard_arrow_up_rounded,
+                                      color: Colors.white,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          IgnorePointer(
+                            ignoring: !_showBottomNavigation,
+                            child: AnimatedSlide(
+                              offset: _showBottomNavigation
+                                  ? Offset.zero
+                                  : const Offset(0, 1.2),
+                              duration: const Duration(milliseconds: 220),
+                              curve: Curves.easeOutCubic,
+                              child: AnimatedOpacity(
+                                opacity: _showBottomNavigation ? 1 : 0,
+                                duration: const Duration(milliseconds: 180),
+                                child: BottomNavigation(
+                                  userName: widget.userName,
+                                  activeIndex: _currentIndex,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
