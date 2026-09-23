@@ -42,15 +42,33 @@ class _AppStartupPageState extends State<AppStartupPage> {
 
   Future<void> _openInitialPage() async {
     final configured = await ApiConfig.hasSavedBaseUrl();
-    if (!mounted) return;
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => configured
-            ? const ApiLoginPage()
-            : const ApiConfigPage(),
-      ),
-    );
+    if (!configured) {
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const ApiConfigPage()),
+      );
+      return;
+    }
+
+    // URL yang pernah berhasil disimpan tetap dipakai.
+    // Setiap kali app dibuka, cek kembali /app-info.
+    // Kalau server sudah tidak bisa diakses, paksa kembali ke konfigurasi.
+    try {
+      await ApiService.instance.getAppInfo();
+
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const ApiLoginPage()),
+      );
+    } catch (_) {
+      await ApiService.instance.clearStoredAppInfo();
+
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const ApiConfigPage()),
+      );
+    }
   }
 
   @override
