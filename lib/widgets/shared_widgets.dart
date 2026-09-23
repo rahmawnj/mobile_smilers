@@ -1339,9 +1339,10 @@ class BottomNavigation extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .12),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            color: Colors.black.withValues(alpha: .24),
+            blurRadius: 16,
+            spreadRadius: 1,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
