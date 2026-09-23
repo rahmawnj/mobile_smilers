@@ -1344,7 +1344,6 @@ class BottomNavigation extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: Container(
           height: 54,
-          clipBehavior: Clip.none,
           decoration: BoxDecoration(
             color: const Color(0xff116ea5).withValues(alpha: .58),
             borderRadius: BorderRadius.circular(28),
@@ -1361,127 +1360,129 @@ class BottomNavigation extends StatelessWidget {
               ),
             ],
           ),
-          child: Container(
-            height: 54,
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),      height: 54,
-      clipBehavior: Clip.none,
-      decoration: BoxDecoration(
-        color: const Color(0xff116ea5).withValues(alpha: .78),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .18),
-            blurRadius: 22,
-            spreadRadius: 1,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Container(
-        height: 54,
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        decoration: const BoxDecoration(
-          color: Colors.transparent,
-        ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            const qrWidth = 58.0;
-            final itemWidth = (constraints.maxWidth - qrWidth) / 4;
-            final activePosition = switch (activeIndex) {
-              0 => 0,
-              1 => 1,
-              3 => 2,
-              4 => 3,
-              _ => -1,
-            };
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const qrWidth = 58.0;
+                final itemWidth = (constraints.maxWidth - qrWidth) / 4;
+                final activePosition = switch (activeIndex) {
+                  0 => 0,
+                  1 => 1,
+                  3 => 2,
+                  4 => 3,
+                  _ => -1,
+                };
 
-            return Stack(
-              children: [
-                if (activePosition >= 0)
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 260),
-                    curve: Curves.easeOutCubic,
-                    left: (activePosition < 2
-                            ? activePosition * itemWidth
-                            : activePosition * itemWidth + qrWidth) +
-                        itemWidth * .11,
-                    top: 0,
-                    bottom: 0,
-                    width: itemWidth * .78,
-                    child: IgnorePointer(
-                      child: Center(
-                        child: Container(
-                          height: 34,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: .16),
-                            borderRadius: BorderRadius.circular(16),
+                return Stack(
+                  children: [
+                    if (activePosition >= 0)
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 260),
+                        curve: Curves.easeOutCubic,
+                        left: (activePosition < 2
+                                ? activePosition * itemWidth
+                                : activePosition * itemWidth + qrWidth) +
+                            itemWidth * .11,
+                        top: 0,
+                        bottom: 0,
+                        width: itemWidth * .78,
+                        child: IgnorePointer(
+                          child: Center(
+                            child: Container(
+                              height: 34,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: .16),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _NavItem(
-                        icon: Icons.home_rounded,
-                        label: 'Beranda',
-                        active: activeIndex == 0,
-                        onTap: () {
-                          AppNavigation.goToIndex(context, 0, userName, currentIndex: activeIndex);
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: _NavItem(
-                        icon: Icons.swap_horiz_rounded,
-                        label: 'Keluar Masuk',
-                        active: activeIndex == 1,
-                        onTap: () {
-                          AppNavigation.goToIndex(context, 1, userName, currentIndex: activeIndex);
-                        },
-                      ),
-                    ),
-                    _QRNavButton(
-                      active: activeIndex == 2,
-                      onTap: () {
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Endpoint QR Check belum tersedia di API yang diberikan.',
-                              ),
-                            ),
-                          );
-                      },
-                    ),
-                    Expanded(
-                      child: _NavItem(
-                        icon: Icons.receipt_long_rounded,
-                        label: 'Rekap',
-                        active: activeIndex == 3,
-                        onTap: () {
-                          AppNavigation.goToIndex(context, 3, userName, currentIndex: activeIndex);
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: _NavItem(
-                        icon: Icons.assignment_late_rounded,
-                        label: 'Belum Kembali',
-                        active: activeIndex == 4,
-                        onTap: () {
-                          AppNavigation.goToIndex(context, 4, userName, currentIndex: activeIndex);
-                        },
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _NavItem(
+                            icon: Icons.home_rounded,
+                            label: 'Beranda',
+                            active: activeIndex == 0,
+                            onTap: () {
+                              AppNavigation.goToIndex(
+                                context,
+                                0,
+                                userName,
+                                currentIndex: activeIndex,
+                              );
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: _NavItem(
+                            icon: Icons.swap_horiz_rounded,
+                            label: 'Keluar Masuk',
+                            active: activeIndex == 1,
+                            onTap: () {
+                              AppNavigation.goToIndex(
+                                context,
+                                1,
+                                userName,
+                                currentIndex: activeIndex,
+                              );
+                            },
+                          ),
+                        ),
+                        _QRNavButton(
+                          active: activeIndex == 2,
+                          onTap: () {
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Endpoint QR Check belum tersedia di API yang diberikan.',
+                                  ),
+                                ),
+                              );
+                          },
+                        ),
+                        Expanded(
+                          child: _NavItem(
+                            icon: Icons.receipt_long_rounded,
+                            label: 'Rekap',
+                            active: activeIndex == 3,
+                            onTap: () {
+                              AppNavigation.goToIndex(
+                                context,
+                                3,
+                                userName,
+                                currentIndex: activeIndex,
+                              );
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: _NavItem(
+                            icon: Icons.assignment_late_rounded,
+                            label: 'Belum Kembali',
+                            active: activeIndex == 4,
+                            onTap: () {
+                              AppNavigation.goToIndex(
+                                context,
+                                4,
+                                userName,
+                                currentIndex: activeIndex,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
-              ],
-            );
-          },
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
