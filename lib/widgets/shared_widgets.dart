@@ -1498,7 +1498,7 @@ class _QRNavButton extends StatelessWidget {
                     Color(0xffff9800),
                   ],
             ),
-            shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(16),
           ),
           child: const Icon(
             Icons.qr_code_scanner_rounded,
