@@ -42,5 +42,5 @@ class AppNavigation {
     int currentIndex = -1,
   }) {
     final shell = context.findAncestorStateOfType<AppShellState>();
-    shell?._switchTo(index);
+    shell?.switchTo(index);
   }}
