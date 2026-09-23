@@ -19,6 +19,36 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
 
   bool _obscurePassword = true;
   bool _isLoading = false;
+  AppInfo? _appInfo;
+  String _appLogoUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAppInfo();
+  }
+
+  Future<void> _loadAppInfo() async {
+    try {
+      final info = await ApiService.instance.getAppInfo();
+      final baseUrl = await ApiConfig.getBaseUrl();
+      if (!mounted) return;
+      setState(() {
+        _appInfo = info;
+        _appLogoUrl = info.logoUrl(baseUrl);
+      });
+    } catch (_) {
+      final info = await ApiService.instance.getStoredAppInfo();
+      final baseUrl = await ApiConfig.getBaseUrl();
+      if (!mounted) return;
+      if (info != null) {
+        setState(() {
+          _appInfo = info;
+          _appLogoUrl = info.logoUrl(baseUrl);
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -139,7 +169,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(14),
                         child: Image.network(
-                          'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
+                          _appLogoUrl,
                           width: 66,
                           height: 66,
                           fit: BoxFit.cover,
@@ -147,7 +177,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        'NEW SMILE',
+                        _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : 'APLIKASI',
                         style: TextStyle(
                           color: Color(0xff173A58),
                           fontSize: 20,
@@ -266,7 +296,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'RS ANUGERAH GLOBAL SEHAT',
+                        _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : '',
                         style: TextStyle(
                           color: Color(0xffA0ADB6),
                           fontSize: 8,
