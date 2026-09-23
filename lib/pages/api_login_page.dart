@@ -221,7 +221,25 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 46,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            _showMessage('Fitur Stream belum tersedia.');
+                          },
+                          icon: const Icon(Icons.play_circle_outline_rounded),
+                          label: const Text('Stream'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xff118D9A),
+                            side: const BorderSide(color: Color(0xff118D9A)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       Align(
                         alignment: Alignment.centerRight,
