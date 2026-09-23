@@ -1116,37 +1116,25 @@ class RoomTable extends StatelessWidget {
 /// BOTTOM NAVIGATION
 /// ===============================================================
 
-/// Transisi dibuat lebih halus: halaman hanya bergeser sedikit sambil
-/// fade-in, jadi tidak terasa seperti halaman baru "menabrak" dari samping.
 PageRoute<T> _slideNavRoute<T>({
   required Widget page,
   required bool forward,
 }) {
   return PageRouteBuilder<T>(
     pageBuilder: (context, animation, secondaryAnimation) => page,
-    transitionDuration: const Duration(milliseconds: 360),
-    reverseTransitionDuration: const Duration(milliseconds: 300),
+    transitionDuration: const Duration(milliseconds: 420),
+    reverseTransitionDuration: const Duration(milliseconds: 360),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final begin = Offset(forward ? .12 : -.12, 0);
-
-      final slide = Tween<Offset>(
-        begin: begin,
+      final tween = Tween<Offset>(
+        begin: Offset(forward ? 1.0 : -1.0, 0),
         end: Offset.zero,
       ).chain(
-        CurveTween(curve: Curves.easeOutCubic),
-      );
-
-      final fade = CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeOut,
+        CurveTween(curve: Curves.easeInOutCubic),
       );
 
       return SlideTransition(
-        position: animation.drive(slide),
-        child: FadeTransition(
-          opacity: fade,
-          child: child,
-        ),
+        position: animation.drive(tween),
+        child: child,
       );
     },
   );
@@ -1168,10 +1156,7 @@ class BottomNavigation extends StatelessWidget {
       borderRadius: BorderRadius.circular(28),
       child: Container(
         height: 70,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 7,
-          vertical: 5,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
         decoration: BoxDecoration(
           color: const Color(0xff116ea5),
           borderRadius: BorderRadius.circular(28),
@@ -1181,8 +1166,7 @@ class BottomNavigation extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xff0b4770)
-                  .withValues(alpha: .28),
+              color: const Color(0xff0b4770).withValues(alpha: .28),
               blurRadius: 25,
               offset: const Offset(0, 10),
             ),
@@ -1196,12 +1180,10 @@ class BottomNavigation extends StatelessWidget {
                 label: 'Beranda',
                 active: activeIndex == 0,
                 onTap: () {
-                  Navigator.of(context)
-                      .popUntil((route) => route.isFirst);
+                  Navigator.of(context).popUntil((route) => route.isFirst);
                 },
               ),
             ),
-
             Expanded(
               child: _NavItem(
                 icon: Icons.swap_horiz_rounded,
@@ -1217,7 +1199,6 @@ class BottomNavigation extends StatelessWidget {
                 },
               ),
             ),
-
             _QRNavButton(
               active: activeIndex == 2,
               onTap: () {
@@ -1232,7 +1213,6 @@ class BottomNavigation extends StatelessWidget {
                   );
               },
             ),
-
             Expanded(
               child: _NavItem(
                 icon: Icons.receipt_long_rounded,
@@ -1248,7 +1228,6 @@ class BottomNavigation extends StatelessWidget {
                 },
               ),
             ),
-
             Expanded(
               child: _NavItem(
                 icon: Icons.assignment_late_rounded,
@@ -1257,9 +1236,7 @@ class BottomNavigation extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).push(
                     _slideNavRoute(
-                      page: LinenBelumKembaliPage(
-                        userName: userName,
-                      ),
+                      page: LinenBelumKembaliPage(userName: userName),
                       forward: activeIndex < 4,
                     ),
                   );
