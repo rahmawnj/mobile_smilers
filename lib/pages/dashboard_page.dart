@@ -136,7 +136,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     title: 'Linen & Tirai Rusak',
                                     subtitle: 'Data linen dan tirai yang rusak',
                                     onTap: () {
-                                      Navigator.of(context, rootNavigator: true).push(
+                                      Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => LinenRusakPage(
                                             userName: widget.userName,
@@ -153,7 +153,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     title: 'Linen & Tirai Hilang',
                                     subtitle: 'Data linen dan tirai yang hilang',
                                     onTap: () {
-                                      Navigator.of(context, rootNavigator: true).push(
+                                      Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => LinenHilangPage(
                                             userName: widget.userName,
@@ -193,7 +193,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     title: 'Data Linen & Tirai Keluar',
                                     subtitle: 'Data linen dan tirai yang keluar',
                                     onTap: () {
-                                      Navigator.of(context, rootNavigator: true).push(
+                                      Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => LinenKeluarPage(
                                             userName: widget.userName,
@@ -210,7 +210,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     title: 'Data Linen & Tirai Masuk',
                                     subtitle: 'Data linen dan tirai yang masuk',
                                     onTap: () {
-                                      Navigator.of(context, rootNavigator: true).push(
+                                      Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => LinenMasukPage(
                                             userName: widget.userName,
@@ -227,7 +227,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     title: 'Permintaan Ruangan',
                                     subtitle: 'Permintaan linen dari ruangan',
                                     onTap: () {
-                                      Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (_) => PermintaanLinenPage(userName: widget.userName)));
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => PermintaanLinenPage(userName: widget.userName)));
                                     },
                                   ),
                                 ),
