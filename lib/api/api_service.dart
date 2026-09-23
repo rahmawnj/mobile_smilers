@@ -475,10 +475,50 @@ class LinenBelumKembaliResponse {
   }
 }
 
+
+class StreamResponse {
+  const StreamResponse({
+    required this.total,
+    required this.berat,
+    required this.waktu,
+  });
+
+  final int total;
+  final double berat;
+  final String waktu;
+
+  factory StreamResponse.fromJson(Map<String, dynamic> json) {
+    return StreamResponse(
+      total: _toInt(json['total']),
+      berat: double.tryParse(json['berat']?.toString() ?? '') ?? 0,
+      waktu: json['waktu']?.toString() ?? '',
+    );
+  }
+}
+
 class ApiService {
   static final ApiService instance = ApiService._();
 
   ApiService._();
+
+  Future<StreamResponse> getStream() async {
+    final baseUrl = await ApiConfig.getBaseUrl();
+    final response = await http.get(
+      Uri.parse('$baseUrl/stream'),
+      headers: const {'Accept': 'application/json'},
+    ).timeout(const Duration(seconds: 10));
+
+    final data = _decode(response);
+
+    if (response.statusCode != 200) {
+      throw ApiException(
+        data['message']?.toString() ?? 'Gagal mengambil data stream.',
+        statusCode: response.statusCode,
+      );
+    }
+
+    return StreamResponse.fromJson(data);
+  }
 
   Future<AuthResponse> login({
     required String username,
