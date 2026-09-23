@@ -16,12 +16,14 @@ class AppShell extends StatefulWidget {
     required this.body,
     this.activeIndex = -1,
     this.backgroundColor = const Color(0xfff5f8fc),
+    this.embedded = false,
   });
 
   final String userName;
   final Widget body;
   final int activeIndex;
   final Color backgroundColor;
+  final bool embedded;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -31,6 +33,9 @@ class _AppShellState extends State<AppShell>
     with SingleTickerProviderStateMixin {
   late final AnimationController _swipeController;
 
+  late int _currentIndex;
+  late Widget _currentBody;
+
   double _dragOffset = 0;
   bool _isNavigating = false;
   DateTime? _lastBackPress;
@@ -38,6 +43,9 @@ class _AppShellState extends State<AppShell>
   @override
   void initState() {
     super.initState();
+
+    _currentIndex = widget.activeIndex;
+    _currentBody = widget.body;
 
     _swipeController = AnimationController(
       vsync: this,
@@ -111,12 +119,20 @@ class _AppShellState extends State<AppShell>
 
     if (!mounted) return;
 
-    AppNavigation.goToIndex(
-      context,
-      targetIndex,
-      widget.userName,
-      currentIndex: widget.activeIndex,
-    );
+    _switchTo(targetIndex);
+  }
+
+  void _switchTo(int index) {
+    if (_isNavigating || index == _currentIndex) return;
+
+    final page = AppNavigation.pageForIndex(index, widget.userName);
+
+    setState(() {
+      _currentIndex = index;
+      _currentBody = page;
+      _dragOffset = 0;
+      _isNavigating = false;
+    });
   }
 
   Future<void> _handleBackPressed() async {
@@ -149,6 +165,8 @@ class _AppShellState extends State<AppShell>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.embedded) return widget.body;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -173,7 +191,7 @@ class _AppShellState extends State<AppShell>
                       _dragOffset * MediaQuery.sizeOf(context).width,
                       0,
                     ),
-                    child: widget.body,
+                    child: _currentBody,
                   ),
                 ),
               ),
@@ -185,7 +203,7 @@ class _AppShellState extends State<AppShell>
                 bottom: 0,
                 child: BottomNavigation(
                   userName: widget.userName,
-                  activeIndex: widget.activeIndex,
+                  activeIndex: _currentIndex,
                 ),
               ),
             ],
