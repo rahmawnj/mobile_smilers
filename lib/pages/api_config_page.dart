@@ -37,6 +37,11 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
     final normalized = ApiConfig.normalize(value);
     final uri = Uri.tryParse(normalized);
 
+    // Setiap kali user menekan update, branding lama langsung dihapus.
+    // Jika URL baru gagal diakses / app-info gagal diambil, nama dan logo
+    // lama tidak akan tetap tampil.
+    await ApiService.instance.clearStoredAppInfo();
+
     if (value.isEmpty || normalized.isEmpty || uri == null || uri.host.isEmpty ||
         (uri.scheme != 'http' && uri.scheme != 'https')) {
       _show('URL tidak valid. Contoh: https://server-rumah-sakit.com');
