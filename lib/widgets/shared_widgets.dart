@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../pages/account_settings_page.dart';
 import '../pages/detail_pages.dart';
@@ -31,6 +32,7 @@ class _AppShellState extends State<AppShell>
 
   double _dragOffset = 0;
   bool _isNavigating = false;
+  DateTime? _lastBackPress;
 
   @override
   void initState() {
@@ -169,10 +171,45 @@ class _AppShellState extends State<AppShell>
     );
   }
 
+  Future<void> _handleBackPressed() async {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    final now = DateTime.now();
+    final last = _lastBackPress;
+
+    if (last == null ||
+        now.difference(last) > const Duration(seconds: 2)) {
+      _lastBackPress = now;
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Tekan tombol kembali sekali lagi untuk keluar.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      return;
+    }
+
+    await SystemNavigator.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: widget.backgroundColor,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _handleBackPressed();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: widget.backgroundColor,
       body: SafeArea(
         bottom: false,
         child: Stack(
@@ -205,6 +242,8 @@ class _AppShellState extends State<AppShell>
             ),
           ],
         ),
+      ),
+    );
       ),
     );
   }
