@@ -42,15 +42,63 @@ class AppNavigation {
     int currentIndex = -1,
   }) {
     if (index == currentIndex) return;
-    Navigator.of(context).pushReplacement(_route(pageForIndex(index, userName)));
+    final bool fromRight = _isMovingFromRight(currentIndex, index);
+
+    Navigator.of(context).pushReplacement(
+      _route(
+        pageForIndex(index, userName),
+        fromRight: fromRight,
+      ),
+    );
   }
 
-  static PageRouteBuilder _route(Widget page) {
+  static bool _isMovingFromRight(
+    int currentIndex,
+    int newIndex,
+  ) {
+    final currentPosition = mainIndexes.indexOf(currentIndex);
+    final newPosition = mainIndexes.indexOf(newIndex);
+
+    if (currentPosition < 0 || newPosition < 0) {
+      return true;
+    }
+
+    return newPosition > currentPosition;
+  }
+
+  static PageRouteBuilder _route(
+    Widget page, {
+    required bool fromRight,
+  }) {
     return PageRouteBuilder(
       pageBuilder: (_, __, ___) => page,
-      transitionDuration: Duration.zero,
-      reverseTransitionDuration: Duration.zero,
-      transitionsBuilder: (_, __, ___, child) => child,
+      transitionDuration: const Duration(milliseconds: 280),
+      reverseTransitionDuration: const Duration(milliseconds: 280),
+      transitionsBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ) {
+        final Offset begin = fromRight
+            ? const Offset(1.0, 0.0)
+            : const Offset(-1.0, 0.0);
+
+        const Offset end = Offset.zero;
+
+        final curve = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: begin,
+            end: end,
+          ).animate(curve),
+          child: child,
+        );
+      },
     );
   }
 }
