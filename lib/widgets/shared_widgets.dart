@@ -1299,15 +1299,15 @@ class BottomNavigation extends StatelessWidget {
                   AnimatedPositioned(
                     duration: const Duration(milliseconds: 260),
                     curve: Curves.easeOutCubic,
-                    left: activePosition < 2
-                        ? activePosition * itemWidth
-                        : activePosition * itemWidth + qrWidth,
-                    top: 0,
-                    width: itemWidth,
-                    height: 60,
+                    left: (activePosition < 2
+                            ? activePosition * itemWidth
+                            : activePosition * itemWidth + qrWidth) +
+                        itemWidth * .11,
+                    top: 7,
+                    width: itemWidth * .78,
+                    height: 46,
                     child: IgnorePointer(
                       child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 2),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: .16),
                           borderRadius: BorderRadius.circular(23),
