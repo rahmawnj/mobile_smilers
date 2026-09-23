@@ -556,11 +556,17 @@ class ApiService {
   }
 
   Future<AppInfo> getAppInfo() async {
-    final baseUrl = await ApiConfig.getBaseUrl();
+    final mobileUrl = await ApiConfig.getMobileUrl();
+    final url = '$mobileUrl/app-info';
+    print('GET: $url');
+
     final response = await http.get(
-      Uri.parse('$baseUrl/app-info'),
+      Uri.parse(url),
       headers: const {'Accept': 'application/json'},
     ).timeout(const Duration(seconds: 10));
+
+    print('STATUS: ${response.statusCode}');
+    print('RESPONSE: ${response.body}');
 
     final data = _decode(response);
 
