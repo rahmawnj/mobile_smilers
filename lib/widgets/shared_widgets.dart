@@ -1236,15 +1236,13 @@ class RoomTable extends StatelessWidget {
             ),
           ),
 
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Table(
-              columnWidths: const {
-                0: FixedColumnWidth(145),
-                1: FixedColumnWidth(100),
-                2: FixedColumnWidth(100),
-                3: FixedColumnWidth(90),
-              },
+          Table(
+            columnWidths: const {
+              0: FlexColumnWidth(1.45),
+              1: FlexColumnWidth(1),
+              2: FlexColumnWidth(1),
+              3: FlexColumnWidth(.9),
+            },
               children: [
                 _roomRow(
                   [
@@ -1274,7 +1272,6 @@ class RoomTable extends StatelessWidget {
                 ),
               ],
             ),
-          ),
         ],
       ),
     );
