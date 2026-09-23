@@ -176,7 +176,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : 'APLIKASI',
                         style: TextStyle(
                           color: Color(0xff173A58),
@@ -295,7 +295,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
+                      Text(
                         _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : '',
                         style: TextStyle(
                           color: Color(0xffA0ADB6),
