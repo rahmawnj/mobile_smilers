@@ -3,6 +3,7 @@ import '../widgets/shared_widgets.dart';
 
 import '../api/api_service.dart';
 import 'dashboard_page.dart';
+import 'stream_page.dart';
 import 'api_config_page.dart';
 
 class ApiLoginPage extends StatefulWidget {
@@ -227,7 +228,11 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                         height: 46,
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            _showMessage('Fitur Stream belum tersedia.');
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const StreamPage(),
+                              ),
+                            );
                           },
                           icon: const Icon(Icons.play_circle_outline_rounded),
                           label: const Text('Stream'),
