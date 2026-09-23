@@ -39,16 +39,31 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
 
     if (value.isEmpty || normalized.isEmpty || uri == null || uri.host.isEmpty ||
         (uri.scheme != 'http' && uri.scheme != 'https')) {
-      _show('URL tidak valid. Contoh: https://smilers.co.id');
+      _show('URL tidak valid. Contoh: https://server-rumah-sakit.com');
       return;
     }
 
     setState(() => _saving = true);
-    await ApiConfig.saveBaseUrl(normalized);
-    if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const ApiLoginPage()),
-    );
+
+    try {
+      await ApiConfig.saveBaseUrl(normalized);
+      await ApiService.instance.getAppInfo();
+
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const ApiLoginPage()),
+      );
+    } on ApiException catch (e) {
+      if (mounted) {
+        _show(e.message);
+      }
+    } catch (_) {
+      if (mounted) {
+        _show('Tidak dapat mengambil informasi aplikasi dari server.');
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   void _show(String message) {
