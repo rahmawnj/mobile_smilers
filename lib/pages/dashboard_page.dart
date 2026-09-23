@@ -5,9 +5,10 @@ import '../widgets/shared_widgets.dart';
 import 'detail_pages.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key, required this.userName});
+  const DashboardPage({super.key, required this.userName, this.embedded = false});
 
   final String userName;
+  final bool embedded;
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -79,6 +80,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return AppShell(
       userName: widget.userName,
       activeIndex: 0,
+      embedded: widget.embedded,
       body: RefreshIndicator(
         onRefresh: _loadLinen,
         child: SingleChildScrollView(
