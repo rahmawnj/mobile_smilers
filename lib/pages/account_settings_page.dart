@@ -15,6 +15,8 @@ class AccountSettingsPage extends StatefulWidget {
 
 class _AccountSettingsPageState extends State<AccountSettingsPage> {
   bool _isLoggingOut = false;
+  AppInfo? _appInfo;
+  String _appLogoUrl = '';
 
   Future<void> _logout() async {
     if (_isLoggingOut) return;
@@ -44,6 +46,34 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadAppInfo();
+  }
+
+  Future<void> _loadAppInfo() async {
+    try {
+      final info = await ApiService.instance.getAppInfo();
+      final baseUrl = await ApiConfig.getBaseUrl();
+      if (!mounted) return;
+      setState(() {
+        _appInfo = info;
+        _appLogoUrl = info.logoUrl(baseUrl);
+      });
+    } catch (_) {
+      final info = await ApiService.instance.getStoredAppInfo();
+      final baseUrl = await ApiConfig.getBaseUrl();
+      if (!mounted) return;
+      if (info != null) {
+        setState(() {
+          _appInfo = info;
+          _appLogoUrl = info.logoUrl(baseUrl);
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AppShell(
       userName: widget.userName,
@@ -57,7 +87,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             alignment: Alignment.center,
             color: Colors.white,
             child: Image.network(
-              'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
+              _appLogoUrl,
               height: 120,
               width: 120,
               fit: BoxFit.contain,
@@ -81,7 +111,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const Text('Rumah Sakit Anugerah Global Sehat'),
+                      Text(_appInfo?.appName ?? ''),
                     ],
                   ),
                 ),
