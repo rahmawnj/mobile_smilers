@@ -140,6 +140,7 @@ class AppShellState extends State<AppShell> {
       },
       child: Scaffold(
         backgroundColor: widget.backgroundColor,
+        extendBody: true,
         body: SafeArea(
           bottom: false,
           child: Stack(
