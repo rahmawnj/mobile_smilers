@@ -1514,6 +1514,60 @@ class BottomNavigation extends StatelessWidget {
 }
 
 /// ===============================================================
+/// QR NAV BUTTON
+/// ===============================================================
+
+class _QRNavButton extends StatelessWidget {
+  const _QRNavButton({
+    required this.onTap,
+    required this.active,
+  });
+
+  final VoidCallback onTap;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 58,
+        height: 58,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: active
+                ? const [
+                    Color(0xffffd54f),
+                    Color(0xffff9800),
+                  ]
+                : const [
+                    Color(0xffffc107),
+                    Color(0xffff9800),
+                  ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .24),
+              blurRadius: 12,
+              spreadRadius: 1,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.qr_code_scanner_rounded,
+          color: Colors.white,
+          size: 28,
+        ),
+      ),
+    );
+  }
+}
+
+/// ===============================================================
 /// NAV ITEM
 /// ===============================================================
 
