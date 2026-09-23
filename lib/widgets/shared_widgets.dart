@@ -1468,10 +1468,10 @@ class _QRNavButton extends StatelessWidget {
           width: 58,
           height: 58,
           decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: active
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: active
                 ? const [
                     Color(0xffffd54f),
                     Color(0xffff9800),
@@ -1480,13 +1480,13 @@ class _QRNavButton extends StatelessWidget {
                     Color(0xffffc107),
                     Color(0xffff9800),
                   ],
-          ),
+            ),
             shape: BoxShape.circle,
           ),
           child: const Icon(
-          Icons.qr_code_scanner_rounded,
-          color: Colors.white,
-          size: 28,
+            Icons.qr_code_scanner_rounded,
+            color: Colors.white,
+            size: 28,
           ),
         ),
       ),
