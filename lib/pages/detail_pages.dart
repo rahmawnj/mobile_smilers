@@ -426,9 +426,9 @@ class _InOutTable extends StatelessWidget {
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 18, offset: const Offset(0, 7))],
       ),
       clipBehavior: Clip.antiAlias,
-      child: SingleChildScrollView(
+      child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: DataTable(
+        child: SizedBox(width: constraints.maxWidth, child: DataTable(
           headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
           headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
           dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
@@ -445,8 +445,8 @@ class _InOutTable extends StatelessWidget {
             DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
             DataCell(Text(r['selisih']?.toString() ?? '0')),
           ])).toList(),
-        ),
-      ),
+        )),
+      ); }),
     );
   }
 }
@@ -653,9 +653,9 @@ class _LinenMasukTable extends StatelessWidget {
   @override Widget build(BuildContext context) => Container(
     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 18, offset: const Offset(0, 7))]),
     clipBehavior: Clip.antiAlias,
-    child: SingleChildScrollView(
+    child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: DataTable(
+      child: SizedBox(width: constraints.maxWidth, child: DataTable(
         headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
         headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
         dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
@@ -676,8 +676,8 @@ class _LinenMasukTable extends StatelessWidget {
             DataCell(Text(i.keterangan.isEmpty ? '-' : i.keterangan)),
           ]);
         }).toList(),
-      ),
-    ),
+      )),
+    ); }),
   );
 }
 
@@ -1225,7 +1225,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _load,
-              child: SingleChildScrollView(
+              child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
                 child: _loading
@@ -1255,7 +1255,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                     clipBehavior: Clip.antiAlias,
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      child: DataTable(
+                                      child: SizedBox(width: constraints.maxWidth, child: DataTable(
                                         headingRowColor:
                                             WidgetStateProperty.all(
                                           const Color(0xff1261dc),
@@ -1329,7 +1329,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                             ],
                                           );
                                         }).toList(),
-                                      ),
+                                      )),
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -1367,7 +1367,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                   ),
                                 ],
                               ),
-              ),
+              ); }),
             ),
           ),
         ],
@@ -1403,9 +1403,9 @@ class _BelumKembaliTable extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: SingleChildScrollView(
+      child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: DataTable(
+        child: SizedBox(width: constraints.maxWidth, child: DataTable(
           headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
           headingTextStyle: const TextStyle(
             color: Colors.white,
@@ -1441,8 +1441,8 @@ class _BelumKembaliTable extends StatelessWidget {
               ],
             );
           }).toList(),
-        ),
-      ),
+        )),
+      ); }),
     );
   }
 }
