@@ -1507,11 +1507,19 @@ class _QRNavButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Transform.translate(
-        offset: const Offset(0, -5),
+        offset: const Offset(0, -11),
         child: Container(
           width: 58,
           height: 58,
           decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: .24),
+                blurRadius: 12,
+                spreadRadius: 1,
+                offset: const Offset(0, 6),
+              ),
+            ],
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
