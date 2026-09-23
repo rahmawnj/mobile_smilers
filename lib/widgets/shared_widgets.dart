@@ -1367,23 +1367,21 @@ class BottomNavigation extends StatelessWidget {
             return Stack(
               children: [
                 if (activePosition >= 0)
-                  AnimatedAlign(
+                  AnimatedPositioned(
                     duration: const Duration(milliseconds: 260),
                     curve: Curves.easeOutCubic,
-                    alignment: Alignment.center,
+                    left: (activePosition < 2
+                            ? activePosition * itemWidth
+                            : activePosition * itemWidth + qrWidth) +
+                        itemWidth * .11,
+                    top: 0,
+                    bottom: 0,
+                    width: itemWidth * .78,
                     child: IgnorePointer(
-                      child: SizedBox(
-                        width: itemWidth * .78,
-                        height: 40,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 260),
-                          margin: EdgeInsets.only(
-                            left: (activePosition < 2
-                                    ? activePosition * itemWidth
-                                    : activePosition * itemWidth + qrWidth) +
-                                itemWidth * .11 -
-                                (constraints.maxWidth - itemWidth * .78) / 2,
-                          ),
+                      child: Center(
+                        child: Container(
+                          height: 40,
+                          width: double.infinity,
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: .16),
                             borderRadius: BorderRadius.circular(999),
