@@ -12,7 +12,6 @@ class StreamPage extends StatefulWidget {
 }
 
 class _StreamPageState extends State<StreamPage> {
-  Timer? _timer;
   StreamResponse? _data;
   String? _error;
   bool _loading = true;
@@ -20,36 +19,35 @@ class _StreamPageState extends State<StreamPage> {
   @override
   void initState() {
     super.initState();
-    _listen();
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (_) => _listen(),
-    );
+    _listenLoop();
   }
 
-  Future<void> _listen() async {
-    try {
-      final data = await ApiService.instance.getStream();
-      if (!mounted) return;
+  Future<void> _listenLoop() async {
+    while (mounted) {
+      try {
+        final data = await ApiService.instance.getStream();
+        if (!mounted) return;
 
-      setState(() {
-        _data = data;
-        _error = null;
-        _loading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
+        setState(() {
+          _data = data;
+          _error = null;
+          _loading = false;
+        });
+      } catch (e) {
+        if (!mounted) return;
 
-      setState(() {
-        _error = e.toString();
-        _loading = false;
-      });
+        setState(() {
+          _error = e.toString();
+          _loading = false;
+        });
+      }
+
+      await Future.delayed(const Duration(seconds: 1));
     }
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     super.dispose();
   }
 
