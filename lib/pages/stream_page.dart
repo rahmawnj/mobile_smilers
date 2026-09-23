@@ -16,12 +16,37 @@ class _StreamPageState extends State<StreamPage> {
   String? _error;
   bool _loading = true;
   String _liveClock = '';
+  AppInfo? _appInfo;
+  String _appLogoUrl = '';
 
   @override
   void initState() {
     super.initState();
+    _loadAppInfo();
     _updateClock();
     _listenLoop();
+  }
+
+  Future<void> _loadAppInfo() async {
+    try {
+      final info = await ApiService.instance.getAppInfo();
+      final baseUrl = await ApiConfig.getBaseUrl();
+      if (!mounted) return;
+      setState(() {
+        _appInfo = info;
+        _appLogoUrl = info.logoUrl(baseUrl);
+      });
+    } catch (_) {
+      final info = await ApiService.instance.getStoredAppInfo();
+      final baseUrl = await ApiConfig.getBaseUrl();
+      if (!mounted) return;
+      if (info != null) {
+        setState(() {
+          _appInfo = info;
+          _appLogoUrl = info.logoUrl(baseUrl);
+        });
+      }
+    }
   }
 
   void _updateClock() {
@@ -114,7 +139,7 @@ class _StreamPageState extends State<StreamPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(14),
                         child: Image.network(
-                          'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
+                          _appLogoUrl,
                           width: 66,
                           height: 66,
                           fit: BoxFit.cover,
@@ -236,7 +261,7 @@ class _StreamPageState extends State<StreamPage> {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'RS ANUGERAH GLOBAL SEHAT',
+                        _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : '',
                         style: TextStyle(
                           color: Color(0xffA0ADB6),
                           fontSize: 8,
