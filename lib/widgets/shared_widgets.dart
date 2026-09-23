@@ -497,8 +497,7 @@ class _MetricTileState extends State<MetricTile> {
           padding: const EdgeInsets.symmetric(
             horizontal: 14,
             vertical: 12,
-          ),
-          decoration: BoxDecoration(
+          ),          decoration: BoxDecoration(
             color: _pressed
                 ? const Color(0xfff3f8fc)
                 : Colors.white,
@@ -997,8 +996,7 @@ class DetailHeader extends StatelessWidget {
 class DetailTable extends StatelessWidget {
   const DetailTable({
     super.key,
-    required this.columns,
-    required this.rows,
+    required this.columns,    required this.rows,
   });
 
   final List<String> columns;
@@ -1433,7 +1431,7 @@ class _QRNavButtonState extends State<_QRNavButton>
 /// NAV ITEM
 /// ===============================================================
 
-class _NavItem extends StatefulWidget {
+class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.icon,
     required this.label,
@@ -1447,98 +1445,72 @@ class _NavItem extends StatefulWidget {
   final bool active;
 
   @override
-  State<_NavItem> createState() => _NavItemState();
-}
-
-class _NavItemState extends State<_NavItem> {
-  bool _pressed = false;
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) {
-        setState(() => _pressed = true);
-      },
-      onTapCancel: () {
-        setState(() => _pressed = false);
-      },
-      onTapUp: (_) {
-        setState(() => _pressed = false);
-        widget.onTap();
-      },
-      child: AnimatedScale(
-        scale: _pressed ? .88 : 1,
-        duration: const Duration(milliseconds: 100),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOut,
-          margin: const EdgeInsets.symmetric(
-            horizontal: 2,
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 3,
-            vertical: 6,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              if (widget.active)
-                Positioned.fill(
-                  child: Hero(
-                    tag: 'bottom-nav-active-indicator',
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: .16),
-                        borderRadius: BorderRadius.circular(18),
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 6),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned.fill(
+              child: active
+                  ? Hero(
+                      tag: 'bottom-nav-active-indicator',
+                      flightShuttleBuilder: (
+                        flightContext,
+                        animation,
+                        flightDirection,
+                        fromHeroContext,
+                        toHeroContext,
+                      ) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: .16),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: .16),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
                       ),
-                    ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: active
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: .68),
+                  size: 19,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: active
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: .68),
+                    fontSize: 7,
+                    fontWeight: active
+                        ? FontWeight.w800
+                        : FontWeight.w500,
                   ),
                 ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: widget.active ? 38 : 30,
-                    height: widget.active ? 28 : 24,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      widget.icon,
-                      color: widget.active
-                          ? Colors.white
-                          : Colors.white.withValues(alpha: .68),
-                      size: widget.active ? 20 : 19,
-                    ),
-                  ),
-
-                  const SizedBox(height: 2),
-
-                  Text(
-                    widget.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: widget.active
-                          ? Colors.white
-                          : Colors.white.withValues(alpha: .68),
-                      fontSize: 7,
-                      fontWeight: widget.active
-                          ? FontWeight.w800
-                          : FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     );
