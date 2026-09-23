@@ -485,18 +485,25 @@ class ApiService {
     required String password,
     String deviceName = 'mobile-app',
   }) async {
-    final response = await http.post(
-      Uri.parse('${await ApiConfig.getMobileUrl()}/login'),
-      headers: const {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'username': username,
-        'password': password,
-        'device_name': deviceName,
-      }),
-    );
+    final response = await http
+        .post(
+          Uri.parse('${await ApiConfig.getMobileUrl()}/login'),
+          headers: const {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'username': username,
+            'password': password,
+            'device_name': deviceName,
+          }),
+        )
+        .timeout(
+          const Duration(seconds: 15),
+          onTimeout: () => throw const ApiException(
+            'Server terlalu lama merespons. Periksa Base URL dan koneksi internet.',
+          ),
+        );
 
     final data = _decode(response);
 
