@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/shared_widgets.dart';
 
 import '../api/api_service.dart';
 import 'dashboard_page.dart';
@@ -54,7 +55,14 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => DashboardPage(userName: result.user.name),
+          builder: (_) => AppShell(
+            userName: result.user.name,
+            activeIndex: 0,
+            body: DashboardPage(
+              userName: result.user.name,
+              embedded: true,
+            ),
+          ),
         ),
       );
     } on ApiException catch (e) {
