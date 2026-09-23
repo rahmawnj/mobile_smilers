@@ -7,7 +7,7 @@ import '../pages/detail_pages.dart';
 /// APP SHELL
 /// ===============================================================
 
-class AppShell extends StatelessWidget {
+class AppShell extends StatefulWidget {
   const AppShell({
     super.key,
     required this.userName,
@@ -22,25 +22,74 @@ class AppShell extends StatelessWidget {
   final Color backgroundColor;
 
   @override
+  State<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends State<AppShell>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _bodyController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _bodyController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+      value: 0,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final isFirstRoute = ModalRoute.of(context)?.isFirst ?? true;
+
+      if (isFirstRoute) {
+        _bodyController.value = 1;
+      } else {
+        _bodyController.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _bodyController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bodyAnimation = CurvedAnimation(
+      parent: _bodyController,
+      curve: Curves.easeOutCubic,
+    );
+
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: widget.backgroundColor,
       body: SafeArea(
         bottom: false,
         child: Stack(
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 88),
-              child: body,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(.16, 0),
+                  end: Offset.zero,
+                ).animate(bodyAnimation),
+                child: widget.body,
+              ),
             ),
 
+            // Navbar is outside the animated content, so it stays fixed.
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
               child: BottomNavigation(
-                userName: userName,
-                activeIndex: activeIndex,
+                userName: widget.userName,
+                activeIndex: widget.activeIndex,
               ),
             ),
           ],
@@ -1116,30 +1165,6 @@ class RoomTable extends StatelessWidget {
 /// BOTTOM NAVIGATION
 /// ===============================================================
 
-PageRoute<T> _slideNavRoute<T>({
-  required Widget page,
-  required bool forward,
-}) {
-  return PageRouteBuilder<T>(
-    pageBuilder: (context, animation, secondaryAnimation) => page,
-    transitionDuration: const Duration(milliseconds: 420),
-    reverseTransitionDuration: const Duration(milliseconds: 360),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final tween = Tween<Offset>(
-        begin: Offset(forward ? 1.0 : -1.0, 0),
-        end: Offset.zero,
-      ).chain(
-        CurveTween(curve: Curves.easeInOutCubic),
-      );
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  );
-}
-
 class BottomNavigation extends StatelessWidget {
   const BottomNavigation({
     super.key,
@@ -1191,9 +1216,8 @@ class BottomNavigation extends StatelessWidget {
                 active: activeIndex == 1,
                 onTap: () {
                   Navigator.of(context, rootNavigator: true).push(
-                    _slideNavRoute(
-                      page: InOutPage(userName: userName),
-                      forward: activeIndex < 1,
+                    MaterialPageRoute(
+                      builder: (_) => InOutPage(userName: userName),
                     ),
                   );
                 },
@@ -1220,9 +1244,8 @@ class BottomNavigation extends StatelessWidget {
                 active: activeIndex == 3,
                 onTap: () {
                   Navigator.of(context).push(
-                    _slideNavRoute(
-                      page: RekapanTransaksiPage(userName: userName),
-                      forward: activeIndex < 3,
+                    MaterialPageRoute(
+                      builder: (_) => RekapanTransaksiPage(userName: userName),
                     ),
                   );
                 },
@@ -1235,9 +1258,8 @@ class BottomNavigation extends StatelessWidget {
                 active: activeIndex == 4,
                 onTap: () {
                   Navigator.of(context).push(
-                    _slideNavRoute(
-                      page: LinenBelumKembaliPage(userName: userName),
-                      forward: activeIndex < 4,
+                    MaterialPageRoute(
+                      builder: (_) => LinenBelumKembaliPage(userName: userName),
                     ),
                   );
                 },
