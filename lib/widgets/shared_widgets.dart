@@ -210,40 +210,39 @@ class _AppShellState extends State<AppShell>
       },
       child: Scaffold(
         backgroundColor: widget.backgroundColor,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 88),
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onHorizontalDragUpdate: _onDragUpdate,
-                onHorizontalDragEnd: _onDragEnd,
-                child: Transform.translate(
-                  offset: Offset(
-                    _dragOffset * MediaQuery.sizeOf(context).width,
-                    0,
+        body: SafeArea(
+          bottom: false,
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 88),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onHorizontalDragUpdate: _onDragUpdate,
+                  onHorizontalDragEnd: _onDragEnd,
+                  child: Transform.translate(
+                    offset: Offset(
+                      _dragOffset * MediaQuery.sizeOf(context).width,
+                      0,
+                    ),
+                    child: widget.body,
                   ),
-                  child: widget.body,
                 ),
               ),
-            ),
 
-            // Navbar remains completely fixed while the page content moves.
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: BottomNavigation(
-                userName: widget.userName,
-                activeIndex: widget.activeIndex,
+              // Navbar remains completely fixed while the page content moves.
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: BottomNavigation(
+                  userName: widget.userName,
+                  activeIndex: widget.activeIndex,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
       ),
     );
   }
