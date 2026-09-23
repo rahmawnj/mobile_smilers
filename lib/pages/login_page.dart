@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../api/api_service.dart';
+
 import 'dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,6 +19,8 @@ class _LoginPageState extends State<LoginPage>
   bool _rememberMe = false;
   bool _obscurePassword = true;
   bool _isLoading = false;
+  AppInfo? _appInfo;
+  String _appLogoUrl = '';
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -25,6 +29,8 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
+
+    _loadAppInfo();
 
     _animationController = AnimationController(
       vsync: this,
@@ -47,6 +53,28 @@ class _LoginPageState extends State<LoginPage>
     );
 
     _animationController.forward();
+  }
+
+  Future<void> _loadAppInfo() async {
+    try {
+      final info = await ApiService.instance.getAppInfo();
+      final baseUrl = await ApiConfig.getBaseUrl();
+      if (!mounted) return;
+      setState(() {
+        _appInfo = info;
+        _appLogoUrl = info.logoUrl(baseUrl);
+      });
+    } catch (_) {
+      final info = await ApiService.instance.getStoredAppInfo();
+      final baseUrl = await ApiConfig.getBaseUrl();
+      if (!mounted) return;
+      if (info != null) {
+        setState(() {
+          _appInfo = info;
+          _appLogoUrl = info.logoUrl(baseUrl);
+        });
+      }
+    }
   }
 
   @override
@@ -381,14 +409,14 @@ class _TopBrand extends StatelessWidget {
             ),
           ),
           child: const CustomPaint(
-            child: const _HospitalLogo(),
+            child: _HospitalLogo(logoUrl: _appLogoUrl),
           ),
         ),
 
         const SizedBox(height: 14),
 
         const Text(
-          'NEW SMILE',
+          _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : 'APLIKASI',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -400,7 +428,7 @@ class _TopBrand extends StatelessWidget {
         const SizedBox(height: 3),
 
         Text(
-          'Hospital Management System',
+          'Linen Management System',
           style: TextStyle(
             color: Colors.white.withValues(alpha: .70),
             fontSize: 9,
@@ -611,7 +639,7 @@ class _LoginCard extends StatelessWidget {
                 padding:
                     EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  'RS ANUGERAH GLOBAL SEHAT',
+                  _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : '',
                   style: TextStyle(
                     color: Color(0xffA0ADB6),
                     fontSize: 7,
@@ -852,7 +880,7 @@ class _Footer extends StatelessWidget {
     return Column(
       children: [
         Text(
-          '© New SMILE RS 2026',
+          _appInfo?.appName.isNotEmpty == true ? '© ${_appInfo!.appName} 2026' : '',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white
@@ -865,7 +893,7 @@ class _Footer extends StatelessWidget {
         const SizedBox(height: 3),
 
         Text(
-          'Support by : PT. Anugerah Global Sukses',
+          '',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white
@@ -879,14 +907,20 @@ class _Footer extends StatelessWidget {
 }
 
 class _HospitalLogo extends StatelessWidget {
-  const _HospitalLogo();
+  const _HospitalLogo({required this.logoUrl});
+
+  final String logoUrl;
 
   @override
   Widget build(BuildContext context) {
+    if (logoUrl.isEmpty) {
+      return const SizedBox(width: 120, height: 120);
+    }
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Image.network(
-        'https://smilers.co.id/storage/logo/20250716hXm3seC3.jpg',
+        logoUrl,
         width: 120,
         height: 120,
         fit: BoxFit.contain,
