@@ -85,7 +85,7 @@ class AppShellState extends State<AppShell>
   }
 
   Future<void> _onDragEnd(DragEndDetails details) async {
-    if (_isNavigating || widget.activeIndex < 0) return;
+    if (_isNavigating || _currentIndex < 0) return;
 
     final velocity = details.primaryVelocity ?? 0;
     if (_dragOffset.abs() <= .18 && velocity.abs() <= 550) {
@@ -119,10 +119,10 @@ class AppShellState extends State<AppShell>
 
     if (!mounted) return;
 
-    _switchTo(targetIndex);
+    switchTo(targetIndex);
   }
 
-  void _switchTo(int index) {
+  void switchTo(int index) {
     if (index == _currentIndex) return;
     _isNavigating = true;
 
