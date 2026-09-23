@@ -27,44 +27,150 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _bodyController;
+  late final AnimationController _swipeController;
+
+  double _dragOffset = 0;
+  bool _isNavigating = false;
 
   @override
   void initState() {
     super.initState();
 
-    _bodyController = AnimationController(
+    _swipeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 280),
-      value: 0,
     );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
-      final isFirstRoute = ModalRoute.of(context)?.isFirst ?? true;
-
-      if (isFirstRoute) {
-        _bodyController.value = 1;
-      } else {
-        _bodyController.forward();
-      }
-    });
   }
 
   @override
   void dispose() {
-    _bodyController.dispose();
+    _swipeController.dispose();
     super.dispose();
+  }
+
+  void _onDragUpdate(DragUpdateDetails details) {
+    if (_isNavigating) return;
+
+    final width = MediaQuery.sizeOf(context).width;
+    if (width <= 0) return;
+
+    setState(() {
+      _dragOffset += details.delta.dx / width;
+      _dragOffset = _dragOffset.clamp(-1.0, 1.0);
+    });
+  }
+
+  Future<void> _onDragEnd(DragEndDetails details) async {
+    if (_isNavigating) return;
+
+    final width = MediaQuery.sizeOf(context).width;
+    final velocity = details.primaryVelocity ?? 0;
+    final passedThreshold = _dragOffset.abs() > .20;
+    final fastSwipe = velocity.abs() > 650;
+
+    int? targetIndex;
+
+    if ((passedThreshold || fastSwipe) && widget.activeIndex >= 0) {
+      if (_dragOffset < 0 && widget.activeIndex < 4) {
+        targetIndex = widget.activeIndex + 1;
+      } else if (_dragOffset > 0 && widget.activeIndex > 0) {
+        targetIndex = widget.activeIndex - 1;
+      }
+    }
+
+    if (targetIndex == null) {
+      final start = _dragOffset;
+      final animation = Tween<double>(
+        begin: start,
+        end: 0,
+      ).animate(
+        CurvedAnimation(
+          parent: _swipeController,
+          curve: Curves.easeOutCubic,
+        ),
+      );
+
+      _swipeController
+        ..reset()
+        ..duration = const Duration(milliseconds: 220);
+
+      void listener() {
+        if (mounted) {
+          setState(() => _dragOffset = animation.value);
+        }
+      }
+
+      animation.addListener(listener);
+      await _swipeController.forward();
+      animation.removeListener(listener);
+      return;
+    }
+
+    _isNavigating = true;
+
+    final direction = _dragOffset < 0 ? -1.0 : 1.0;
+    final animation = Tween<double>(
+      begin: _dragOffset,
+      end: direction,
+    ).animate(
+      CurvedAnimation(
+        parent: _swipeController,
+        curve: Curves.easeInOutCubic,
+      ),
+    );
+
+    _swipeController
+      ..reset()
+      ..duration = const Duration(milliseconds: 180);
+
+    void listener() {
+      if (mounted) {
+        setState(() => _dragOffset = animation.value);
+      }
+    }
+
+    animation.addListener(listener);
+    await _swipeController.forward();
+    animation.removeListener(listener);
+
+    if (!mounted) return;
+
+    _pushPageForIndex(targetIndex);
+  }
+
+  void _pushPageForIndex(int index) {
+    Widget? page;
+
+    switch (index) {
+      case 0:
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        return;
+      case 1:
+        page = InOutPage(userName: widget.userName);
+        break;
+      case 3:
+        page = RekapanTransaksiPage(userName: widget.userName);
+        break;
+      case 4:
+        page = LinenBelumKembaliPage(userName: widget.userName);
+        break;
+      default:
+        _isNavigating = false;
+        _dragOffset = 0;
+        return;
+    }
+
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => page!,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final bodyAnimation = CurvedAnimation(
-      parent: _bodyController,
-      curve: Curves.easeOutCubic,
-    );
-
     return Scaffold(
       backgroundColor: widget.backgroundColor,
       body: SafeArea(
@@ -73,16 +179,21 @@ class _AppShellState extends State<AppShell>
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 88),
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(.16, 0),
-                  end: Offset.zero,
-                ).animate(bodyAnimation),
-                child: widget.body,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onHorizontalDragUpdate: _onDragUpdate,
+                onHorizontalDragEnd: _onDragEnd,
+                child: Transform.translate(
+                  offset: Offset(
+                    _dragOffset * MediaQuery.sizeOf(context).width,
+                    0,
+                  ),
+                  child: widget.body,
+                ),
               ),
             ),
 
-            // Navbar is outside the animated content, so it stays fixed.
+            // Navbar remains completely fixed while the page content moves.
             Positioned(
               left: 0,
               right: 0,
