@@ -1385,11 +1385,11 @@ class BottomNavigation extends StatelessWidget {
                     child: IgnorePointer(
                       child: Center(
                         child: Container(
-                          height: 40,
+                          height: 34,
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: .16),
-                            borderRadius: BorderRadius.circular(999),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),
