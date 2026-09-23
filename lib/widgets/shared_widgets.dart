@@ -403,11 +403,11 @@ class DashboardHeader extends StatelessWidget {
 
                       const SizedBox(height: 7),
 
-                      Text(
-                        _appInfo?.appName ?? '',
+                      const Text(
+                        'Rumah Sakit',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
