@@ -145,7 +145,16 @@ class _AppShellState extends State<AppShell>
 
     switch (index) {
       case 0:
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        // Saat swipe kembali dari menu utama seperti Keluar Masuk,
+        // cukup pop route aktif agar Dashboard yang sudah ada di bawahnya
+        // ditampilkan kembali. Jangan popUntil karena AppShell setiap halaman
+        // punya state/gesture sendiri dan itu bisa membuat layar terlihat blank.
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        } else {
+          _isNavigating = false;
+          _dragOffset = 0;
+        }
         return;
       case 1:
         page = InOutPage(userName: widget.userName);
