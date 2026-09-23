@@ -129,16 +129,16 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             onTap: () => _showInfo(
               context,
               'Manual Book',
-              'Panduan penggunaan SMileRS tersedia di sini.',
+              'Panduan penggunaan aplikasi tersedia di sini.',
             ),
           ),
           _SettingItem(
             icon: Icons.text_fields,
-            label: 'Tentang SMileRS',
+            label: 'Tentang Aplikasi',
             onTap: () => _showInfo(
               context,
-              'Tentang SMileRS',
-              'SMileRS - Sistem Manajemen Linen Rumah Sakit.',
+              'Tentang Aplikasi',
+              '${_appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : 'Aplikasi'} - Sistem Manajemen Linen Rumah Sakit.',
             ),
           ),
           _SettingItem(
