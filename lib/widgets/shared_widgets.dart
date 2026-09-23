@@ -60,7 +60,7 @@ class _AppShellState extends State<AppShell>
   }
 
   void _onDragUpdate(DragUpdateDetails details) {
-    if (_isNavigating || widget.activeIndex < 0) return;
+    if (_isNavigating || _currentIndex < 0) return;
     final width = MediaQuery.sizeOf(context).width;
     if (width <= 0) return;
     setState(() {
@@ -94,8 +94,8 @@ class _AppShellState extends State<AppShell>
     }
 
     final int? targetIndex = _dragOffset < 0
-        ? AppNavigation.nextIndex(widget.activeIndex)
-        : AppNavigation.previousIndex(widget.activeIndex);
+        ? AppNavigation.nextIndex(_currentIndex)
+        : AppNavigation.previousIndex(_currentIndex);
 
     if (targetIndex == null) {
       await _animateBackToCenter();
@@ -123,7 +123,8 @@ class _AppShellState extends State<AppShell>
   }
 
   void _switchTo(int index) {
-    if (_isNavigating || index == _currentIndex) return;
+    if (index == _currentIndex) return;
+    _isNavigating = true;
 
     final page = AppNavigation.pageForIndex(index, widget.userName);
 
