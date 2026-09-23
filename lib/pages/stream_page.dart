@@ -15,11 +15,30 @@ class _StreamPageState extends State<StreamPage> {
   StreamResponse? _data;
   String? _error;
   bool _loading = true;
+  String _liveClock = '';
 
   @override
   void initState() {
     super.initState();
+    _updateClock();
     _listenLoop();
+  }
+
+  void _updateClock() {
+    if (!mounted) return;
+    final now = DateTime.now();
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    ];
+    final hh = now.hour.toString().padLeft(2, '0');
+    final mm = now.minute.toString().padLeft(2, '0');
+    final ss = now.second.toString().padLeft(2, '0');
+    setState(() {
+      _liveClock = now.day.toString() + ' ' + months[now.month - 1] + ' ' +
+          now.year.toString() + ' ' + hh + ':' + mm + ':' + ss;
+    });
+    Future.delayed(const Duration(seconds: 1), _updateClock);
   }
 
   Future<void> _listenLoop() async {
@@ -141,7 +160,7 @@ class _StreamPageState extends State<StreamPage> {
                             const SizedBox(width: 8),
                             Flexible(
                               child: Text(
-                                data?.waktu ?? 'Menghubungkan...',
+                                (data?.waktu.trim().isNotEmpty ?? false) ? data!.waktu : (_liveClock.isEmpty ? 'Menghubungkan...' : _liveClock),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   color: Color(0xff526575),
