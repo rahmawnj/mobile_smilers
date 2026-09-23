@@ -10,7 +10,9 @@ class ApiConfig {
   static Future<bool> hasSavedBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_baseUrlKey)?.trim();
-    return saved != null && saved.isNotEmpty;
+    return saved != null &&
+        saved.isNotEmpty &&
+        normalize(saved) != 'https://smilers.co.id';
   }
 
   static Future<String> getBaseUrl() async {
