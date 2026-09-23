@@ -149,7 +149,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                       const SizedBox(height: 10),
                       const Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Contoh: https://smilers.co.id', style: TextStyle(color: Color(0xff94A2AC), fontSize: 10)),
+                        child: Text('Contoh: https://server-rumah-sakit.com', style: TextStyle(color: Color(0xff94A2AC), fontSize: 10)),
                       ),
                       const SizedBox(height: 22),
                       SizedBox(
