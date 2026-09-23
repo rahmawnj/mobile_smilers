@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../api/api_service.dart';
 import '../pages/account_settings_page.dart';
 import '../pages/dashboard_page.dart';
 import '../pages/detail_pages.dart';
@@ -37,15 +38,23 @@ class AppShellState extends State<AppShell> {
   late int _currentIndex;
   DateTime? _lastBackPress;
   bool _showBottomNavigation = true;
+  AppInfo? _appInfo;
 
   static const List<int> _indexes = [0, 1, 3, 4];
 
   int _positionForIndex(int index) => _indexes.indexOf(index);
 
+  Future<void> _loadAppInfo() async {
+    final info = await ApiService.instance.getStoredAppInfo();
+    if (!mounted) return;
+    setState(() => _appInfo = info);
+  }
+
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.activeIndex;
+    _loadAppInfo();
     final initialPosition = _positionForIndex(_currentIndex);
     _pageController = PageController(
       initialPage: initialPosition < 0 ? 0 : initialPosition,
@@ -394,9 +403,11 @@ class DashboardHeader extends StatelessWidget {
 
                       const SizedBox(height: 7),
 
-                      const Text(
-                        'Rumah Sakit Anugerah Global Sehat',
-                        style: TextStyle(
+                      Text(
+                        _appInfo?.appName ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
