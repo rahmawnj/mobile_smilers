@@ -78,16 +78,16 @@ class _AppShellState extends State<AppShell>
 
   Future<void> _onDragEnd(DragEndDetails details) async {
     if (_isNavigating || widget.activeIndex < 0) return;
-    final velocity = details.primaryVelocity ?? 0;
-    int? targetIndex;
 
-    if (_dragOffset.abs() > .18 || velocity.abs() > 550) {
-      if (_dragOffset < 0 && widget.activeIndex < 4) {
-        targetIndex = widget.activeIndex + 1;
-      } else if (_dragOffset > 0 && widget.activeIndex > 0) {
-        targetIndex = widget.activeIndex - 1;
-      }
+    final velocity = details.primaryVelocity ?? 0;
+    if (_dragOffset.abs() <= .18 && velocity.abs() <= 550) {
+      await _animateBackToCenter();
+      return;
     }
+
+    final int? targetIndex = _dragOffset < 0
+        ? AppNavigation.nextIndex(widget.activeIndex)
+        : AppNavigation.previousIndex(widget.activeIndex);
 
     if (targetIndex == null) {
       await _animateBackToCenter();
@@ -100,14 +100,17 @@ class _AppShellState extends State<AppShell>
       CurvedAnimation(parent: _swipeController, curve: Curves.easeInCubic),
     );
     _swipeController..reset()..duration = const Duration(milliseconds: 120);
+
     void listener() {
       if (mounted) setState(() => _dragOffset = animation.value);
     }
+
     animation.addListener(listener);
     await _swipeController.forward();
     animation.removeListener(listener);
 
     if (!mounted) return;
+
     AppNavigation.goToIndex(
       context,
       targetIndex,
