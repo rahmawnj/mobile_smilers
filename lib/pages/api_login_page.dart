@@ -266,7 +266,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                             );
                           },
                           icon: const Icon(Icons.play_circle_outline_rounded),
-                          label: const Text('Stream'),
+                          label: const Text('Stream Linen'),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: const Color(0xff118D9A),
                             side: const BorderSide(color: Color(0xff118D9A)),
