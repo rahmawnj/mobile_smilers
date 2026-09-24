@@ -14,85 +14,24 @@ class PermintaanLinenPage extends StatefulWidget {
 
 class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   bool _loading = true;
-  bool _saving = false;
   String? _error;
   LinenListResponse<PermintaanLinenItem>? _response;
-  Map<String, dynamic> _formData = {};
   int? _roomId;
   String? _status;
   int _page = 1;
   int _perPage = 10;
   final TextEditingController _search = TextEditingController();
-  final TextEditingController _itemSearch = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _load();
-    _loadFormData();
   }
 
   @override
   void dispose() {
     _search.dispose();
-    _itemSearch.dispose();
     super.dispose();
-  }
-
-  List<Map<String, dynamic>> get _rooms {
-    final value = _formData['ruangan'];
-    if (value is! List) return <Map<String, dynamic>>[];
-    return value.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
-  }
-
-  List<Map<String, dynamic>> get _linens {
-    final value = _formData['linen'];
-    if (value is! List) return <Map<String, dynamic>>[];
-    return value.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
-  }
-
-  int _toInt(dynamic value) => int.tryParse(value?.toString() ?? '') ?? 0;
-
-  Future<void> _loadFormData() async {
-    try {
-      final results = await Future.wait([
-        ApiService.instance.getPermintaanLinenRuanganDropdown(),
-        ApiService.instance.getPermintaanLinenItemDropdown(),
-      ]);
-
-      if (!mounted) return;
-
-      setState(() {
-        _formData = {
-          'ruangan': results[0],
-          'linen': results[1],
-        };
-      });
-    } catch (_) {}
-  }
-
-  Future<void> _loadDropdowns() async {
-    try {
-      final results = await Future.wait([
-        ApiService.instance.getPermintaanLinenRuanganDropdown(),
-        ApiService.instance.getPermintaanLinenItemDropdown(),
-      ]);
-
-      if (!mounted) return;
-
-      setState(() {
-        _formData = {
-          'ruangan': results[0],
-          'linen': results[1],
-        };
-      });
-    } on ApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message)),
-        );
-      }
-    }
   }
 
   Future<void> _load() async {
