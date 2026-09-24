@@ -20,7 +20,6 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   final _searchController=TextEditingController();
   int _page=1,_perPage=10;
   int? _filterRoom,_selectedRoom,_selectedUser;
-  DateTime? _selectedDate;
   DateTimeRange? _selectedDateRange;
 
   @override void initState(){super.initState();_loadOptions();_load();_loadQueue();}
@@ -41,8 +40,18 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
       final r=await ApiService.instance.getLinenKeluar(
         perPage:_perPage,page:_page,
         search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),
-        ruangan:_filterRoom,date:_selectedDate==null?null:_date(_selectedDate!),
-        daterange:_selectedDateRange==null?null:_range(_selectedDateRange!));
+        ruangan:_filterRoom,
+        date:_selectedDateRange != null && _selectedDateRange!.start.year == _selectedDateRange!.end.year &&
+                _selectedDateRange!.start.month == _selectedDateRange!.end.month &&
+                _selectedDateRange!.start.day == _selectedDateRange!.end.day
+            ? _date(_selectedDateRange!.start)
+            : null,
+        daterange:_selectedDateRange != null &&
+                !(_selectedDateRange!.start.year == _selectedDateRange!.end.year &&
+                  _selectedDateRange!.start.month == _selectedDateRange!.end.month &&
+                  _selectedDateRange!.start.day == _selectedDateRange!.end.day)
+            ? _range(_selectedDateRange!)
+            : null);
       if(!mounted)return;
       setState(()=>{_response=r,_error=null,_loading=false});
     } on ApiException catch(e) {
@@ -81,15 +90,19 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
       await Future.wait([_load(),_loadQueue()]);
     } on ApiException catch(e) { if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(e.message))); }
   }
-  Future<void> _pickDate() async {
-    final d=await showDatePicker(context:context,initialDate:_selectedDate??DateTime.now(),firstDate:DateTime(2020),lastDate:DateTime(2100));
-    if(d!=null){setState(()=>{_selectedDate=d,_selectedDateRange=null,_page=1});_load();}
-  }
   Future<void> _pickRange() async {
-    final r=await showDateRangePicker(context:context,firstDate:DateTime(2020),lastDate:DateTime(2100),initialDateRange:_selectedDateRange);
-    if(r!=null){setState(()=>{_selectedDateRange=r,_selectedDate=null,_page=1});_load();}
+    final r=await showDateRangePicker(
+      context:context,
+      firstDate:DateTime(2020),
+      lastDate:DateTime(2100),
+      initialDateRange:_selectedDateRange,
+    );
+    if(r!=null){
+      setState(()=>{_selectedDateRange=r,_page=1});
+      _load();
+    }
   }
-  void _reset(){_searchController.clear();setState(()=>{_filterRoom=null,_selectedDate=null,_selectedDateRange=null,_page=1});_load();}
+  void _reset(){_searchController.clear();setState(()=>{_filterRoom=null,_selectedDateRange=null,_page=1});_load();}
 
   @override Widget build(BuildContext context) {
     final rows=_response?.data??const <LinenKeluarItem>[];
@@ -136,8 +149,6 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                 items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua Ruangan')), ...?_options?.ruangan.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.namaRuangan)))],
                 onChanged:(v){setState(()=>{_filterRoom=v,_page=1});_load();},
               )),
-              const SizedBox(width:8),
-              Expanded(child:OutlinedButton.icon(onPressed:_pickDate,icon:const Icon(Icons.event_rounded),label:Text(_selectedDate==null?'Tanggal':_date(_selectedDate!)))),
               const SizedBox(width:8),
               Expanded(child:OutlinedButton.icon(onPressed:_pickRange,icon:const Icon(Icons.date_range_rounded),label:Text(_selectedDateRange==null?'Rentang Tanggal':_range(_selectedDateRange!)))),
               IconButton(onPressed:_reset,tooltip:'Reset filter',icon:const Icon(Icons.filter_alt_off_rounded)),
