@@ -17,7 +17,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   LinenScanQueueResponse? _queue;
   final _searchController=TextEditingController();
   int _page=1,_perPage=10;
-  int? _selectedRoom,_selectedUser;
+  int? _filterRoom,_selectedRoom,_selectedUser;
   DateTime? _selectedDate;
   DateTimeRange? _selectedDateRange;
 
@@ -39,7 +39,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
       final r=await ApiService.instance.getLinenKeluar(
         perPage:_perPage,page:_page,
         search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),
-        ruangan:_selectedRoom,date:_selectedDate==null?null:_date(_selectedDate!),
+        ruangan:_filterRoom,date:_selectedDate==null?null:_date(_selectedDate!),
         daterange:_selectedDateRange==null?null:_range(_selectedDateRange!));
       if(!mounted)return;
       setState(()=>{_response=r,_error=null,_loading=false});
@@ -87,7 +87,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     final r=await showDateRangePicker(context:context,firstDate:DateTime(2020),lastDate:DateTime(2100),initialDateRange:_selectedDateRange);
     if(r!=null){setState(()=>{_selectedDateRange=r,_selectedDate=null,_page=1});_load();}
   }
-  void _reset(){_searchController.clear();setState(()=>{_selectedRoom=null,_selectedUser=null,_selectedDate=null,_selectedDateRange=null,_page=1});_load();}
+  void _reset(){_searchController.clear();setState(()=>{_filterRoom=null,_selectedDate=null,_selectedDateRange=null,_page=1});_load();}
 
   @override Widget build(BuildContext context) {
     final rows=_response?.data??const <LinenKeluarItem>[];
@@ -101,23 +101,56 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
             border:OutlineInputBorder(borderRadius:BorderRadius.circular(20),borderSide:BorderSide.none)))),
           const SizedBox(width:8),ElevatedButton.icon(onPressed:_scan,icon:const Icon(Icons.qr_code_scanner_rounded),label:const Text('Scan'))]),
         const SizedBox(height:10),
-        if(_optionsLoading)const LinearProgressIndicator(minHeight:2),
-        Row(children:[
-          Expanded(child:DropdownButtonFormField<int?>(value:_selectedRoom,decoration:const InputDecoration(labelText:'Ruangan',filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderSide:BorderSide.none)),
-            items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua Ruangan')), ...?_options?.ruangan.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.namaRuangan)))],
-            onChanged:(v){setState(()=>{_selectedRoom=v,_page=1});_load();})),
-          const SizedBox(width:8),
-          Expanded(child:DropdownButtonFormField<int?>(value:_selectedUser,decoration:const InputDecoration(labelText:'User',filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderSide:BorderSide.none)),
-            items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua User')), ...?_options?.users.map((u)=>DropdownMenuItem<int?>(value:u.id,child:Text('${u.name} (${u.username})')))],
-            onChanged:(v){setState(()=>{_selectedUser=v,_page=1});_load();})),
-        ]),
-        const SizedBox(height:8),
-        Row(children:[
-          Expanded(child:OutlinedButton.icon(onPressed:_pickDate,icon:const Icon(Icons.event_rounded),label:Text(_selectedDate==null?'Tanggal':_date(_selectedDate!)))),
-          const SizedBox(width:8),Expanded(child:OutlinedButton.icon(onPressed:_pickRange,icon:const Icon(Icons.date_range_rounded),label:Text(_selectedDateRange==null?'Rentang Tanggal':_range(_selectedDateRange!)))),
-          IconButton(onPressed:_reset,tooltip:'Reset filter',icon:const Icon(Icons.filter_alt_off_rounded))]),
+        Container(
+          width:double.infinity,
+          padding:const EdgeInsets.all(14),
+          decoration:BoxDecoration(
+            color:Colors.white,
+            borderRadius:BorderRadius.circular(18),
+            boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:12,offset:const Offset(0,4))],
+          ),
+          child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+            const Text('Filter Data',style:TextStyle(fontSize:13,fontWeight:FontWeight.w800)),
+            const SizedBox(height:10),
+            if(_optionsLoading)const LinearProgressIndicator(minHeight:2),
+            const SizedBox(height:8),
+            Row(children:[
+              Expanded(child:DropdownButtonFormField<int?>(
+                value:_filterRoom,
+                decoration:const InputDecoration(labelText:'Ruangan',filled:true,fillColor:Color(0xfff5f8fc),border:OutlineInputBorder(borderSide:BorderSide.none)),
+                items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua Ruangan')), ...?_options?.ruangan.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.namaRuangan)))],
+                onChanged:(v){setState(()=>{_filterRoom=v,_page=1});_load();},
+              )),
+              const SizedBox(width:8),
+              Expanded(child:OutlinedButton.icon(onPressed:_pickDate,icon:const Icon(Icons.event_rounded),label:Text(_selectedDate==null?'Tanggal':_date(_selectedDate!)))),
+              const SizedBox(width:8),
+              Expanded(child:OutlinedButton.icon(onPressed:_pickRange,icon:const Icon(Icons.date_range_rounded),label:Text(_selectedDateRange==null?'Rentang Tanggal':_range(_selectedDateRange!)))),
+              IconButton(onPressed:_reset,tooltip:'Reset filter',icon:const Icon(Icons.filter_alt_off_rounded)),
+            ]),
+          ]),
+        ),
         const SizedBox(height:12),
-        Container(width:double.infinity,padding:const EdgeInsets.all(14),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+        Container(width:double.infinity,padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18),boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:12,offset:const Offset(0,4))]),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+          const Text('Form Linen Keluar',style:TextStyle(fontSize:13,fontWeight:FontWeight.w800)),
+          const SizedBox(height:10),
+          Row(children:[
+            Expanded(child:DropdownButtonFormField<int?>(
+              value:_selectedRoom,
+              decoration:const InputDecoration(labelText:'Ruangan Tujuan',filled:true,fillColor:Color(0xfff5f8fc),border:OutlineInputBorder(borderSide:BorderSide.none)),
+              items:[const DropdownMenuItem<int?>(value:null,child:Text('Pilih Ruangan')), ...?_options?.ruangan.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.namaRuangan)))],
+              onChanged:(v)=>setState(()=>_selectedRoom=v),
+            )),
+            const SizedBox(width:8),
+            Expanded(child:DropdownButtonFormField<int?>(
+              value:_selectedUser,
+              decoration:const InputDecoration(labelText:'User',filled:true,fillColor:Color(0xfff5f8fc),border:OutlineInputBorder(borderSide:BorderSide.none)),
+              items:[const DropdownMenuItem<int?>(value:null,child:Text('Pilih User')), ...?_options?.users.map((u)=>DropdownMenuItem<int?>(value:u.id,child:Text('${u.name} (${u.username})')))],
+              onChanged:(v)=>setState(()=>_selectedUser=v),
+            )),
+          ]),
+          const SizedBox(height:10),
+          SizedBox(width:double.infinity,child:OutlinedButton.icon(onPressed:_scan,icon:const Icon(Icons.qr_code_scanner_rounded),label:const Text('Scan Linen'))),
+          const SizedBox(height:12),
           Row(children:[Expanded(child:Text('Antrean Scan (${_queue?.total??0})',style:const TextStyle(fontSize:13,fontWeight:FontWeight.w800))),ElevatedButton.icon(onPressed:_saveQueue,icon:const Icon(Icons.save_rounded,size:18),label:const Text('Simpan Keluar'))]),
           const SizedBox(height:8),
           _queueLoading?const Padding(padding:EdgeInsets.all(16),child:Center(child:CircularProgressIndicator())):(_queue?.data.isEmpty??true)?const Padding(padding:EdgeInsets.all(12),child:Text('Antrean scan kosong.')):
