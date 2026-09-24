@@ -26,6 +26,10 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   @override void dispose(){_searchController.dispose();super.dispose();}
   String _date(DateTime d)=>'${d.month}/${d.day}/${d.year}';
   String _range(DateTimeRange r)=>'${_date(r.start)} - ${_date(r.end)}';
+  bool _isSingleDate(DateTimeRange r) =>
+      r.start.year == r.end.year &&
+      r.start.month == r.end.month &&
+      r.start.day == r.end.day;
 
   Future<void> _loadOptions() async {
     try {
@@ -41,15 +45,10 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         perPage:_perPage,page:_page,
         search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),
         ruangan:_filterRoom,
-        date:_selectedDateRange != null && _selectedDateRange!.start.year == _selectedDateRange!.end.year &&
-                _selectedDateRange!.start.month == _selectedDateRange!.end.month &&
-                _selectedDateRange!.start.day == _selectedDateRange!.end.day
+        date:_selectedDateRange != null && _isSingleDate(_selectedDateRange!)
             ? _date(_selectedDateRange!.start)
             : null,
-        daterange:_selectedDateRange != null &&
-                !(_selectedDateRange!.start.year == _selectedDateRange!.end.year &&
-                  _selectedDateRange!.start.month == _selectedDateRange!.end.month &&
-                  _selectedDateRange!.start.day == _selectedDateRange!.end.day)
+        daterange:_selectedDateRange != null && !_isSingleDate(_selectedDateRange!)
             ? _range(_selectedDateRange!)
             : null);
       if(!mounted)return;
@@ -150,7 +149,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                 onChanged:(v){setState(()=>{_filterRoom=v,_page=1});_load();},
               )),
               const SizedBox(width:8),
-              Expanded(child:OutlinedButton.icon(onPressed:_pickRange,icon:const Icon(Icons.date_range_rounded),label:Text(_selectedDateRange==null?'Rentang Tanggal':_range(_selectedDateRange!)))),
+              Expanded(child:OutlinedButton.icon(onPressed:_pickRange,icon:const Icon(Icons.date_range_rounded),label:Text(_selectedDateRange==null?'Rentang Tanggal':(_isSingleDate(_selectedDateRange!)?_date(_selectedDateRange!.start):_range(_selectedDateRange!))))),
               IconButton(onPressed:_reset,tooltip:'Reset filter',icon:const Icon(Icons.filter_alt_off_rounded)),
             ]),
           ]),
