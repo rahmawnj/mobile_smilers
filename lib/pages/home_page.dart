@@ -4,6 +4,7 @@ import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
 import 'detail_pages.dart';
 import 'ruangan/linen_ruangan_page.dart';
+import 'laundry/linen_laundry_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key, required this.userName, this.embedded = false});
@@ -19,6 +20,7 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _loading = true;
   String? _error;
   List<LinenCategory> _linen = const [];
+  int _readyCount = 0;
   int _laundryCount = 0;
   int _roomCount = 0;
 
@@ -50,6 +52,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
       setState(() {
         _linen = linenResponse.data;
+        _readyCount = linenResponse.meta.total;
         _laundryCount = laundryResponse.meta.total;
         _roomCount = roomResponse.meta.total;
         _loading = false;
@@ -92,13 +95,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: MetricCard(
                   metrics: [
                     {
-                      'value': _loading ? '...' : _laundryCount.toString(),
+                      'value': _loading ? '...' : _readyCount.toString(),
                       'unit': 'Linen',
                       'title': 'Linen & Tirai Ready',
                       'action': 'Lihat Data',
                     },
                     {
-                      'value': _loading ? '...' : totalStock.toString(),
+                      'value': _loading ? '...' : _laundryCount.toString(),
                       'unit': 'Linen',
                       'title': 'Linen & Tirai di Laundry',
                       'action': 'Lihat Data',
