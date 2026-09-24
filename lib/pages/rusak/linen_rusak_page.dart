@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../api/api_service.dart';
 import '../../widgets/pagination_widget.dart';
+import '../../widgets/shared_widgets.dart';
 
 class LinenRusakPage extends StatefulWidget {
   const LinenRusakPage({super.key, required this.userName});
@@ -201,29 +202,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
       ),
       child: Row(
         children: [
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => Navigator.of(context).pop(),
-              borderRadius: BorderRadius.circular(20),
-              child: Ink(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: .14),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: .20),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ),
-          ),
+          const AppBackButton(),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
