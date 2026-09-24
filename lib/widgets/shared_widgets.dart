@@ -607,23 +607,34 @@ class MetricCard extends StatelessWidget {
 /// ===============================================================
 
 class MetricTile extends StatefulWidget {
-  const MetricTile({super.key, required this.metric, required this.onTap, this.index = 0});
+  const MetricTile({
+    super.key,
+    required this.metric,
+    required this.onTap,
+    this.index = 0,
+  });
+
   final Map<String, dynamic> metric;
   final VoidCallback onTap;
   final int index;
-  @override State<MetricTile> createState() => _MetricTileState();
+
+  @override
+  State<MetricTile> createState() => _MetricTileState();
 }
 
 class _MetricTileState extends State<MetricTile> {
-  bool _pressed = false;
   @override
   Widget build(BuildContext context) {
     final metric = widget.metric;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: widget.onTap,
         borderRadius: BorderRadius.circular(20),
+        hoverColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
         child: Container(
           margin: const EdgeInsets.only(bottom: 6),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -631,33 +642,74 @@ class _MetricTileState extends State<MetricTile> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
-            child: Row(
-              children: [
-                _MetricIcon(index: widget.index),
-                const SizedBox(width: 12),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('${metric['value']}', style: const TextStyle(color: Color(0xff172b4d), fontSize: 23, fontWeight: FontWeight.w800, height: 1)),
+          child: Row(
+            children: [
+              _MetricIcon(index: widget.index),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${metric['value']}',
+                    style: const TextStyle(
+                      color: Color(0xff172b4d),
+                      fontSize: 23,
+                      fontWeight: FontWeight.w800,
+                      height: 1,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(metric['unit'] as String, style: const TextStyle(color: Color(0xff9aa8b5), fontSize: 9, fontWeight: FontWeight.w500)),
-                ]),
-                const Spacer(),
-                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  Text(metric['title'] as String, style: const TextStyle(color: Color(0xff52616f), fontSize: 10, fontWeight: FontWeight.w600)),
+                  Text(
+                    metric['unit'] as String,
+                    style: const TextStyle(
+                      color: Color(0xff9aa8b5),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    metric['title'] as String,
+                    style: const TextStyle(
+                      color: Color(0xff52616f),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 5),
-                  Row(children: [
-                    Text(metric['action'] as String, style: const TextStyle(color: Color(0xff159cf1), fontSize: 9, fontWeight: FontWeight.w700)),
-                    const SizedBox(width: 3),
-                    const Icon(Icons.arrow_forward_rounded, color: Color(0xff159cf1), size: 12),
-                  ]),
-                ]),
-              ],
-            ),
+                  Row(
+                    children: [
+                      Text(
+                        metric['action'] as String,
+                        style: const TextStyle(
+                          color: Color(0xff159cf1),
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(width: 3),
+                      const Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Color(0xff159cf1),
+                        size: 12,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 }
+
 /// ===============================================================
 /// METRIC ICON
 /// ===============================================================
