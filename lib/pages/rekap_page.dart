@@ -150,7 +150,7 @@ class _RekapCard extends StatelessWidget {
 class _RekapTable extends StatelessWidget {
   const _RekapTable({required this.rows}); final List<RekapanTransaksiItem> rows;
   @override
-  Widget build(BuildContext context)=>Container(width:double.infinity,clipBehavior:Clip.antiAlias,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
+  Widget build(BuildContext context)=>Container(width:double.infinity,hild:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
     headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),
     headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),
     dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),
