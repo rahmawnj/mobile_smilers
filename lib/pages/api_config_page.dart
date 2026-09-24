@@ -44,7 +44,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
 
     if (value.isEmpty || normalized.isEmpty || uri == null || uri.host.isEmpty ||
         (uri.scheme != 'http' && uri.scheme != 'https')) {
-      _show('URL tidak valid. Contoh: https://server-rumah-sakit.com');
+      _show('URL tidak valid. Contoh: https://server-rumah-sakit.com atau http://192.168.1.100');
       return;
     }
 
@@ -143,7 +143,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                         onSubmitted: (_) => _save(),
                         decoration: InputDecoration(
                           labelText: 'Base URL',
-                          hintText: 'https://server-rumah-sakit.com',
+                          hintText: 'https://server-rumah-sakit.com atau http://192.168.1.100',
                           prefixIcon: const Icon(Icons.dns_outlined, color: Color(0xff118D9A)),
                           filled: true,
                           fillColor: const Color(0xffF5F8FA),
