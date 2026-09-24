@@ -164,11 +164,7 @@ class _InOutTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 18, offset: const Offset(0, 7))],
-      ),
+      
       clipBehavior: Clip.antiAlias,
       child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
