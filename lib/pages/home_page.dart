@@ -51,7 +51,7 @@ class _DashboardPageState extends State<DashboardPage> {
         _linen = linenResponse.data;
         _laundryCount = laundryResponse.data.fold<int>(
           0,
-          (sum, item) => sum + int.tryParse(item.ready.toString())!,
+          (sum, item) => sum + int.tryParse(item.ready.toString()) ?? 0,
         );
         _roomCount = roomResponse.data.fold<int>(
           0,
