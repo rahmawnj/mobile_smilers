@@ -78,7 +78,7 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
                     hintText: 'Semua Ruangan',
                     prefixIcon: const Icon(Icons.meeting_room_rounded, size: 19),
                     filled: true, fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
                   ),
                   items: [
                     const DropdownMenuItem<int?>(value: null, child: Text('Semua Ruangan')),
@@ -145,12 +145,12 @@ class _RekapCard extends StatelessWidget {
   const _RekapCard({required this.title,required this.value,required this.icon});
   final String title,value; final IconData icon;
   @override
-  Widget build(BuildContext context)=>Container(padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(16)),child:Column(children:[Icon(icon,size:20,color:const Color(0xff1261dc)),const SizedBox(height:6),Text(value,style:const TextStyle(fontSize:18,fontWeight:FontWeight.w800)),const SizedBox(height:2),Text(title,textAlign:TextAlign.center,style:const TextStyle(fontSize:8,color:Color(0xff6f7f8d))) ]));
+  Widget build(BuildContext context)=>Container(padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),child:Column(children:[Icon(icon,size:20,color:const Color(0xff1261dc)),const SizedBox(height:6),Text(value,style:const TextStyle(fontSize:18,fontWeight:FontWeight.w800)),const SizedBox(height:2),Text(title,textAlign:TextAlign.center,style:const TextStyle(fontSize:8,color:Color(0xff6f7f8d))) ]));
 }
 class _RekapTable extends StatelessWidget {
   const _RekapTable({required this.rows}); final List<RekapanTransaksiItem> rows;
   @override
-  Widget build(BuildContext context)=>Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),clipBehavior:Clip.antiAlias,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
+  Widget build(BuildContext context)=>Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),clipBehavior:Clip.antiAlias,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
     headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),
     headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),
     dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),
