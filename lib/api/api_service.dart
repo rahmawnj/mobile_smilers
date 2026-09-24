@@ -216,6 +216,7 @@ class LinenLaundryDetailResponse {
   const LinenLaundryDetailResponse({required this.data,required this.meta});
   final List<LinenLaundryDetailItem> data; final LinenMeta meta;
   factory LinenLaundryDetailResponse.fromJson(Map<String,dynamic> j)=>LinenLaundryDetailResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenLaundryDetailItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
+  }
 }
 class LinenRuanganItem {
   const LinenRuanganItem({required this.id,required this.namaRuangan,required this.stokAwal,required this.hilang,required this.linenDiRuangan});
@@ -260,9 +261,11 @@ class LinenRuanganBaHilangItem {
   factory LinenRuanganBaHilangItem.fromJson(Map<String,dynamic> j)=>LinenRuanganBaHilangItem(id:_toInt(j['id']),waktuHilang:j['waktu_hilang']?.toString()??'',fileUrl:j['file_url']?.toString()??'');
 }
 class LinenRuanganBaHilangResponse {
-  const LinenRuanganBaHilangResponse({required this.ruangan,required this.data,required this.meta});
-  final String ruangan; final List<LinenRuanganBaHilangItem> data; final LinenMeta meta;
-  factory LinenRuanganBaHilangResponse.fromJson(Map<String,dynamic> j)=>LinenRuanganBaHilangResponse(ruangan:j['ruangan']?.toString()??'',data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenRuanganBaHilangItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
+  const LinenRuanganBaHilangResponse({required this.ruanganId,required this.ruanganName,required this.data,required this.meta});
+  final int ruanganId; final String ruanganName; final List<LinenRuanganBaHilangItem> data; final LinenMeta meta;
+  factory LinenRuanganBaHilangResponse.fromJson(Map<String,dynamic> j) {
+    final room = Map<String,dynamic>.from((j['ruangan'] as Map?) ?? const {});
+    return LinenRuanganBaHilangResponse(ruanganId:_toInt(room['id']),ruanganName:room['nama_ruangan']?.toString()??'',data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenRuanganBaHilangItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
 }
 class LinenRusakItem {
   const LinenRusakItem({required this.id,required this.linenId,required this.namaLinen,required this.tagRfid,required this.qrCode,required this.jam,required this.tanggal,required this.tahunPembuatan});
