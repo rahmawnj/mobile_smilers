@@ -6,6 +6,7 @@ import 'detail_pages.dart';
 import 'ruangan/linen_ruangan_page.dart';
 import 'laundry/linen_laundry_page.dart';
 import 'laundry/linen_laundry_detail_page.dart';
+import 'keluar/linen_keluar_page.dart';
 import 'rusak/linen_rusak_page.dart';
 import 'hilang/linen_hilang_page.dart';
 
