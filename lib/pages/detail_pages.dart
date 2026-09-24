@@ -406,7 +406,7 @@ class _LinenMasukTable extends StatelessWidget {
   final List<LinenMasukItem> rows;
   final int page, perPage;
   @override Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 18, offset: const Offset(0, 7))]),
+    
     clipBehavior: Clip.antiAlias,
     child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -1003,10 +1003,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                             : Column(
                                 children: [
                                   Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
+                                    
                                     clipBehavior: Clip.antiAlias,
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
@@ -1163,7 +1160,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
       Expanded(child: RefreshIndicator(onRefresh: _load, child: _loading ? const Center(child: CircularProgressIndicator()) : _error != null ? ListView(children: [Padding(padding: const EdgeInsets.all(24), child: Column(children: [const Icon(Icons.cloud_off_rounded), const SizedBox(height: 10), Text('_error!', textAlign: TextAlign.center), const SizedBox(height: 12), ElevatedButton(onPressed: _load, child: const Text('Coba Lagi'))]))]) : ListView(padding: const EdgeInsets.fromLTRB(16,14,16,24), children: [
         Container(width: double.infinity, padding: const EdgeInsets.fromLTRB(14,4,14,4), decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20)), child: DropdownButtonHideUnderline(child: DropdownButton<String?>(value: _selectedCategory,isExpanded:true,hint:const Text('Filter Kategori'),items:[const DropdownMenuItem<String?>(value:null,child:Text('Semua Kategori')),...categoryNames.map((n)=>DropdownMenuItem<String?>(value:n,child:Text(n)))],onChanged:(v)=>setState(()=>_selectedCategory=v)))),
         const SizedBox(height: 12),
-        Container(width: double.infinity, decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20),boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:18,offset:const Offset(0,7))]),clipBehavior:Clip.antiAlias, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
+        Container(width: double.infinity, clipBehavior:Clip.antiAlias, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
         if(filtered.isEmpty) const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data untuk kategori ini.'))),
         if(_meta!=null) AppPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
       ]))),
@@ -1289,10 +1286,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                               children: [
                                 Container(
                                   width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
+                                  
                                   clipBehavior: Clip.antiAlias,
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
@@ -1536,17 +1530,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                               children: [
                                 Container(
                                   width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: .05),
-                                        blurRadius: 18,
-                                        offset: const Offset(0, 7),
-                                      ),
-                                    ],
-                                  ),
+                                  
                                   clipBehavior: Clip.antiAlias,
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
@@ -1801,17 +1785,7 @@ class _RoomDetailTable extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: .05),
-                blurRadius: 18,
-                offset: const Offset(0, 7),
-              ),
-            ],
-          ),
+          
           clipBehavior: Clip.antiAlias,
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -2321,13 +2295,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                             const SizedBox(height: 12),
                             Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 18, offset: const Offset(0, 7)),
-                                ],
-                              ),
+                              
                               clipBehavior: Clip.antiAlias,
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
@@ -2584,17 +2552,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                             const SizedBox(height: 12),
                             Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: .05),
-                                    blurRadius: 18,
-                                    offset: const Offset(0, 7),
-                                  ),
-                                ],
-                              ),
+                              
                               clipBehavior: Clip.antiAlias,
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
@@ -2818,17 +2776,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                             const SizedBox(height: 12),
                             Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: .05),
-                                    blurRadius: 18,
-                                    offset: const Offset(0, 7),
-                                  ),
-                                ],
-                              ),
+                              
                               clipBehavior: Clip.antiAlias,
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
@@ -3031,7 +2979,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           const SizedBox(width:8),Expanded(child:OutlinedButton.icon(onPressed:_pickRange,icon:const Icon(Icons.date_range_rounded),label:Text(_selectedDateRange==null?'Rentang Tanggal':_range(_selectedDateRange!)))),
           IconButton(onPressed:_reset,tooltip:'Reset filter',icon:const Icon(Icons.filter_alt_off_rounded))]),
         const SizedBox(height:12),
-        Container(width:double.infinity,padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+        Container(width:double.infinity,padding:const EdgeInsets.all(14),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
           Row(children:[Expanded(child:Text('Antrean Scan (${_queue?.total??0})',style:const TextStyle(fontSize:13,fontWeight:FontWeight.w800))),ElevatedButton.icon(onPressed:_saveQueue,icon:const Icon(Icons.save_rounded,size:18),label:const Text('Simpan Keluar'))]),
           const SizedBox(height:8),
           _queueLoading?const Padding(padding:EdgeInsets.all(16),child:Center(child:CircularProgressIndicator())):(_queue?.data.isEmpty??true)?const Padding(padding:EdgeInsets.all(12),child:Text('Antrean scan kosong.')):
@@ -3044,7 +2992,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         const SizedBox(height:12),
         if(_loading)const Center(child:Padding(padding:EdgeInsets.all(30),child:CircularProgressIndicator()))
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
-        else Container(width:double.infinity,clipBehavior:Clip.antiAlias,decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
+        else Container(width:double.infinity,clipBehavior:Clip.antiAlias,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
           headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(fontSize:9),columnSpacing:22,
           columns:const [DataColumn(label:Text('No.')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('QR Code')),DataColumn(label:Text('RFID')),DataColumn(label:Text('Ke Ruangan')),DataColumn(label:Text('Jam')),DataColumn(label:Text('Tanggal')),DataColumn(label:Text('User'))],
           rows:rows.asMap().entries.map((e){final n=((meta?.currentPage??_page)-1)*(meta?.perPage??_perPage)+e.key+1;return DataRow(cells:[DataCell(Text('${n}')),DataCell(Text(e.value.namaLinen)),DataCell(Text(e.value.qrCode)),DataCell(Text(e.value.tagRfid)),DataCell(Text(e.value.keRuangan)),DataCell(Text(e.value.jam)),DataCell(Text(e.value.tanggal)),DataCell(Text(e.value.user))]);}).toList(),
