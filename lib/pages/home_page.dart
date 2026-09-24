@@ -6,6 +6,7 @@ import 'detail_pages.dart';
 import 'ruangan/linen_ruangan_page.dart';
 import 'laundry/linen_laundry_page.dart';
 import 'laundry/linen_laundry_detail_page.dart';
+import 'rusak/linen_rusak_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key, required this.userName, this.embedded = false});
