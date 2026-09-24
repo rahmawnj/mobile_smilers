@@ -222,19 +222,9 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                               ),
                             ),
                             const SizedBox(width: 6),
-                            DropdownButtonHideUnderline(
-                              child: DropdownButton<int>(
-                                value: _perPage,
-                                isDense: true,
-                                items: const [
-                                  DropdownMenuItem(value: 10, child: Text('10')),
-                                  DropdownMenuItem(value: 25, child: Text('25')),
-                                  DropdownMenuItem(value: 50, child: Text('50')),
-                                ],
-                                onChanged: (value) {
-                                  if (value != null) _changePerPage(value);
-                                },
-                              ),
+                            AppPerPageDropdown(
+                              value: _perPage,
+                              onChanged: _changePerPage,
                             ),
                           ],
                         ),
