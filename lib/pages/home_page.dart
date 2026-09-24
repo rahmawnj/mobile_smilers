@@ -53,8 +53,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
       setState(() {
         _linen = linenResponse.data;
-        _readyCount = linenResponse.meta.total;
-        _laundryCount = laundryResponse.meta.total;
+        _readyCount = laundryResponse.meta.total;
+        _laundryCount = linenResponse.meta.total;
         _roomCount = roomResponse.meta.total;
         _loading = false;
       });
