@@ -1145,36 +1145,41 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                 ),
                               if (_response != null) ...[
                                 const SizedBox(height: 8),
-                                Row(
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    const Text(
-                                      'Jumlah',
-                                      style: TextStyle(fontSize: 9),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        const Text(
+                                          'Jumlah',
+                                          style: TextStyle(fontSize: 9),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: _perPage,
+                                            isDense: true,
+                                            items: const [10, 25, 50, 100]
+                                                .map(
+                                                  (v) => DropdownMenuItem<int>(
+                                                    value: v,
+                                                    child: Text('$v'),
+                                                  ),
+                                                )
+                                                .toList(),
+                                            onChanged: (v) {
+                                              if (v == null) return;
+                                              setState(() {
+                                                _perPage = v;
+                                                _page = 1;
+                                              });
+                                              _load();
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 8),
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButton<int>(
-                                        value: _perPage,
-                                        isDense: true,
-                                        items: const [10, 25, 50, 100]
-                                            .map(
-                                              (v) => DropdownMenuItem<int>(
-                                                value: v,
-                                                child: Text('$v'),
-                                              ),
-                                            )
-                                            .toList(),
-                                        onChanged: (v) {
-                                          if (v == null) return;
-                                          setState(() {
-                                            _perPage = v;
-                                            _page = 1;
-                                          });
-                                          _load();
-                                        },
-                                      ),
-                                    ),
-                                    const Spacer(),
                                     AppPagination(
                                       meta: _response!.meta,
                                       onPage: (page) {
