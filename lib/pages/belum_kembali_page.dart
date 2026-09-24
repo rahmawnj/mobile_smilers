@@ -20,11 +20,7 @@ class _BelumKembaliTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      
-      
-      child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
+    return TableSurface(child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: SizedBox(width: constraints.maxWidth, child: DataTable(
           headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
