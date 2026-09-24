@@ -18,6 +18,10 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   bool _loading = true;
   String? _error;
   LinenListResponse<LinenCategory>? _response;
+  List<Map<String, dynamic>> _categoryOptions = [];
+  List<LinenDropdownSubCategory> _subCategoryOptions = [];
+  int? _selectedCategoryId;
+  String? _selectedSubCategory;
   int _page = 1;
   int _perPage = 10;
 
@@ -26,7 +30,50 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   @override
   void initState() {
     super.initState();
+    _loadFilterOptions();
     _load();
+  }
+
+  Future<void> _loadFilterOptions() async {
+    try {
+      final results = await Future.wait([
+        ApiService.instance.getLinenCategoryDropdown(),
+        ApiService.instance.getLinenSubCategoryDropdown(),
+      ]);
+
+      if (!mounted) return;
+
+      setState(() {
+        _categoryOptions =
+            (results[0] as List<Map<String, dynamic>>).where((item) {
+          final id = _toOptionId(item);
+          final name = _toOptionName(item);
+          return id != null && name.isNotEmpty;
+        }).toList();
+        _subCategoryOptions =
+            (results[1] as List<LinenDropdownSubCategory>)
+                .where((item) => item.subKategoriLinen.trim().isNotEmpty)
+                .toList();
+      });
+    } catch (_) {
+      // Filter options are auxiliary; the main /linen list can still load.
+    }
+  }
+
+  int? _toOptionId(Map<String, dynamic> item) {
+    final value = item['id'] ?? item['kategori_linen'] ?? item['kategori_linen_id'];
+    if (value is num) return value.toInt();
+    return int.tryParse(value?.toString() ?? '');
+  }
+
+  String _toOptionName(Map<String, dynamic> item) {
+    return (item['nama_kategori_linen'] ??
+            item['nama_kategori'] ??
+            item['name'] ??
+            item['label'] ??
+            '')
+        .toString()
+        .trim();
   }
 
   @override
@@ -108,7 +155,14 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final rows = _response?.data ?? const <LinenCategory>[];
+    final allRows = _response?.data ?? const <LinenCategory>[];
+    final rows = allRows.where((category) {
+      final categoryMatches =
+          _selectedCategoryId == null || category.id == _selectedCategoryId;
+      final subCategoryMatches = _selectedSubCategory == null ||
+          category.subKategoriLinen.trim() == _selectedSubCategory;
+      return categoryMatches && subCategoryMatches;
+    }).toList();
     final meta = _response?.meta;
 
     return Scaffold(
@@ -129,6 +183,8 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
                 children: [
                   _buildSearchBar(),
+                  const SizedBox(height: 10),
+                  _buildFilters(),
                   const SizedBox(height: 14),
                   if (_loading)
                     const Padding(
@@ -259,6 +315,68 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     );
   }
 
+  Widget _buildFilters() {
+    return Row(
+      children: [
+        Expanded(
+          child: _FilterDropdown<int>(
+            label: 'Kategori',
+            value: _selectedCategoryId,
+            items: _categoryOptions.map((item) {
+              return DropdownMenuItem<int>(
+                value: _toOptionId(item),
+                child: Text(
+                  _toOptionName(item),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedCategoryId = value;
+                _page = 1;
+              });
+            },
+            onClear: _selectedCategoryId == null
+                ? null
+                : () => setState(() {
+                      _selectedCategoryId = null;
+                      _page = 1;
+                    }),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _FilterDropdown<String>(
+            label: 'Sub Kategori',
+            value: _selectedSubCategory,
+            items: _subCategoryOptions.map((item) {
+              return DropdownMenuItem<String>(
+                value: item.subKategoriLinen,
+                child: Text(
+                  item.subKategoriLinen,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedSubCategory = value;
+                _page = 1;
+              });
+            },
+            onClear: _selectedSubCategory == null
+                ? null
+                : () => setState(() {
+                      _selectedSubCategory = null;
+                      _page = 1;
+                    }),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildTable(List<LinenCategory> rows) {
     return TableSurface(
       child: LayoutBuilder(
@@ -376,6 +494,78 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
             onPressed: _load,
             child: const Text('Coba Lagi'),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterDropdown<T> extends StatelessWidget {
+  const _FilterDropdown({
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    required this.onClear,
+  });
+
+  final String label;
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+  final VoidCallback? onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xffe5ebf1)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                value: value,
+                isExpanded: true,
+                isDense: true,
+                hint: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Color(0xff7f8c98),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 18,
+                  color: Color(0xff7f8c98),
+                ),
+                items: items,
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+          if (onClear != null)
+            IconButton(
+              tooltip: 'Reset $label',
+              onPressed: onClear,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(
+                minWidth: 24,
+                minHeight: 24,
+              ),
+              icon: const Icon(
+                Icons.close_rounded,
+                size: 15,
+                color: Color(0xff9aa8b5),
+              ),
+            ),
         ],
       ),
     );
