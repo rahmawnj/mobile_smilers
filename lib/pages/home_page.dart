@@ -51,10 +51,7 @@ class _DashboardPageState extends State<DashboardPage> {
       setState(() {
         _linen = linenResponse.data;
         _laundryCount = laundryResponse.meta.total;
-        _roomCount = roomResponse.data.fold<int>(
-          0,
-          (sum, item) => sum + item.linenDiRuangan,
-        );
+        _roomCount = roomResponse.meta.total;
         _loading = false;
       });
     } on ApiException catch (e) {
