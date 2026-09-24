@@ -1127,7 +1127,7 @@ class DetailTable extends StatelessWidget {
         return Container(
           width: double.infinity,
           
-          clipBehavior: Clip.antiAlias,
+          
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: ConstrainedBox(
