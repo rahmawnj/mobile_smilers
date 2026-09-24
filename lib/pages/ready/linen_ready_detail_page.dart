@@ -68,10 +68,11 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
   Widget build(BuildContext context) {
     final detail = _detail ?? widget.category;
 
-    return AppShell(
-      userName: widget.userName,
-      activeIndex: 0,
-      body: Column(
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
         children: [
           DetailHeader(
             title: detail.namaKategoriLinen,
@@ -149,6 +150,7 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
           ),
         ],
       ),
+    ),
     );
   }
 }
