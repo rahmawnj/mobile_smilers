@@ -909,41 +909,287 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
 
 class LinenLaundryPage extends StatefulWidget {
   const LinenLaundryPage({super.key, required this.userName});
+
   final String userName;
-  @override State<LinenLaundryPage> createState() => _LinenLaundryPageState();
+
+  @override
+  State<LinenLaundryPage> createState() => _LinenLaundryPageState();
 }
 
 class _LinenLaundryPageState extends State<LinenLaundryPage> {
-  bool _loading = true; String? _error; List<LinenLaundryItem> _items = const []; String? _selectedCategory; LinenMeta? _meta; int _page = 1;
-  @override void initState() { super.initState(); _load(); }
+  bool _loading = true;
+  String? _error;
+  LinenListResponse<LinenLaundryItem>? _response;
+  int _page = 1;
+  int _perPage = 10;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Future<void> _load() async {
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
     try {
-      final response = await ApiService.instance.getLinenLaundry(perPage: 10, page: _page);
+      final response = await ApiService.instance.getLinenLaundry(
+        search: _searchController.text.trim().isEmpty
+            ? null
+            : _searchController.text.trim(),
+        perPage: _perPage,
+        page: _page,
+      );
+
       if (!mounted) return;
-      setState(() { _items = response.data; _meta = response.meta; _loading = false; });
+
+      setState(() {
+        _response = response;
+        _loading = false;
+      });
     } on ApiException catch (e) {
-      if (!mounted) return; setState(() { _error = e.message; _loading = false; });
+      if (!mounted) return;
+      setState(() {
+        _error = e.message;
+        _loading = false;
+      });
     } catch (_) {
-      if (!mounted) return; setState(() { _error = 'Tidak dapat mengambil data Linen & Tirai di Laundry.'; _loading = false; });
+      if (!mounted) return;
+      setState(() {
+        _error = 'Tidak dapat mengambil data Linen & Tirai di Laundry.';
+        _loading = false;
+      });
     }
   }
-  void _openDetail(LinenLaundryItem item) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => LinenLaundryDetailPage(categoryId: item.id, categoryName: item.namaKategoriLinen, userName: widget.userName)));
+
+  void _search() {
+    setState(() => _page = 1);
+    _load();
   }
-  @override Widget build(BuildContext context) {
-    final categoryNames = _items.map((i) => i.namaKategoriLinen.trim()).where((n) => n.isNotEmpty).toSet().toList()..sort();
-    final filtered = _selectedCategory == null ? _items : _items.where((i) => i.namaKategoriLinen.trim() == _selectedCategory).toList();
-    return AppShell(userName: widget.userName, activeIndex: 0, body: Column(children: [
-      DetailHeader(title: 'Linen & Tirai di Laundry', userName: widget.userName),
-      Expanded(child: RefreshIndicator(onRefresh: _load, child: _loading ? const Center(child: CircularProgressIndicator()) : _error != null ? ListView(children: [Padding(padding: const EdgeInsets.all(24), child: Column(children: [const Icon(Icons.cloud_off_rounded), const SizedBox(height: 10), Text('_error!', textAlign: TextAlign.center), const SizedBox(height: 12), ElevatedButton(onPressed: _load, child: const Text('Coba Lagi'))]))]) : ListView(padding: const EdgeInsets.fromLTRB(16,14,16,24), children: [
-        Container(width: double.infinity, padding: const EdgeInsets.fromLTRB(14,4,14,4), decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20)), child: DropdownButtonHideUnderline(child: DropdownButton<String?>(value: _selectedCategory,isExpanded:true,hint:const Text('Filter Kategori'),items:[const DropdownMenuItem<String?>(value:null,child:Text('Semua Kategori')),...categoryNames.map((n)=>DropdownMenuItem<String?>(value:n,child:Text(n)))],onChanged:(v)=>setState(()=>_selectedCategory=v)))),
-        const SizedBox(height: 12),
-        TableSurface(child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
-        if(filtered.isEmpty) const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data untuk kategori ini.'))),
-        if(_meta!=null) AppPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
-      ]))),
-    ]));
+
+  void _openDetail(LinenLaundryItem item) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LinenLaundryDetailPage(
+          categoryId: item.id,
+          categoryName: item.namaKategoriLinen,
+          userName: widget.userName,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = _response?.data ?? const <LinenLaundryItem>[];
+
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      body: SafeArea(
+        child: Column(
+          children: [
+            DetailHeader(
+              title: 'Linen & Tirai di Laundry',
+              userName: widget.userName,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+              child: TextField(
+                controller: _searchController,
+                onSubmitted: (_) => _search(),
+                decoration: InputDecoration(
+                  hintText: 'Cari linen / kategori...',
+                  prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _load,
+                child: _loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _error != null
+                        ? ListView(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  children: [
+                                    const Icon(Icons.cloud_off_rounded),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      _error!,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ElevatedButton(
+                                      onPressed: _load,
+                                      child: const Text('Coba Lagi'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : ListView(
+                            padding: const EdgeInsets.fromLTRB(
+                              16,
+                              8,
+                              16,
+                              24,
+                            ),
+                            children: [
+                              TableSurface(
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: SizedBox(
+                                        width: constraints.maxWidth,
+                                        child: DataTable(
+                                          headingRowColor:
+                                              WidgetStateProperty.all(
+                                            const Color(0xff1261dc),
+                                          ),
+                                          headingTextStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          dataTextStyle: const TextStyle(
+                                            color: Color(0xff465564),
+                                            fontSize: 9,
+                                          ),
+                                          columnSpacing: 28,
+                                          horizontalMargin: 16,
+                                          columns: const [
+                                            DataColumn(
+                                              label: Text('Nama Linen'),
+                                            ),
+                                            DataColumn(
+                                              label: Text('Kategori'),
+                                            ),
+                                            DataColumn(
+                                              label: Text('Ready'),
+                                            ),
+                                            DataColumn(
+                                              label: Text('Detail'),
+                                            ),
+                                          ],
+                                          rows: rows.map((item) {
+                                            return DataRow(
+                                              cells: [
+                                                DataCell(
+                                                  Text(
+                                                    item.namaLinen.isEmpty
+                                                        ? '-'
+                                                        : item.namaLinen,
+                                                  ),
+                                                ),
+                                                DataCell(
+                                                  Text(
+                                                    item.namaKategoriLinen.isEmpty
+                                                        ? '-'
+                                                        : item.namaKategoriLinen,
+                                                  ),
+                                                ),
+                                                DataCell(
+                                                  Text(item.ready.toString()),
+                                                ),
+                                                DataCell(
+                                                  IconButton(
+                                                    tooltip: 'Detail',
+                                                    onPressed: () =>
+                                                        _openDetail(item),
+                                                    icon: const Icon(
+                                                      Icons
+                                                          .visibility_outlined,
+                                                      size: 18,
+                                                      color: Color(0xff1261dc),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              if (rows.isEmpty)
+                                const Padding(
+                                  padding: EdgeInsets.all(24),
+                                  child: Center(
+                                    child: Text(
+                                      'Tidak ada data Linen & Tirai di Laundry.',
+                                    ),
+                                  ),
+                                ),
+                              if (_response != null) ...[
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Tampilkan',
+                                      style: TextStyle(fontSize: 9),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    DropdownButton<int>(
+                                      value: _perPage,
+                                      items: const [10, 25, 50, 100]
+                                          .map(
+                                            (v) => DropdownMenuItem<int>(
+                                              value: v,
+                                              child: Text('$v'),
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (v) {
+                                        if (v == null) return;
+                                        setState(() {
+                                          _perPage = v;
+                                          _page = 1;
+                                        });
+                                        _load();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                AppPagination(
+                                  meta: _response!.meta,
+                                  onPage: (page) {
+                                    setState(() => _page = page);
+                                    _load();
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
