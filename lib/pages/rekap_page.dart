@@ -153,7 +153,7 @@ class _RekapTable extends StatelessWidget {
   final List<RekapanTransaksiItem> rows;
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
+  Widget build(BuildContext context) => TableSurface(child: LayoutBuilder(
     builder: (context, constraints) => SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: ConstrainedBox(
@@ -177,5 +177,5 @@ class _RekapTable extends StatelessWidget {
         ),
       ),
     ),
-  );
+  ));
 }
