@@ -165,7 +165,7 @@ class _InOutTable extends StatelessWidget {
     return Container(
       width: double.infinity,
       
-      clipBehavior: Clip.antiAlias,
+      
       child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: SizedBox(width: constraints.maxWidth, child: DataTable(
