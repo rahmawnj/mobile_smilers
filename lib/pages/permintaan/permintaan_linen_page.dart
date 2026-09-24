@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../api/api_service.dart';
 import '../../widgets/pagination_widget.dart';
 import '../../widgets/shared_widgets.dart';
+import 'permintaan_linen_form_page.dart';
 
 class PermintaanLinenPage extends StatefulWidget {
   const PermintaanLinenPage({super.key, required this.userName});
@@ -17,6 +18,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   String? _error;
   LinenListResponse<PermintaanLinenItem>? _response;
   int? _roomId;
+  List<Map<String, dynamic>> _rooms = [];
   String? _status;
   int _page = 1;
   int _perPage = 10;
@@ -26,12 +28,26 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   void initState() {
     super.initState();
     _load();
+    _loadRooms();
   }
 
   @override
   void dispose() {
     _search.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadRooms() async {
+    try {
+      final rooms =
+          await ApiService.instance.getPermintaanLinenRuanganDropdown();
+      if (!mounted) return;
+      setState(() {
+        _rooms = rooms;
+      });
+    } on ApiException catch (_) {
+      // Room filter is optional; keep the list usable if the dropdown fails.
+    }
   }
 
   Future<void> _load() async {
