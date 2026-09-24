@@ -160,12 +160,26 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.network(
-                          _appLogoUrl,
-                          width: 66,
-                          height: 66,
-                          fit: BoxFit.cover,
-                        ),
+                        child: _appLogoUrl.isEmpty
+                            ? const SizedBox(
+                                width: 66,
+                                height: 66,
+                                child: Icon(
+                                  Icons.local_hospital_rounded,
+                                  color: Color(0xff159cf1),
+                                ),
+                              )
+                            : Image.network(
+                                _appLogoUrl,
+                                width: 66,
+                                height: 66,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) =>
+                                    const Icon(
+                                  Icons.local_hospital_rounded,
+                                  color: Color(0xff159cf1),
+                                ),
+                              ),
                       ),
                       const SizedBox(height: 16),
                       Text(
