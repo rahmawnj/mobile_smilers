@@ -52,7 +52,7 @@ class _StreamPageState extends State<StreamPage> {
     final mm = now.minute.toString().padLeft(2, '0');
     final ss = now.second.toString().padLeft(2, '0');
     setState(() {
-      _liveClock = '\${now.day} \${months[now.month - 1]} \${now.year} \$hh:\$mm:\$ss';
+      _liveClock = '${now.day} ${months[now.month - 1]} ${now.year} $hh:$mm:$ss';
     });
     Future.delayed(const Duration(seconds: 1), _updateClock);
   }
