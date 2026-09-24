@@ -94,13 +94,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: MetricCard(
                   metrics: [
                     {
-                      'value': _loading ? '...' : totalStock.toString(),
+                      'value': _loading ? '...' : _laundryCount.toString(),
                       'unit': 'Linen',
                       'title': 'Linen & Tirai Ready',
                       'action': 'Lihat Data',
                     },
                     {
-                      'value': _loading ? '...' : _laundryCount.toString(),
+                      'value': _loading ? '...' : totalStock.toString(),
                       'unit': 'Linen',
                       'title': 'Linen & Tirai di Laundry',
                       'action': 'Lihat Data',
