@@ -407,26 +407,15 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                       },
                                     ),
                                   const SizedBox(height: 8),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [10, 25, 50, 100].map((value) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 3,
-                                        ),
-                                        child: ChoiceChip(
-                                          label: Text('$value'),
-                                          selected: _perPage == value,
-                                          onSelected: (_) {
-                                            setState(() {
-                                              _perPage = value;
-                                              _page = 1;
-                                            });
-                                            _load();
-                                          },
-                                        ),
-                                      );
-                                    }).toList(),
+                                  AppPerPageDropdown(
+                                    value: _perPage,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _perPage = value;
+                                        _page = 1;
+                                      });
+                                      _load();
+                                    },
                                   ),
                                 ],
                               ),
