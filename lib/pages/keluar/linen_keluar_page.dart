@@ -92,7 +92,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   @override Widget build(BuildContext context) {
     final rows=_response?.data??const <LinenKeluarItem>[];
     final meta=_response?.meta;
-    return AppShell(userName:widget.userName,activeIndex:5,body:Column(children:[
+    return AppShell(userName:widget.userName,activeIndex:-1,body:Column(children:[
       DetailHeader(title:'Linen & Tirai Keluar',userName:widget.userName),
       Expanded(child:RefreshIndicator(onRefresh:() async=>Future.wait([_load(),_loadQueue()]),child:ListView(padding:const EdgeInsets.fromLTRB(16,14,16,100),children:[
         Row(children:[
