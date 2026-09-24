@@ -4,6 +4,7 @@ import '../../api/api_service.dart';
 import '../../widgets/pagination_widget.dart';
 import '../../widgets/shared_widgets.dart';
 import 'linen_keluar_form_page.dart';
+import 'linen_keluar_scan_page.dart';
 
 class LinenKeluarPage extends StatefulWidget {
   const LinenKeluarPage({super.key, required this.userName});
@@ -100,6 +101,19 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           Expanded(child:TextField(controller:_searchController,onSubmitted:(_){setState(()=>_page=1);_load();},decoration:InputDecoration(
             hintText:'Cari nama linen, RFID, QR Code, user...',prefixIcon:const Icon(Icons.search_rounded),filled:true,fillColor:Colors.white,
             border:OutlineInputBorder(borderRadius:BorderRadius.circular(20),borderSide:BorderSide.none)))),
+          const SizedBox(width:8),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => LinenKeluarScanPage(userName: widget.userName),
+                ),
+              );
+              if (mounted) await _load();
+            },
+            icon: const Icon(Icons.qr_code_scanner_rounded),
+            label: const Text('Scan'),
+          ),
         ]),
         const SizedBox(height:10),
         Container(
