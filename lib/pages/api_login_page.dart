@@ -193,10 +193,12 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Hospital Management System',
+                        'SmileRS',
                         style: TextStyle(
                           color: Color(0xff8291A0),
                           fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.2,
                         ),
                       ),
                       const SizedBox(height: 28),
