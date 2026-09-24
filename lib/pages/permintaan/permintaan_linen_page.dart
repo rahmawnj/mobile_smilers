@@ -314,7 +314,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                               )
                             : Column(
                                 children: [
-                                  Container(
+                                  TableSurface(
                                     
                                     
                                     child: SingleChildScrollView(
