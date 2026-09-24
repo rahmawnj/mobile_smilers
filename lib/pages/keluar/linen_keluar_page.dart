@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../api/api_service.dart';
 import '../../widgets/pagination_widget.dart';
 import '../../widgets/shared_widgets.dart';
+import 'linen_keluar_form_page.dart';
 
 class LinenKeluarPage extends StatefulWidget {
   const LinenKeluarPage({super.key, required this.userName});
@@ -130,36 +131,67 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           ]),
         ),
         const SizedBox(height:12),
-        Container(width:double.infinity,padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18),boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:12,offset:const Offset(0,4))]),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-          const Text('Form Linen Keluar',style:TextStyle(fontSize:13,fontWeight:FontWeight.w800)),
-          const SizedBox(height:10),
-          Row(children:[
-            Expanded(child:DropdownButtonFormField<int?>(
-              value:_selectedRoom,
-              decoration:const InputDecoration(labelText:'Ruangan Tujuan',filled:true,fillColor:Color(0xfff5f8fc),border:OutlineInputBorder(borderSide:BorderSide.none)),
-              items:[const DropdownMenuItem<int?>(value:null,child:Text('Pilih Ruangan')), ...?_options?.ruangan.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.namaRuangan)))],
-              onChanged:(v)=>setState(()=>_selectedRoom=v),
-            )),
-            const SizedBox(width:8),
-            Expanded(child:DropdownButtonFormField<int?>(
-              value:_selectedUser,
-              decoration:const InputDecoration(labelText:'User',filled:true,fillColor:Color(0xfff5f8fc),border:OutlineInputBorder(borderSide:BorderSide.none)),
-              items:[const DropdownMenuItem<int?>(value:null,child:Text('Pilih User')), ...?_options?.users.map((u)=>DropdownMenuItem<int?>(value:u.id,child:Text('${u.name} (${u.username})')))],
-              onChanged:(v)=>setState(()=>_selectedUser=v),
-            )),
-          ]),
-          const SizedBox(height:10),
-          SizedBox(width:double.infinity,child:OutlinedButton.icon(onPressed:_scan,icon:const Icon(Icons.qr_code_scanner_rounded),label:const Text('Scan Linen'))),
-          const SizedBox(height:12),
-          Row(children:[Expanded(child:Text('Antrean Scan (${_queue?.total??0})',style:const TextStyle(fontSize:13,fontWeight:FontWeight.w800))),ElevatedButton.icon(onPressed:_saveQueue,icon:const Icon(Icons.save_rounded,size:18),label:const Text('Simpan Keluar'))]),
-          const SizedBox(height:8),
-          _queueLoading?const Padding(padding:EdgeInsets.all(16),child:Center(child:CircularProgressIndicator())):(_queue?.data.isEmpty??true)?const Padding(padding:EdgeInsets.all(12),child:Text('Antrean scan kosong.')):
-          SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
-            headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(fontSize:9),
-            columns:const [DataColumn(label:Text('No.')),DataColumn(label:Text('Linen ID')),DataColumn(label:Text('Kategori')),DataColumn(label:Text('QR Code')),DataColumn(label:Text('RFID')),DataColumn(label:Text('Waktu Scan')),DataColumn(label:Text('Aksi'))],
-            rows:_queue!.data.asMap().entries.map((e)=>DataRow(cells:[DataCell(Text('${e.key+1}')),DataCell(Text('${e.value.linenId}')),DataCell(Text(e.value.namaKategoriLinen)),DataCell(Text(e.value.qrCode)),DataCell(Text(e.value.tagRfid)),DataCell(Text(e.value.waktuScan)),DataCell(IconButton(onPressed:()=>_deleteQueue(e.value),tooltip:'Hapus',icon:const Icon(Icons.delete_outline_rounded)))] )).toList(),
-          )),
-        ])),
+        InkWell(
+          onTap: () async {
+            final saved = await Navigator.of(context).push<bool>(
+              MaterialPageRoute(
+                builder: (_) => LinenKeluarFormPage(userName: widget.userName),
+              ),
+            );
+            if (saved == true && mounted) {
+              await Future.wait([_load(), _loadQueue()]);
+            }
+          },
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: .05),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Row(
+              children: [
+                Icon(
+                  Icons.assignment_rounded,
+                  color: Color(0xff159cf1),
+                  size: 26,
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Form Linen Keluar',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      SizedBox(height: 3),
+                      Text(
+                        'Isi ruangan tujuan, user, lalu lanjut ke halaman scan.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height:12),
         if(_loading)const Center(child:Padding(padding:EdgeInsets.all(30),child:CircularProgressIndicator()))
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
