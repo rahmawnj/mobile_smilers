@@ -619,25 +619,18 @@ class _MetricTileState extends State<MetricTile> {
   @override
   Widget build(BuildContext context) {
     final metric = widget.metric;
-    return AnimatedScale(
-      scale: _pressed ? .985 : 1,
-      duration: const Duration(milliseconds: 100),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: widget.onTap,
-          onTapDown: (_) => setState(() => _pressed = true),
-          onTapCancel: () => setState(() => _pressed = false),
-          onTapUp: (_) => setState(() => _pressed = false),
-          borderRadius: BorderRadius.circular(20),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            margin: const EdgeInsets.only(bottom: 6),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: _pressed ? const Color(0xfff3f8fc) : Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: widget.onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
             child: Row(
               children: [
                 _MetricIcon(index: widget.index),
