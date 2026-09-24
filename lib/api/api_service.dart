@@ -297,6 +297,23 @@ class LinenHilangItem {
     tanggalHilang:j['tanggal_hilang']?.toString()??'',
   );
 }
+class LinenHilangRuanganOption {
+  const LinenHilangRuanganOption({
+    required this.id,
+    required this.namaRuangan,
+    required this.namaKepalaRuangan,
+  });
+  final int id;
+  final String namaRuangan;
+  final String namaKepalaRuangan;
+
+  factory LinenHilangRuanganOption.fromJson(Map<String, dynamic> j) =>
+      LinenHilangRuanganOption(
+        id: _toInt(j['id']),
+        namaRuangan: j['nama_ruangan']?.toString() ?? '',
+        namaKepalaRuangan: j['nama_kepala_ruangan']?.toString() ?? '',
+      );
+}
 class LinenHilangRuanganItem {
   const LinenHilangRuanganItem({
     required this.transaksiId,
@@ -789,6 +806,14 @@ class ApiService {
     final d=await _get('/linen-hilang',query:_query({'per_page':perPage,'search':search,'filter_ruangan':filterRuangan,'filter_kategori':filterKategori,'daterange':daterange,'page':page}));
     return _listResponse(d,(e)=>LinenHilangItem.fromJson(e));
   }
+  Future<List<LinenHilangRuanganOption>> getLinenHilangRuanganDropdown() async {
+    final d = await _get('/linen-hilang/ruangan-dropdown');
+    return (d['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((e) => LinenHilangRuanganOption.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
   Future<LinenListResponse<LinenHilangRuanganItem>> getLinenHilangRuanganList({required int ruanganId,int? perPage,int? page}) async {
     final d=await _get('/linen-hilang/ruangan-list',query:_query({'ruangan_id':ruanganId,'per_page':perPage??20,'page':page}));
     return _listResponse(d,(e)=>LinenHilangRuanganItem.fromJson(e));
