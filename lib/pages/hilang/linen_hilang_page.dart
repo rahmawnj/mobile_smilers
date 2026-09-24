@@ -496,16 +496,18 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
           ),
         ],
       ),
-      child: ScrollConfiguration(
-        behavior: const MaterialScrollBehavior().copyWith(
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-          },
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: ScrollConfiguration(
+          behavior: const MaterialScrollBehavior().copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+            },
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
             headingRowColor: WidgetStateProperty.all(
               const Color(0xff1261dc),
             ),
@@ -518,7 +520,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
               color: Color(0xff465564),
               fontSize: 9,
             ),
-            columnSpacing: 24,
+            columnSpacing: 26,
             horizontalMargin: 14,
             columns: const [
               DataColumn(label: Text('ID')),
