@@ -1439,6 +1439,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
   String? _search;
   LinenMeta? _meta;
   int _page = 1;
+  int _perPage = 10;
   final _searchController = TextEditingController();
 
   @override
@@ -1461,7 +1462,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
     try {
       final response = await ApiService.instance.getLinenRuangan(
         search: _search,
-        perPage: 10,
+        perPage: _perPage,
         page: _page,
       );
       if (!mounted) return;
@@ -1499,10 +1500,11 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AppShell(
-      userName: widget.userName,
-      activeIndex: 0,
-      body: Column(
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
         children: [
           DetailHeader(
             title: 'Linen & Tirai di Ruangan',
@@ -1630,12 +1632,54 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                     },
                                   ),
                                 ),
-                                if (_meta != null) AppPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
+                                if (_meta != null) ...[
+                                  const SizedBox(height: 8),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          const Text('Jumlah', style: TextStyle(fontSize: 9)),
+                                          const SizedBox(width: 8),
+                                          DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: _perPage,
+                                              isDense: true,
+                                              items: const [10, 25, 50, 100]
+                                                  .map((v) => DropdownMenuItem<int>(
+                                                        value: v,
+                                                        child: Text('$v'),
+                                                      ))
+                                                  .toList(),
+                                              onChanged: (v) {
+                                                if (v == null) return;
+                                                setState(() {
+                                                  _perPage = v;
+                                                  _page = 1;
+                                                });
+                                                _load();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      AppPagination(
+                                        meta: _meta!,
+                                        onPage: (page) {
+                                          setState(() => _page = page);
+                                          _load();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ],
                             ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
