@@ -199,50 +199,49 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                     _buildTable(rows),
                   if (!_loading && _error == null && meta != null) ...[
                     const SizedBox(height: 10),
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Expanded(
-                          child: Text(
-                            'Menampilkan ${rows.length} dari ${meta.total} kategori',
-                            style: const TextStyle(
-                              color: Color(0xff8b99a5),
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          'Jumlah',
-                          style: TextStyle(
-                            color: Color(0xff8b99a5),
-                            fontSize: 9,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            value: _perPage,
-                            isDense: true,
-                            items: const [
-                              DropdownMenuItem(value: 10, child: Text('10')),
-                              DropdownMenuItem(value: 25, child: Text('25')),
-                              DropdownMenuItem(value: 50, child: Text('50')),
-                            ],
-                            onChanged: (value) {
-                              if (value != null) _changePerPage(value);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        if (meta.lastPage > 1)
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: AppPagination(
-                                meta: meta,
-                                onPage: _changePage,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Menampilkan ${rows.length} dari ${meta.total} kategori',
+                              style: const TextStyle(
+                                color: Color(0xff8b99a5),
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
+                            const SizedBox(width: 18),
+                            const Text(
+                              'Jumlah',
+                              style: TextStyle(
+                                color: Color(0xff8b99a5),
+                                fontSize: 9,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            DropdownButtonHideUnderline(
+                              child: DropdownButton<int>(
+                                value: _perPage,
+                                isDense: true,
+                                items: const [
+                                  DropdownMenuItem(value: 10, child: Text('10')),
+                                  DropdownMenuItem(value: 25, child: Text('25')),
+                                  DropdownMenuItem(value: 50, child: Text('50')),
+                                ],
+                                onChanged: (value) {
+                                  if (value != null) _changePerPage(value);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (meta.lastPage > 1)
+                          AppPagination(
+                            meta: meta,
+                            onPage: _changePage,
                           ),
                       ],
                     ),
