@@ -82,3 +82,37 @@ class _PaginationButton extends StatelessWidget {
     );
   }
 }
+
+class AppPerPageDropdown extends StatelessWidget {
+  const AppPerPageDropdown({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.options = const [10, 25, 50, 100],
+  });
+
+  final int value;
+  final ValueChanged<int> onChanged;
+  final List<int> options;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<int>(
+        value: options.contains(value) ? value : options.first,
+        isDense: true,
+        items: options
+            .map(
+              (item) => DropdownMenuItem<int>(
+                value: item,
+                child: Text('$item'),
+              ),
+            )
+            .toList(),
+        onChanged: (item) {
+          if (item != null) onChanged(item);
+        },
+      ),
+    );
+  }
+}
