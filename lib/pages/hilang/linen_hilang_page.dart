@@ -443,25 +443,15 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                             ),
                           ),
                           const SizedBox(width: 6),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<int>(
-                              value: _perPage,
-                              isDense: true,
-                              items: const [10, 20, 50].map(
-                                (v) => DropdownMenuItem(
-                                  value: v,
-                                  child: Text('$v'),
-                                ),
-                              ).toList(),
-                              onChanged: (value) {
-                                if (value == null) return;
-                                setState(() {
-                                  _perPage = value;
-                                  _page = 1;
-                                });
-                                _load();
-                              },
-                            ),
+                          AppPerPageDropdown(
+                            value: _perPage,
+                            onChanged: (value) {
+                              setState(() {
+                                _perPage = value;
+                                _page = 1;
+                              });
+                              _load();
+                            },
                           ),
                         ],
                       ),
