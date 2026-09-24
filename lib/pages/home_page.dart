@@ -292,14 +292,10 @@ class _DashboardDataMenu extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff159cf1).withValues(alpha: .10),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Icon(icon, color: const Color(0xff159cf1), size: 22),
+                  Icon(
+                    icon,
+                    color: const Color(0xff159cf1),
+                    size: 22,
                   ),
                   const SizedBox(height: 8),
                   Text(
