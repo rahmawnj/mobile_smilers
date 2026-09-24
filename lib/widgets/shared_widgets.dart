@@ -485,7 +485,7 @@ class DashboardHeader extends StatelessWidget {
                       ),
                     );
                   },
-                  icon: Icons.settings_rounded,
+                  icon: Icons.manage_accounts_rounded,
                 ),
               ],
             ),
@@ -512,24 +512,18 @@ class _HeaderActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: Colors.white.withValues(alpha: .16),
+      borderRadius: BorderRadius.circular(13),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          width: 46,
-          height: 46,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: .16),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: .30),
-            ),
-          ),
+        borderRadius: BorderRadius.circular(13),
+        child: SizedBox(
+          width: 42,
+          height: 42,
           child: Icon(
             icon,
             color: Colors.white,
-            size: 22,
+            size: 21,
           ),
         ),
       ),
