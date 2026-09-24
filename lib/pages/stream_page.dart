@@ -113,7 +113,7 @@ class _StreamPageState extends State<StreamPage> {
                   padding: const EdgeInsets.all(26),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: .97),
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: .20),
@@ -125,7 +125,7 @@ class _StreamPageState extends State<StreamPage> {
                   child: Column(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(20),
                         child: Image.network(
                           _appLogoUrl,
                           width: 66,
@@ -160,7 +160,7 @@ class _StreamPageState extends State<StreamPage> {
                         ),
                         decoration: BoxDecoration(
                           color: const Color(0xffF5F8FA),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -242,7 +242,7 @@ class _StreamPageState extends State<StreamPage> {
                             foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                         ),
@@ -293,7 +293,7 @@ class _MetricCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
       decoration: BoxDecoration(
         color: const Color(0xfff7fafc),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         children: [
