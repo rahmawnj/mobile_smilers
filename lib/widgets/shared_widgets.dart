@@ -1028,6 +1028,40 @@ class _TransactionItemState extends State<TransactionItem> {
 }
 
 /// ===============================================================
+/// BACK BUTTON
+/// ===============================================================
+
+class AppBackButton extends StatelessWidget {
+  const AppBackButton({
+    super.key,
+    this.onTap,
+  });
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withValues(alpha: .16),
+      borderRadius: BorderRadius.circular(13),
+      child: InkWell(
+        onTap: onTap ?? () => Navigator.of(context).pop(),
+        borderRadius: BorderRadius.circular(13),
+        child: const SizedBox(
+          width: 42,
+          height: 42,
+          child: Icon(
+            Icons.arrow_back_rounded,
+            color: Colors.white,
+            size: 21,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ===============================================================
 /// DETAIL HEADER
 /// ===============================================================
 
@@ -1066,29 +1100,7 @@ class DetailHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => Navigator.of(context).pop(),
-              borderRadius: BorderRadius.circular(20),
-              child: Ink(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: .14),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: .20),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ),
-          ),
+          const AppBackButton(),
 
           const SizedBox(width: 12),
 
