@@ -419,9 +419,14 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                       DataCell(Text(category.jumlahStok.toString())),
                       DataCell(Text(category.jumlahHilang.toString())),
                       DataCell(
-                        TextButton(
+                        IconButton(
+                          tooltip: 'Detail',
                           onPressed: () => _openDetail(category),
-                          child: const Text('Detail'),
+                          icon: const Icon(
+                            Icons.visibility_outlined,
+                            size: 18,
+                            color: Color(0xff1261dc),
+                          ),
                         ),
                       ),
                     ],
