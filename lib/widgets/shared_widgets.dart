@@ -629,88 +629,80 @@ class _MetricTileState extends State<MetricTile> {
   Widget build(BuildContext context) {
     final metric = widget.metric;
 
-    return Material(
-      color: Colors.transparent,
-      child: MouseRegion(
-        onEnter: (_) => setState(() => _hovered = true),
-        onExit: (_) => setState(() => _hovered = false),
-        cursor: SystemMouseCursors.click,
-        child: InkWell(
-          onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(20),
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 6),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: _hovered
-                  ? const Color(0xfff3f8fc)
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                _MetricIcon(index: widget.index),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${metric['value']}',
-                      style: const TextStyle(
-                        color: Color(0xff172b4d),
-                        fontSize: 23,
-                        fontWeight: FontWeight.w800,
-                        height: 1,
-                      ),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: _hovered ? const Color(0xfff3f8fc) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            children: [
+              _MetricIcon(index: widget.index),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${metric['value']}',
+                    style: const TextStyle(
+                      color: Color(0xff172b4d),
+                      fontSize: 23,
+                      fontWeight: FontWeight.w800,
+                      height: 1,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      metric['unit'] as String,
-                      style: const TextStyle(
-                        color: Color(0xff9aa8b5),
-                        fontSize: 9,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    metric['unit'] as String,
+                    style: const TextStyle(
+                      color: Color(0xff9aa8b5),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
-                const Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      metric['title'] as String,
-                      style: const TextStyle(
-                        color: Color(0xff52616f),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    metric['title'] as String,
+                    style: const TextStyle(
+                      color: Color(0xff52616f),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Text(
-                          metric['action'] as String,
-                          style: const TextStyle(
-                            color: Color(0xff159cf1),
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(width: 3),
-                        const Icon(
-                          Icons.arrow_forward_rounded,
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Text(
+                        metric['action'] as String,
+                        style: const TextStyle(
                           color: Color(0xff159cf1),
-                          size: 12,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      ),
+                      const SizedBox(width: 3),
+                      const Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Color(0xff159cf1),
+                        size: 12,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
