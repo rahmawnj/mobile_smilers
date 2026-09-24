@@ -859,13 +859,43 @@ class ApiService {
   Future<Map<String,dynamic>> scanLinenMasuk(String rfid)=>_post('/linen-masuk/scan',{'rfid':rfid});
 
   Future<LinenListResponse<PermintaanLinenItem>> getPermintaanLinen({String? search,int? perPage,int? ruangan,String? status,int? page}) async {
-    final d=await _get('/permintaan-linen',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'status':status,'page':page}));
+    final d = await _get('/permintaan-linen',
+        query: _query({'per_page':perPage,'search':search,'ruangan':ruangan,'status':status,'page':page}));
     return _listResponse(d,(e)=>PermintaanLinenItem.fromJson(e));
   }
-  Future<PermintaanLinenFormData> getPermintaanLinenFormData() async=>PermintaanLinenFormData.fromJson(Map<String,dynamic>.from((await _get('/permintaan-linen/form-data'))['data'] as Map));
-  Future<Map<String,dynamic>> createPermintaanLinen({required String tanggalPermintaan,required int ruanganId,required String alasanPermintaan,required List<Map<String,dynamic>> items})=>_post('/permintaan-linen',{'tanggal_permintaan':tanggalPermintaan,'ruangan_id':ruanganId,'alasan_permintaan':alasanPermintaan,'items':items});
-  Future<PermintaanLinenDetail> getPermintaanLinenDetail(int id) async=>PermintaanLinenDetail.fromJson(Map<String,dynamic>.from((await _get('/permintaan-linen/$id'))['data'] as Map));
-  Future<Map<String,dynamic>> updatePermintaanLinenStatus(int id)=>_patch('/permintaan-linen/$id/status');
+
+  Future<PermintaanLinenFormData> getPermintaanLinenFormData() async =>
+      PermintaanLinenFormData.fromJson(
+        Map<String,dynamic>.from((await _get('/permintaan-linen/form-data'))['data'] as Map),
+      );
+
+  Future<List<Map<String,dynamic>>> getPermintaanLinenRuanganDropdown() async {
+    final d = await _get('/permintaan-linen/ruangan-dropdown');
+    return (d['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((e)=>Map<String,dynamic>.from(e))
+        .toList();
+  }
+
+  Future<List<Map<String,dynamic>>> getPermintaanLinenItemDropdown({String? search}) async {
+    final d = await _get('/permintaan-linen/item-dropdown',
+        query:_query({'search':search}));
+    return (d['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((e)=>Map<String,dynamic>.from(e))
+        .toList();
+  }
+
+  Future<Map<String,dynamic>> createPermintaanLinen({required String tanggalPermintaan,required int ruanganId,required String alasanPermintaan,required List<Map<String,dynamic>> items}) =>
+      _post('/permintaan-linen',{'tanggal_permintaan':tanggalPermintaan,'ruangan_id':ruanganId,'alasan_permintaan':alasanPermintaan,'items':items});
+
+  Future<PermintaanLinenDetail> getPermintaanLinenDetail(int id) async =>
+      PermintaanLinenDetail.fromJson(
+        Map<String,dynamic>.from((await _get('/permintaan-linen/$id'))['data'] as Map),
+      );
+
+  Future<Map<String,dynamic>> updatePermintaanLinenStatus(int id) =>
+      _patch('/permintaan-linen/$id/status');
 
   Future<InOutResponse> getInOut({String? search,int? perPage,int? ruangan,String? date,String? daterange,int? page}) async=>InOutResponse.fromJson(await _get('/inout',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange,'page':page})));
   Future<Map<String,dynamic>> getInOutDetail(int ruangan,{String? date,String? daterange})=>_get('/inout/$ruangan',query:_query({'date':date,'daterange':daterange}));
