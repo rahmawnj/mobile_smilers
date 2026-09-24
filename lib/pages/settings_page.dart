@@ -482,7 +482,6 @@ class _SettingMenu extends StatelessWidget {
             horizontal: 4,
             vertical: 14,
           ),
-        ),
           child: Row(
             children: [
               Container(
@@ -534,4 +533,3 @@ class _SettingMenu extends StatelessWidget {
     );
   }
 }
-
