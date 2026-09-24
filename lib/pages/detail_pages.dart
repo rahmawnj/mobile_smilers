@@ -407,7 +407,7 @@ class _LinenMasukTable extends StatelessWidget {
   final int page, perPage;
   @override Widget build(BuildContext context) => Container(
     
-    clipBehavior: Clip.antiAlias,
+    
     child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SizedBox(width: constraints.maxWidth, child: DataTable(
@@ -1004,7 +1004,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                 children: [
                                   Container(
                                     
-                                    clipBehavior: Clip.antiAlias,
+                                    
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: SizedBox(width: constraints.maxWidth, child: DataTable(
@@ -1160,7 +1160,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
       Expanded(child: RefreshIndicator(onRefresh: _load, child: _loading ? const Center(child: CircularProgressIndicator()) : _error != null ? ListView(children: [Padding(padding: const EdgeInsets.all(24), child: Column(children: [const Icon(Icons.cloud_off_rounded), const SizedBox(height: 10), Text('_error!', textAlign: TextAlign.center), const SizedBox(height: 12), ElevatedButton(onPressed: _load, child: const Text('Coba Lagi'))]))]) : ListView(padding: const EdgeInsets.fromLTRB(16,14,16,24), children: [
         Container(width: double.infinity, padding: const EdgeInsets.fromLTRB(14,4,14,4), decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20)), child: DropdownButtonHideUnderline(child: DropdownButton<String?>(value: _selectedCategory,isExpanded:true,hint:const Text('Filter Kategori'),items:[const DropdownMenuItem<String?>(value:null,child:Text('Semua Kategori')),...categoryNames.map((n)=>DropdownMenuItem<String?>(value:n,child:Text(n)))],onChanged:(v)=>setState(()=>_selectedCategory=v)))),
         const SizedBox(height: 12),
-        Container(width: double.infinity, clipBehavior:Clip.antiAlias, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
+        Container(width: double.infinity, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
         if(filtered.isEmpty) const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data untuk kategori ini.'))),
         if(_meta!=null) AppPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
       ]))),
@@ -1287,7 +1287,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                                 Container(
                                   width: double.infinity,
                                   
-                                  clipBehavior: Clip.antiAlias,
+                                  
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
                                       final tableWidth = constraints.maxWidth;
@@ -1531,7 +1531,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                 Container(
                                   width: double.infinity,
                                   
-                                  clipBehavior: Clip.antiAlias,
+                                  
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
                                       final tableWidth =
@@ -1786,7 +1786,7 @@ class _RoomDetailTable extends StatelessWidget {
         Container(
           width: double.infinity,
           
-          clipBehavior: Clip.antiAlias,
+          
           child: LayoutBuilder(
             builder: (context, constraints) {
               const tableWidth = 1100.0;
@@ -2296,7 +2296,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                             Container(
                               width: double.infinity,
                               
-                              clipBehavior: Clip.antiAlias,
+                              
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   final tableWidth = constraints.maxWidth;
@@ -2553,7 +2553,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                             Container(
                               width: double.infinity,
                               
-                              clipBehavior: Clip.antiAlias,
+                              
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   final tableWidth = constraints.maxWidth;
@@ -2777,7 +2777,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                             Container(
                               width: double.infinity,
                               
-                              clipBehavior: Clip.antiAlias,
+                              
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   final tableWidth = constraints.maxWidth;
@@ -2992,7 +2992,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         const SizedBox(height:12),
         if(_loading)const Center(child:Padding(padding:EdgeInsets.all(30),child:CircularProgressIndicator()))
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
-        else Container(width:double.infinity,clipBehavior:Clip.antiAlias,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
+        else Container(width:double.infinity,hild:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
           headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(fontSize:9),columnSpacing:22,
           columns:const [DataColumn(label:Text('No.')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('QR Code')),DataColumn(label:Text('RFID')),DataColumn(label:Text('Ke Ruangan')),DataColumn(label:Text('Jam')),DataColumn(label:Text('Tanggal')),DataColumn(label:Text('User'))],
           rows:rows.asMap().entries.map((e){final n=((meta?.currentPage??_page)-1)*(meta?.perPage??_perPage)+e.key+1;return DataRow(cells:[DataCell(Text('${n}')),DataCell(Text(e.value.namaLinen)),DataCell(Text(e.value.qrCode)),DataCell(Text(e.value.tagRfid)),DataCell(Text(e.value.keRuangan)),DataCell(Text(e.value.jam)),DataCell(Text(e.value.tanggal)),DataCell(Text(e.value.user))]);}).toList(),
