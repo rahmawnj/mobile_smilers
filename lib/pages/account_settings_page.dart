@@ -78,12 +78,23 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             width: double.infinity,
             alignment: Alignment.center,
             color: Colors.white,
-            child: Image.network(
-              _appLogoUrl,
-              height: 120,
-              width: 120,
-              fit: BoxFit.contain,
-            ),
+            child: _appLogoUrl.isEmpty
+                ? const Icon(
+                    Icons.local_hospital_rounded,
+                    size: 52,
+                    color: Color(0xff159cf1),
+                  )
+                : Image.network(
+                    _appLogoUrl,
+                    height: 120,
+                    width: 120,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => const Icon(
+                      Icons.local_hospital_rounded,
+                      size: 52,
+                      color: Color(0xff159cf1),
+                    ),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(28),
