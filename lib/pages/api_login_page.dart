@@ -147,7 +147,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                   padding: const EdgeInsets.all(26),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: .97),
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: .20),
@@ -159,7 +159,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                   child: Column(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(20),
                         child: Image.network(
                           _appLogoUrl,
                           width: 66,
@@ -239,7 +239,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                             foregroundColor: Colors.white,
                             disabledBackgroundColor: const Color(0xff9bbec2),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                         ),
@@ -262,7 +262,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                             foregroundColor: const Color(0xff118D9A),
                             side: const BorderSide(color: Color(0xff118D9A)),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                         ),
@@ -319,11 +319,11 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
       filled: true,
       fillColor: const Color(0xffF5F8FA),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(20),
         borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(20),
         borderSide: const BorderSide(color: Color(0xff118D9A)),
       ),
     );

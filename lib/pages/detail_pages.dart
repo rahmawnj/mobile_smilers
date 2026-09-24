@@ -5,42 +5,7 @@ import 'package:file_picker/file_picker.dart';
 
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
-
-class _MetaPagination extends StatelessWidget {
-  const _MetaPagination({required this.meta, required this.onPage});
-  final LinenMeta meta;
-  final ValueChanged<int> onPage;
-
-  @override
-  Widget build(BuildContext context) {
-    if (meta.lastPage <= 1) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 100),
-      child: Material(
-        color: Colors.transparent,
-        child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          OutlinedButton(
-            onPressed: meta.currentPage > 1 ? () => onPage(meta.currentPage - 1) : null,
-            child: const Text('Sebelumnya'),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            'Halaman ${meta.currentPage} dari ${meta.lastPage}',
-            style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
-          ),
-          const SizedBox(width: 12),
-          OutlinedButton(
-            onPressed: meta.currentPage < meta.lastPage ? () => onPage(meta.currentPage + 1) : null,
-            child: const Text('Berikutnya'),
-          ),
-        ],
-        ),
-      ),
-    );
-  }
-}
+import '../widgets/pagination_widget.dart';
 
 class LinenCategoryDetailPage extends StatefulWidget {
   const LinenCategoryDetailPage({
@@ -179,7 +144,7 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
                                 'Total ' + _items!.meta.total.toString() + ' item',
                                 style: const TextStyle(color: Color(0xff8b99a5), fontSize: 9),
                               ),
-                              _MetaPagination(meta: _items!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                              AppPagination(meta: _items!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
                             ],
                           ),
               ),
@@ -207,7 +172,7 @@ class _CategoryInfo extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,7 +220,7 @@ class _EmptyDetail extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(message, textAlign: TextAlign.center),
     );
@@ -377,7 +342,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
               onSubmitted: (_) { setState(() => _page = 1); _load(); },
               decoration: InputDecoration(
                 hintText: 'Cari linen / RFID / QR...', prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
               ),
             )),
             const SizedBox(width: 8),
@@ -401,7 +366,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
           child: DropdownButtonFormField<int?>(
             value: _roomId, isExpanded: true,
-            decoration: InputDecoration(hintText: 'Semua Ruangan', prefixIcon: const Icon(Icons.meeting_room_rounded, size: 19), filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none)),
+            decoration: InputDecoration(hintText: 'Semua Ruangan', prefixIcon: const Icon(Icons.meeting_room_rounded, size: 19), filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none)),
             items: [const DropdownMenuItem<int?>(value: null, child: Text('Semua Ruangan')), ..._rooms.map((r) => DropdownMenuItem<int?>(value: r.id, child: Text(r.nama)))],
             onChanged: (v) { setState(() { _roomId = v; _page = 1; }); _load(); },
           ),
@@ -425,7 +390,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
               : Column(children: [
                   _LinenMasukTable(rows: rows, page: _response!.meta.currentPage, perPage: _response!.meta.perPage),
                   const SizedBox(height: 10),
-                  _MetaPagination(meta: _response!.meta, onPage: (p) { setState(() => _page = p); _load(); }),
+                  AppPagination(meta: _response!.meta, onPage: (p) { setState(() => _page = p); _load(); }),
                   const SizedBox(height: 6),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [10,25,50,100].map((n) => Padding(padding: const EdgeInsets.symmetric(horizontal: 3), child: ChoiceChip(label: Text('$n'), selected: _perPage == n, onSelected: (_) { setState(() { _perPage = n; _page = 1; }); _load(); }))).toList()),
                 ]),
@@ -441,7 +406,7 @@ class _LinenMasukTable extends StatelessWidget {
   final List<LinenMasukItem> rows;
   final int page, perPage;
   @override Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 18, offset: const Offset(0, 7))]),
+    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 18, offset: const Offset(0, 7))]),
     clipBehavior: Clip.antiAlias,
     child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -947,7 +912,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide.none,
                       ),
                     ),
@@ -1040,7 +1005,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                   Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(18),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
                                     clipBehavior: Clip.antiAlias,
                                     child: SingleChildScrollView(
@@ -1124,7 +1089,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                   ),
                                   const SizedBox(height: 10),
                                   if (meta != null)
-                                    _MetaPagination(
+                                    AppPagination(
                                       meta: meta,
                                       onPage: (page) {
                                         setState(() {
@@ -1196,11 +1161,11 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
     return AppShell(userName: widget.userName, activeIndex: 0, body: Column(children: [
       DetailHeader(title: 'Linen & Tirai di Laundry', userName: widget.userName),
       Expanded(child: RefreshIndicator(onRefresh: _load, child: _loading ? const Center(child: CircularProgressIndicator()) : _error != null ? ListView(children: [Padding(padding: const EdgeInsets.all(24), child: Column(children: [const Icon(Icons.cloud_off_rounded), const SizedBox(height: 10), Text('_error!', textAlign: TextAlign.center), const SizedBox(height: 12), ElevatedButton(onPressed: _load, child: const Text('Coba Lagi'))]))]) : ListView(padding: const EdgeInsets.fromLTRB(16,14,16,24), children: [
-        Container(width: double.infinity, padding: const EdgeInsets.fromLTRB(14,4,14,4), decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(14)), child: DropdownButtonHideUnderline(child: DropdownButton<String?>(value: _selectedCategory,isExpanded:true,hint:const Text('Filter Kategori'),items:[const DropdownMenuItem<String?>(value:null,child:Text('Semua Kategori')),...categoryNames.map((n)=>DropdownMenuItem<String?>(value:n,child:Text(n)))],onChanged:(v)=>setState(()=>_selectedCategory=v)))),
+        Container(width: double.infinity, padding: const EdgeInsets.fromLTRB(14,4,14,4), decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20)), child: DropdownButtonHideUnderline(child: DropdownButton<String?>(value: _selectedCategory,isExpanded:true,hint:const Text('Filter Kategori'),items:[const DropdownMenuItem<String?>(value:null,child:Text('Semua Kategori')),...categoryNames.map((n)=>DropdownMenuItem<String?>(value:n,child:Text(n)))],onChanged:(v)=>setState(()=>_selectedCategory=v)))),
         const SizedBox(height: 12),
-        Container(width: double.infinity, decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(18),boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:18,offset:const Offset(0,7))]),clipBehavior:Clip.antiAlias, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth<680?680.0:constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
+        Container(width: double.infinity, decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20),boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:18,offset:const Offset(0,7))]),clipBehavior:Clip.antiAlias, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth<680?680.0:constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
         if(filtered.isEmpty) const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data untuk kategori ini.'))),
-        if(_meta!=null) _MetaPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
+        if(_meta!=null) AppPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
       ]))),
     ]));
   }
@@ -1326,12 +1291,12 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(18),
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
                                   clipBehavior: Clip.antiAlias,
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      const tableWidth = 900.0;
+                                      final tableWidth = constraints.maxWidth;
 
                                       return SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
@@ -1413,7 +1378,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                                     },
                                   ),
                                 ),
-                                _MetaPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                                AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
                               ],
                             ),
             ),
@@ -1522,7 +1487,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none,
                 ),
               ),
@@ -1573,7 +1538,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(18),
+                                    borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withValues(alpha: .05),
@@ -1644,7 +1609,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                     },
                                   ),
                                 ),
-                                if (_meta != null) _MetaPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
+                                if (_meta != null) AppPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
                               ],
                             ),
             ),
@@ -1786,7 +1751,7 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                                   )
                                   .toList(),
                             ),
-                            if (_response != null) _MetaPagination(meta: _response!.meta, onPage: (page) { setState(() => _detailPage = page); _load(); }),
+                            if (_response != null) AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _detailPage = page); _load(); }),
                             const SizedBox(height: 18),
                             _RoomDetailTable(
                               title: 'BA Hilang',
@@ -1805,7 +1770,7 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                                   )
                                   .toList(),
                             ),
-                            if (_baResponse != null) _MetaPagination(meta: _baResponse!.meta, onPage: (page) { setState(() => _baPage = page); _load(); }),
+                            if (_baResponse != null) AppPagination(meta: _baResponse!.meta, onPage: (page) { setState(() => _baPage = page); _load(); }),
                           ],
                         ),
             ),
@@ -1838,7 +1803,7 @@ class _RoomDetailTable extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: .05),
@@ -2259,7 +2224,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                                       hintText: 'Cari ruangan, kategori, linen, RFID, atau QR Code',
                                       prefixIcon: const Icon(Icons.search_rounded),
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(14),
+                                        borderRadius: BorderRadius.circular(20),
                                         borderSide: BorderSide.none,
                                       ),
                                       filled: true,
@@ -2358,7 +2323,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 18, offset: const Offset(0, 7)),
                                 ],
@@ -2366,7 +2331,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                               clipBehavior: Clip.antiAlias,
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  final tableWidth = constraints.maxWidth < 980 ? 980.0 : constraints.maxWidth;
+                                  final tableWidth = constraints.maxWidth;
                                   return SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     physics: const ClampingScrollPhysics(),
@@ -2411,7 +2376,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                                 child: Center(child: Text('Tidak ada data Linen & Tirai Hilang.')),
                               ),
                             if (_meta != null)
-                              _MetaPagination(
+                              AppPagination(
                                 meta: _meta!,
                                 onPage: (page) {
                                   setState(() => _page = page);
@@ -2600,7 +2565,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                               icon: const Icon(Icons.clear_rounded),
                                             ),
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(14),
+                                        borderRadius: BorderRadius.circular(20),
                                         borderSide: BorderSide.none,
                                       ),
                                       filled: true,
@@ -2621,7 +2586,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: .05),
@@ -2633,7 +2598,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                               clipBehavior: Clip.antiAlias,
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  final tableWidth = constraints.maxWidth < 980 ? 980.0 : constraints.maxWidth;
+                                  final tableWidth = constraints.maxWidth;
                                   return SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     physics: const ClampingScrollPhysics(),
@@ -2687,7 +2652,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                 child: Center(child: Text('Tidak ada data Linen & Tirai Rusak.')),
                               ),
                             if (_meta != null)
-                              _MetaPagination(
+                              AppPagination(
                                 meta: _meta!,
                                 onPage: (page) {
                                   setState(() => _page = page);
@@ -2824,7 +2789,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                               padding: const EdgeInsets.fromLTRB(14, 4, 14, 4),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String?>(
@@ -2855,7 +2820,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: .05),
@@ -2867,9 +2832,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                               clipBehavior: Clip.antiAlias,
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  final tableWidth = constraints.maxWidth < 680
-                                      ? 680.0
-                                      : constraints.maxWidth;
+                                  final tableWidth = constraints.maxWidth;
 
                                   return SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
@@ -2943,7 +2906,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                                   child: Text('Tidak ada data untuk kategori ini.'),
                                 ),
                               ),
-                            if (_meta != null) _MetaPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
+                            if (_meta != null) AppPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
                           ],
                         ),
             ),
@@ -3049,7 +3012,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         Row(children:[
           Expanded(child:TextField(controller:_searchController,onSubmitted:(_){setState(()=>_page=1);_load();},decoration:InputDecoration(
             hintText:'Cari nama linen, RFID, QR Code, user...',prefixIcon:const Icon(Icons.search_rounded),filled:true,fillColor:Colors.white,
-            border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))),
+            border:OutlineInputBorder(borderRadius:BorderRadius.circular(20),borderSide:BorderSide.none)))),
           const SizedBox(width:8),ElevatedButton.icon(onPressed:_scan,icon:const Icon(Icons.qr_code_scanner_rounded),label:const Text('Scan'))]),
         const SizedBox(height:10),
         if(_optionsLoading)const LinearProgressIndicator(minHeight:2),
@@ -3068,7 +3031,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           const SizedBox(width:8),Expanded(child:OutlinedButton.icon(onPressed:_pickRange,icon:const Icon(Icons.date_range_rounded),label:Text(_selectedDateRange==null?'Rentang Tanggal':_range(_selectedDateRange!)))),
           IconButton(onPressed:_reset,tooltip:'Reset filter',icon:const Icon(Icons.filter_alt_off_rounded))]),
         const SizedBox(height:12),
-        Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+        Container(width:double.infinity,padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
           Row(children:[Expanded(child:Text('Antrean Scan (${_queue?.total??0})',style:const TextStyle(fontSize:13,fontWeight:FontWeight.w800))),ElevatedButton.icon(onPressed:_saveQueue,icon:const Icon(Icons.save_rounded,size:18),label:const Text('Simpan Keluar'))]),
           const SizedBox(height:8),
           _queueLoading?const Padding(padding:EdgeInsets.all(16),child:Center(child:CircularProgressIndicator())):(_queue?.data.isEmpty??true)?const Padding(padding:EdgeInsets.all(12),child:Text('Antrean scan kosong.')):
@@ -3081,14 +3044,14 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         const SizedBox(height:12),
         if(_loading)const Center(child:Padding(padding:EdgeInsets.all(30),child:CircularProgressIndicator()))
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
-        else Container(clipBehavior:Clip.antiAlias,decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
+        else Container(width:double.infinity,clipBehavior:Clip.antiAlias,decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
           headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(fontSize:9),columnSpacing:22,
           columns:const [DataColumn(label:Text('No.')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('QR Code')),DataColumn(label:Text('RFID')),DataColumn(label:Text('Ke Ruangan')),DataColumn(label:Text('Jam')),DataColumn(label:Text('Tanggal')),DataColumn(label:Text('User'))],
           rows:rows.asMap().entries.map((e){final n=((meta?.currentPage??_page)-1)*(meta?.perPage??_perPage)+e.key+1;return DataRow(cells:[DataCell(Text('${n}')),DataCell(Text(e.value.namaLinen)),DataCell(Text(e.value.qrCode)),DataCell(Text(e.value.tagRfid)),DataCell(Text(e.value.keRuangan)),DataCell(Text(e.value.jam)),DataCell(Text(e.value.tanggal)),DataCell(Text(e.value.user))]);}).toList(),
         ))),
         if(!_loading&&_error==null&&rows.isEmpty)const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data Linen & Tirai Keluar.'))),
         if(meta!=null)Row(children:[const Text('Tampilkan',style:TextStyle(fontSize:9)),const SizedBox(width:8),DropdownButton<int>(value:_perPage,items:const [10,25,50,100].map((v)=>DropdownMenuItem(value:v,child:Text('${v}'))).toList(),onChanged:(v){if(v==null)return;setState(()=>{_perPage=v,_page=1});_load();}),const Spacer(),Text('Total ${meta.total}',style:const TextStyle(fontSize:9))]),
-        if(meta!=null)_MetaPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
+        if(meta!=null)AppPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
       ]))),
     ]));
   }

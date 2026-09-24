@@ -270,7 +270,7 @@ class _DashboardDataMenu extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: .07),
@@ -281,7 +281,7 @@ class _DashboardDataMenu extends StatelessWidget {
           ),
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(20),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
@@ -293,7 +293,7 @@ class _DashboardDataMenu extends StatelessWidget {
                     height: 44,
                     decoration: BoxDecoration(
                       color: const Color(0xff159cf1).withValues(alpha: .10),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Icon(icon, color: const Color(0xff159cf1), size: 22),
                   ),
@@ -333,7 +333,7 @@ class _LinenCategoryCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: .05),
@@ -344,7 +344,7 @@ class _LinenCategoryCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
@@ -354,7 +354,7 @@ class _LinenCategoryCard extends StatelessWidget {
                 height: 42,
                 decoration: BoxDecoration(
                   color: const Color(0xff159cf1).withValues(alpha: .10),
-                  borderRadius: BorderRadius.circular(13),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Icon(
                   Icons.inventory_2_rounded,
@@ -432,7 +432,7 @@ class _ErrorCard extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         children: [
@@ -459,7 +459,7 @@ class _EmptyCard extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(message, textAlign: TextAlign.center),
     );

@@ -239,7 +239,7 @@ class AppShellState extends State<AppShell> {
                                       height: 30,
                                       decoration: BoxDecoration(
                                         color: const Color(0xff116ea5),
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(16),
                                         boxShadow: [
                                           BoxShadow(
                                             color: const Color(0xff0b4770)
@@ -320,7 +320,7 @@ class DashboardHeader extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(20),
+          bottom: Radius.circular(32),
         ),
       ),
       child: Stack(
@@ -482,13 +482,13 @@ class _HeaderActionButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: Ink(
           width: 46,
           height: 46,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: .16),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: Colors.white.withValues(alpha: .30),
             ),
@@ -527,7 +527,7 @@ class MetricCard extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
               color: const Color(0xff183b56).withValues(alpha: .08),
@@ -620,7 +620,7 @@ class _MetricTileState extends State<MetricTile> {
           ),          decoration: BoxDecoration(            color: _pressed
                 ? const Color(0xfff3f8fc)
                 : Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: Row(
             children: [
@@ -730,7 +730,7 @@ class _MetricIcon extends StatelessWidget {
       height: 36,
       decoration: BoxDecoration(
         color: colors[i].withValues(alpha: .10),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
       ),
       child: Icon(
         icons[i],
@@ -791,7 +791,7 @@ class SectionTitle extends StatelessWidget {
             height: 16,
             decoration: BoxDecoration(
               color: const Color(0xff159cf1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
           const SizedBox(width: 8),
@@ -858,7 +858,7 @@ class _CategoryItemState extends State<CategoryItem> {
           ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
                 color: color.withValues(alpha: .10),
@@ -964,7 +964,7 @@ class _TransactionItemState extends State<TransactionItem> {
           ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
                 color: color.withValues(alpha: .10),
@@ -1045,7 +1045,7 @@ class DetailHeader extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(20),
+          bottom: Radius.circular(28),
         ),
       ),
       child: Row(
@@ -1054,13 +1054,13 @@ class DetailHeader extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () => Navigator.of(context).pop(),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(15),
               child: Ink(
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: .14),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(15),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: .20),
                   ),
@@ -1125,10 +1125,9 @@ class DetailTable extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
-          width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: .05),
@@ -1207,7 +1206,6 @@ class RoomTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -1245,7 +1243,7 @@ class RoomTable extends StatelessWidget {
                   height: 34,
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: .15),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(11),
                   ),
                   child: const Icon(
                     Icons.meeting_room_rounded,
@@ -1378,13 +1376,13 @@ class BottomNavigation extends StatelessWidget {
             bottom: 0,
             height: 54,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(28),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                 child: Container(
                   decoration: BoxDecoration(
                     color: const Color(0xff116ea5).withValues(alpha: .58),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(28),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: .10),
                       width: 1,
@@ -1440,7 +1438,7 @@ class BottomNavigation extends StatelessWidget {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: .16),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(16),
                               ),
                             ),
                           ),
@@ -1576,7 +1574,7 @@ class _QRNavButton extends StatelessWidget {
                     Color(0xffff9800),
                   ],
           ),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: .24),

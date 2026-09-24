@@ -170,7 +170,7 @@ class _LoginPageState extends State<LoginPage>
         elevation: 8,
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(20),
         ),
         content: Row(
           children: [
@@ -484,7 +484,7 @@ class _LoginCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: .97),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: Colors.white.withValues(alpha: .70),
           width: 1,
@@ -559,7 +559,7 @@ class _LoginCard extends StatelessWidget {
                       const Color(0xff118D9A),
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(5),
+                        BorderRadius.circular(20),
                   ),
                   side: const BorderSide(
                     color: Color(0xffB5C0C9),
@@ -707,7 +707,7 @@ class _LoginFieldState extends State<_LoginField> {
               ? const Color(0xffF4FBFB)
               : const Color(0xffF4F6F8),
           borderRadius:
-              BorderRadius.circular(13),
+              BorderRadius.circular(20),
           border: Border.all(
             color: _focused
                 ? const Color(0xff18A5A7)
@@ -817,7 +817,7 @@ class _ActionButton extends StatelessWidget {
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
             borderRadius:
-                BorderRadius.circular(13),
+                BorderRadius.circular(20),
           ),
         ).copyWith(
           overlayColor:
@@ -918,7 +918,7 @@ class _HospitalLogo extends StatelessWidget {
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(20),
       child: Image.network(
         logoUrl,
         width: 120,

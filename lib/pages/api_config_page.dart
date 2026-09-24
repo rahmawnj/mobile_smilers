@@ -100,7 +100,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                   padding: const EdgeInsets.all(26),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: .97),
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: .20),
@@ -116,7 +116,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                         height: 66,
                         decoration: BoxDecoration(
                           color: const Color(0xff118D9A).withValues(alpha: .10),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(
                           Icons.dns_rounded,
@@ -147,8 +147,8 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                           prefixIcon: const Icon(Icons.dns_outlined, color: Color(0xff118D9A)),
                           filled: true,
                           fillColor: const Color(0xffF5F8FA),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
-                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Color(0xff118D9A))),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
+                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Color(0xff118D9A))),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -169,7 +169,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff1197A2),
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                           ),
                         ),
                       ),
