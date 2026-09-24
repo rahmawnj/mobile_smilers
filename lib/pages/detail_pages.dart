@@ -1146,40 +1146,43 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                               if (_response != null) ...[
                                 const SizedBox(height: 8),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const Text(
-                                      'Tampilkan',
+                                      'Jumlah',
                                       style: TextStyle(fontSize: 9),
                                     ),
                                     const SizedBox(width: 8),
-                                    DropdownButton<int>(
-                                      value: _perPage,
-                                      items: const [10, 25, 50, 100]
-                                          .map(
-                                            (v) => DropdownMenuItem<int>(
-                                              value: v,
-                                              child: Text('$v'),
-                                            ),
-                                          )
-                                          .toList(),
-                                      onChanged: (v) {
-                                        if (v == null) return;
-                                        setState(() {
-                                          _perPage = v;
-                                          _page = 1;
-                                        });
+                                    DropdownButtonHideUnderline(
+                                      child: DropdownButton<int>(
+                                        value: _perPage,
+                                        isDense: true,
+                                        items: const [10, 25, 50, 100]
+                                            .map(
+                                              (v) => DropdownMenuItem<int>(
+                                                value: v,
+                                                child: Text('$v'),
+                                              ),
+                                            )
+                                            .toList(),
+                                        onChanged: (v) {
+                                          if (v == null) return;
+                                          setState(() {
+                                            _perPage = v;
+                                            _page = 1;
+                                          });
+                                          _load();
+                                        },
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    AppPagination(
+                                      meta: _response!.meta,
+                                      onPage: (page) {
+                                        setState(() => _page = page);
                                         _load();
                                       },
                                     ),
                                   ],
-                                ),
-                                AppPagination(
-                                  meta: _response!.meta,
-                                  onPage: (page) {
-                                    setState(() => _page = page);
-                                    _load();
-                                  },
                                 ),
                               ],
                             ],
