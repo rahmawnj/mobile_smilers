@@ -35,7 +35,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     try {
       final results = await Future.wait([
-        ApiService.instance.getLinen(perPage: 1000),
+        ApiService.instance.getLinen(perPage: 10),
         ApiService.instance.getLinenLaundry(perPage: 1000),
         ApiService.instance.getLinenRuangan(perPage: 1000),
       ]);
@@ -49,10 +49,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
       setState(() {
         _linen = linenResponse.data;
-        _laundryCount = laundryResponse.data.fold<int>(
-          0,
-          (sum, item) => sum + (int.tryParse(item.ready.toString()) ?? 0),
-        );
+        _laundryCount = laundryResponse.meta.total;
         _roomCount = roomResponse.data.fold<int>(
           0,
           (sum, item) => sum + item.linenDiRuangan,
