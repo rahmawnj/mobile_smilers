@@ -65,10 +65,10 @@ class _PaginationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: enabled ? const Color(0xff1261dc) : const Color(0xffdfe7ef),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(11),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(11),
         child: SizedBox(
           width: 38,
           height: 38,
