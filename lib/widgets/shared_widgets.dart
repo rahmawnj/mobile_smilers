@@ -1150,7 +1150,7 @@ class DetailTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
+    return TableSurface(child: LayoutBuilder(
       builder: (context, constraints) {
         return Container(
           width: double.infinity,
@@ -1206,7 +1206,7 @@ class DetailTable extends StatelessWidget {
           ),
         );
       },
-    );
+    ));
   }
 }
 
