@@ -1,0 +1,381 @@
+import 'package:flutter/material.dart';
+
+import '../../api/api_service.dart';
+import '../../widgets/pagination_widget.dart';
+import '../../widgets/shared_widgets.dart';
+import '../detail_pages.dart';
+
+class LinenReadyPage extends StatefulWidget {
+  const LinenReadyPage({super.key, required this.userName});
+
+  final String userName;
+
+  @override
+  State<LinenReadyPage> createState() => _LinenReadyPageState();
+}
+
+class _LinenReadyPageState extends State<LinenReadyPage> {
+  bool _loading = true;
+  String? _error;
+  LinenListResponse<LinenCategory>? _response;
+  int _page = 1;
+  int _perPage = 10;
+
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      final response = await ApiService.instance.getLinen(
+        search: _searchController.text.trim().isEmpty
+            ? null
+            : _searchController.text.trim(),
+        perPage: _perPage,
+        page: _page,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _response = response;
+        _loading = false;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.message;
+        _loading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _error = 'Tidak dapat mengambil data Linen & Tirai Ready.';
+        _loading = false;
+      });
+    }
+  }
+
+  void _search() {
+    setState(() => _page = 1);
+    _load();
+  }
+
+  void _resetSearch() {
+    _searchController.clear();
+    setState(() => _page = 1);
+    _load();
+  }
+
+  void _changePage(int page) {
+    setState(() => _page = page);
+    _load();
+  }
+
+  void _changePerPage(int value) {
+    setState(() {
+      _perPage = value;
+      _page = 1;
+    });
+    _load();
+  }
+
+  void _openDetail(LinenCategory category) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => LinenCategoryDetailPage(
+          category: category,
+          userName: widget.userName,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = _response?.data ?? const <LinenCategory>[];
+    final meta = _response?.meta;
+
+    return AppShell(
+      userName: widget.userName,
+      activeIndex: 0,
+      body: Column(
+        children: [
+          DetailHeader(
+            title: 'Linen & Tirai Ready',
+            userName: widget.userName,
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _load,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                children: [
+                  _buildSearchBar(),
+                  const SizedBox(height: 14),
+                  if (_loading)
+                    const Padding(
+                      padding: EdgeInsets.all(40),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (_error != null)
+                    _buildError()
+                  else if (rows.isEmpty)
+                    _buildEmpty()
+                  else
+                    _buildTable(rows),
+                  if (!_loading && _error == null && meta != null) ...[
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Menampilkan ${rows.length} dari ${meta.total} kategori',
+                            style: const TextStyle(
+                              color: Color(0xff8b99a5),
+                              fontSize: 9,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const Text(
+                          'Per halaman',
+                          style: TextStyle(
+                            color: Color(0xff8b99a5),
+                            fontSize: 9,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                            value: _perPage,
+                            isDense: true,
+                            items: const [
+                              DropdownMenuItem(value: 10, child: Text('10')),
+                              DropdownMenuItem(value: 25, child: Text('25')),
+                              DropdownMenuItem(value: 50, child: Text('50')),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) _changePerPage(value);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (meta.lastPage > 1)
+                      AppPagination(
+                        meta: meta,
+                        onPage: _changePage,
+                      ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _searchController,
+            onSubmitted: (_) => _search(),
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              hintText: 'Cari kategori / sub kategori...',
+              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+              suffixIcon: _searchController.text.isEmpty
+                  ? null
+                  : IconButton(
+                      tooltip: 'Bersihkan',
+                      onPressed: _resetSearch,
+                      icon: const Icon(Icons.close_rounded, size: 18),
+                    ),
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                  color: Color(0xff159cf1),
+                  width: 1,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Material(
+          color: const Color(0xff1261dc),
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
+            onTap: _search,
+            borderRadius: BorderRadius.circular(10),
+            child: const SizedBox(
+              width: 46,
+              height: 46,
+              child: Icon(
+                Icons.search_rounded,
+                color: Colors.white,
+                size: 21,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTable(List<LinenCategory> rows) {
+    return TableSurface(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: DataTable(
+                headingRowColor: WidgetStateProperty.all(
+                  const Color(0xff1261dc),
+                ),
+                headingTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                ),
+                dataTextStyle: const TextStyle(
+                  color: Color(0xff465564),
+                  fontSize: 9,
+                ),
+                columnSpacing: 28,
+                horizontalMargin: 16,
+                columns: const [
+                  DataColumn(label: Text('Kategori')),
+                  DataColumn(label: Text('Sub Kategori')),
+                  DataColumn(label: Text('Stock Ready')),
+                  DataColumn(label: Text('Hilang')),
+                  DataColumn(label: Text('Action')),
+                ],
+                rows: rows.map((category) {
+                  final sub = category.subKategoriLinen.trim().isEmpty
+                      ? '-'
+                      : category.subKategoriLinen;
+
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(category.namaKategoriLinen)),
+                      DataCell(Text(sub)),
+                      DataCell(Text(category.jumlahStok.toString())),
+                      DataCell(Text(category.jumlahHilang.toString())),
+                      DataCell(
+                        TextButton(
+                          onPressed: () => _openDetail(category),
+                          child: const Text('Detail'),
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildEmpty() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Column(
+        children: [
+          Icon(
+            Icons.inventory_2_outlined,
+            color: Color(0xff9aa8b5),
+            size: 34,
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Tidak ada data Linen & Tirai Ready.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xff6f7f8d),
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildError() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.cloud_off_rounded,
+            color: Color(0xff9aa8b5),
+            size: 34,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            _error!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xff6f7f8d),
+              fontSize: 10,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: _load,
+            child: const Text('Coba Lagi'),
+          ),
+        ],
+      ),
+    );
+  }
+}
