@@ -296,9 +296,13 @@ class _DashboardPageState extends State<DashboardPage> {
                               TableSurface(
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: SizedBox(
+                                          width: constraints.maxWidth,
+                                          child: DataTable(
                                       headingRowColor: WidgetStateProperty.all(
                                         const Color(0xff1261dc),
                                       ),
@@ -326,7 +330,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                           DataCell(Text(r['selisih']?.toString() ?? '0')),
                                         ],
                                       )).toList(),
-                                    ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
