@@ -262,19 +262,15 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         if(meta!=null) ...[
           AppPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
           const SizedBox(height:6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [10,25,50,100].map((n) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3),
-              child: ChoiceChip(
-                label: Text('${n}'),
-                selected: _perPage == n,
-                onSelected: (_) {
-                  setState(() { _perPage = n; _page = 1; });
-                  _load();
-                },
-              ),
-            )).toList(),
+          AppPerPageDropdown(
+            value: _perPage,
+            onChanged: (n) {
+              setState(() {
+                _perPage = n;
+                _page = 1;
+              });
+              _load();
+            },
           ),
         ],
       ]))),
