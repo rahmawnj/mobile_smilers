@@ -500,39 +500,39 @@ class _SettingMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(18),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(10),
+        hoverColor: const Color(0xff159cf1).withValues(alpha: .045),
+        splashColor: const Color(0xff159cf1).withValues(alpha: .08),
+        highlightColor: const Color(0xff159cf1).withValues(alpha: .035),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 16,
+            horizontal: 4,
+            vertical: 14,
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: .045),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Color(0xffe3e9ee),
+                width: 1,
               ),
-            ],
+            ),
           ),
           child: Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
-                  color: const Color(0xff159cf1).withValues(alpha: .10),
-                  borderRadius: BorderRadius.circular(14),
+                  color: const Color(0xff159cf1).withValues(alpha: .08),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   icon,
                   color: const Color(0xff159cf1),
-                  size: 22,
+                  size: 21,
                 ),
               ),
               const SizedBox(width: 14),
@@ -548,7 +548,7 @@ class _SettingMenu extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
                       subtitle,
                       style: const TextStyle(
@@ -562,7 +562,7 @@ class _SettingMenu extends StatelessWidget {
               const Icon(
                 Icons.chevron_right_rounded,
                 color: Color(0xffa5b0ba),
-                size: 22,
+                size: 21,
               ),
             ],
           ),
@@ -571,3 +571,4 @@ class _SettingMenu extends StatelessWidget {
     );
   }
 }
+
