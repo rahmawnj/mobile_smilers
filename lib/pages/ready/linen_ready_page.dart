@@ -114,6 +114,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     return AppShell(
       userName: widget.userName,
       activeIndex: 0,
+      embedded: true,
       body: Column(
         children: [
           DetailHeader(
