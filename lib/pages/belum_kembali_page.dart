@@ -3,6 +3,42 @@ import 'package:flutter/material.dart';
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
 
+
+class _MetaPagination extends StatelessWidget {
+  const _MetaPagination({required this.meta, required this.onPage});
+  final LinenMeta meta;
+  final ValueChanged<int> onPage;
+
+  @override
+  Widget build(BuildContext context) {
+    if (meta.lastPage <= 1) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 100),
+      child: Material(
+        color: Colors.transparent,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OutlinedButton(
+              onPressed: meta.currentPage > 1 ? () => onPage(meta.currentPage - 1) : null,
+              child: const Text('Sebelumnya'),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Halaman ' + meta.currentPage.toString() + ' dari ' + meta.lastPage.toString(),
+              style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
+            ),
+            const SizedBox(width: 12),
+            OutlinedButton(
+              onPressed: meta.currentPage < meta.lastPage ? () => onPage(meta.currentPage + 1) : null,
+              child: const Text('Berikutnya'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 class LinenBelumKembaliPage extends StatefulWidget { const LinenBelumKembaliPage({super.key, required this.userName, this.embedded = false}); final String userName; final bool embedded; @override State<LinenBelumKembaliPage> createState()=>_LinenBelumKembaliPageState(); }
 class _LinenBelumKembaliPageState extends State<LinenBelumKembaliPage> { bool _loading=true; String? _error; LinenBelumKembaliResponse? _response; List<LinenRoomOption> _rooms=const []; int? _roomId; DateTimeRange? _range; int _page=1; final _searchController=TextEditingController(); @override void initState(){super.initState();_load();_loadRooms();} @override void dispose(){_searchController.dispose();super.dispose();} String _date(DateTime d)=>d.day.toString()+'/'+d.month.toString()+'/'+d.year.toString(); String? get _daterange=>_range==null?null:_date(_range!.start)+' - '+_date(_range!.end);
 Future<void> _loadRooms() async {try{final rooms=await ApiService.instance.getLinenBelumKembaliRuangan();if(mounted)setState(()=>_rooms=rooms);}catch(_){}}
