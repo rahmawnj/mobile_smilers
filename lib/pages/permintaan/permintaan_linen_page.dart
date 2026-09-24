@@ -23,6 +23,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   int _page = 1;
   int _perPage = 10;
   final TextEditingController _search = TextEditingController();
+  final TextEditingController _itemSearch = TextEditingController();
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   @override
   void dispose() {
     _search.dispose();
+    _itemSearch.dispose();
     super.dispose();
   }
 
@@ -53,40 +55,44 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
 
   Future<void> _loadFormData() async {
     try {
-      // Gunakan endpoint sumber data yang memang sudah menyediakan
-      // daftar ruangan dan linen untuk transaksi mobile.
       final results = await Future.wait([
-        ApiService.instance.getLinenKeluarOptions(),
-        ApiService.instance.getLinenLaundry(
-          perPage: 100,
-          page: 1,
-        ),
+        ApiService.instance.getPermintaanLinenRuanganDropdown(),
+        ApiService.instance.getPermintaanLinenItemDropdown(),
       ]);
-
-      final options = results[0] as LinenKeluarOptions;
-      final laundry = results[1] as LinenListResponse<LinenLaundryItem>;
 
       if (!mounted) return;
 
       setState(() {
         _formData = {
-          'ruangan': options.ruangan
-              .map((room) => {
-                    'id': room.id,
-                    'nama_ruangan': room.namaRuangan,
-                  })
-              .toList(),
-          'linen': laundry.data
-              .map((linen) => {
-                    'id': linen.id,
-                    'nama_linen': linen.namaLinen,
-                    'nama_kategori_linen': linen.namaKategoriLinen,
-                    'ready': linen.ready,
-                  })
-              .toList(),
+          'ruangan': results[0],
+          'linen': results[1],
         };
       });
     } catch (_) {}
+  }
+
+  Future<void> _loadDropdowns() async {
+    try {
+      final results = await Future.wait([
+        ApiService.instance.getPermintaanLinenRuanganDropdown(),
+        ApiService.instance.getPermintaanLinenItemDropdown(),
+      ]);
+
+      if (!mounted) return;
+
+      setState(() {
+        _formData = {
+          'ruangan': results[0],
+          'linen': results[1],
+        };
+      });
+    } on ApiException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
+      }
+    }
   }
 
   Future<void> _load() async {
@@ -127,9 +133,18 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   }
 
   Future<void> _create() async {
-    // Form data bisa saja belum selesai dimuat ketika tombol ditekan.
-    // Pastikan data form tersedia sebelum membuka dialog.
+    await _loadFormData();
+
     if (_rooms.isEmpty || _linens.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Data ruangan atau item linen belum tersedia.'),
+        ),
+      );
+      return;
+    }
+
+
       try {
         final result = await ApiService.instance.getPermintaanLinenFormData();
         if (!mounted) return;
@@ -234,6 +249,32 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextField(
+                          controller: _itemSearch,
+                          decoration: const InputDecoration(
+                            labelText: 'Cari Item Linen',
+                            hintText: 'Nama kategori atau sub kategori',
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(),
+                          ),
+                          onSubmitted: (_) async {
+                            final result = await ApiService.instance
+                                .getPermintaanLinenItemDropdown(
+                              search: _itemSearch.text.trim().isEmpty
+                                  ? null
+                                  : _itemSearch.text.trim(),
+                            );
+                            if (!mounted) return;
+                            setState(() {
+                              _formData['linen'] = result;
+                            });
+                            setDialogState(() {});
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -244,26 +285,23 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                       const SizedBox(height: 8),
                       ..._linens.map((linen) {
                         final id = _toInt(linen['id'] ?? linen['linen_id']);
-                        final name = linen['nama_linen']?.toString() ??
-                            linen['nama']?.toString() ??
-                            '-';
-                        final category = linen['kategori_linen']?.toString() ??
-                            linen['nama_kategori_linen']?.toString() ??
-                            '';
+                        final category =
+                            linen['nama_kategori_linen']?.toString() ?? '-';
+                        final subCategory =
+                            linen['sub_kategori_linen']?.toString() ?? '-';
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: Row(
                             children: [
                               Expanded(
-                                child: Text(
-                                  category.isEmpty ? name : '$name • $category',
-                                ),
+                                child: Text('$category • $subCategory'),
                               ),
                               SizedBox(
                                 width: 90,
                                 child: TextFormField(
-                                  initialValue: quantities[id]?.toString() ?? '',
+                                  initialValue:
+                                      quantities[id]?.toString() ?? '',
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
                                     labelText: 'Jumlah',
