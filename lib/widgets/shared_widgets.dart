@@ -54,6 +54,7 @@ class AppShell extends StatefulWidget {
     this.activeIndex = -1,
     this.backgroundColor = const Color(0xfff5f8fc),
     this.embedded = false,
+    this.showBottomNavigation = true,
   });
 
   final String userName;
@@ -61,6 +62,7 @@ class AppShell extends StatefulWidget {
   final int activeIndex;
   final Color backgroundColor;
   final bool embedded;
+  final bool showBottomNavigation;
 
   @override
   State<AppShell> createState() => AppShellState();
@@ -239,17 +241,18 @@ class AppShellState extends State<AppShell> {
                       ),
                     ],
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 18,
-                        right: 18,
-                        bottom: 10,
-                      ),
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
+                  if (widget.showBottomNavigation)
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 18,
+                          right: 18,
+                          bottom: 10,
+                        ),
+                        child: Stack(
+                          alignment: Alignment.bottomCenter,
+                          children: [
                           IgnorePointer(
                             ignoring: _showBottomNavigation,
                             child: AnimatedOpacity(
