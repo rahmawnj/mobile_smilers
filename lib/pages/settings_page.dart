@@ -473,23 +473,16 @@ class _SettingMenu extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        hoverColor: const Color(0xff159cf1).withValues(alpha: .045),
-        splashColor: const Color(0xff159cf1).withValues(alpha: .08),
-        highlightColor: const Color(0xff159cf1).withValues(alpha: .035),
+        hoverColor: const Color(0xff159cf1).withValues(alpha: .055),
+        splashColor: const Color(0xff159cf1).withValues(alpha: .09),
+        highlightColor: const Color(0xff159cf1).withValues(alpha: .04),
         child: Container(
+          width: double.infinity,
           padding: const EdgeInsets.symmetric(
             horizontal: 4,
             vertical: 14,
           ),
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Color(0xffe3e9ee),
-                width: 1,
-              ),
-            ),
-          ),
+        ),
           child: Row(
             children: [
               Container(
