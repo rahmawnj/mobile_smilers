@@ -213,7 +213,8 @@ class AppShellState extends State<AppShell> {
                 children: [
                   Column(
                     children: [
-                      if (_currentIndex != 0)
+                      if (_positionForIndex(_currentIndex) >= 0 &&
+                          _currentIndex != 0)
                         DetailHeader(
                           title: switch (_currentIndex) {
                             1 => 'Keluar Masuk Linen & Tirai',
@@ -224,15 +225,17 @@ class AppShellState extends State<AppShell> {
                           userName: widget.userName,
                         ),
                       Expanded(
-                        child: PageView.builder(
-                          controller: _pageController,
-                          itemCount: _indexes.length,
-                          physics: const ClampingScrollPhysics(),
-                          onPageChanged: _onPageChanged,
-                          itemBuilder: (context, position) {
-                            return _pageForPosition(position);
-                          },
-                        ),
+                        child: _positionForIndex(_currentIndex) < 0
+                            ? widget.body
+                            : PageView.builder(
+                                controller: _pageController,
+                                itemCount: _indexes.length,
+                                physics: const ClampingScrollPhysics(),
+                                onPageChanged: _onPageChanged,
+                                itemBuilder: (context, position) {
+                                  return _pageForPosition(position);
+                                },
+                              ),
                       ),
                     ],
                   ),
