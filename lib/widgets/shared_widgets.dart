@@ -573,7 +573,7 @@ class MetricCard extends StatelessWidget {
                 onTap: () {
                   if (entry.key == 0) {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (_) => LinenReadyPage(userName: userName),
                       ),
                     );
