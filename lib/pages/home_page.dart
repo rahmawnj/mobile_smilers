@@ -28,6 +28,7 @@ class _DashboardPageState extends State<DashboardPage> {
   int _readyCount = 0;
   int _laundryCount = 0;
   int _roomCount = 0;
+  List<Map<String, dynamic>> _inOutRows = const [];
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ApiService.instance.getLinen(perPage: 10),
         ApiService.instance.getLinenLaundry(perPage: 1000),
         ApiService.instance.getLinenRuangan(perPage: 1000),
+        ApiService.instance.getInOut(perPage: 10, page: 1),
       ]);
       if (!mounted) return;
 
@@ -54,12 +56,14 @@ class _DashboardPageState extends State<DashboardPage> {
           results[1] as LinenListResponse<LinenLaundryItem>;
       final roomResponse =
           results[2] as LinenListResponse<LinenRuanganItem>;
+      final inOutResponse = results[3] as InOutResponse;
 
       setState(() {
         _linen = linenResponse.data;
         _readyCount = laundryResponse.meta.total;
         _laundryCount = linenResponse.meta.total;
         _roomCount = roomResponse.meta.total;
+        _inOutRows = inOutResponse.data.take(10).toList();
         _loading = false;
       });
     } on ApiException catch (e) {
@@ -171,6 +175,92 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                               ],
                             ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Transform.translate(
+                offset: const Offset(0, -8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 900),
+                      child: DashboardCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Expanded(
+                                  child: SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => InOutPage(
+                                          userName: widget.userName,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Lihat Semua'),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            if (_loading)
+                              const Padding(
+                                padding: EdgeInsets.all(28),
+                                child: Center(child: CircularProgressIndicator()),
+                              )
+                            else if (_inOutRows.isEmpty)
+                              const Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Center(child: Text('Tidak ada data Keluar Masuk.')),
+                              )
+                            else
+                              TableSurface(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: DataTable(
+                                      headingRowColor: WidgetStateProperty.all(
+                                        const Color(0xff1261dc),
+                                      ),
+                                      headingTextStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      dataTextStyle: const TextStyle(
+                                        color: Color(0xff465564),
+                                        fontSize: 9,
+                                      ),
+                                      columnSpacing: 28,
+                                      columns: const [
+                                        DataColumn(label: Text('Ruangan')),
+                                        DataColumn(label: Text('Masuk')),
+                                        DataColumn(label: Text('Keluar')),
+                                        DataColumn(label: Text('Selisih')),
+                                      ],
+                                      rows: _inOutRows.map((r) => DataRow(
+                                        cells: [
+                                          DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
+                                          DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
+                                          DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
+                                          DataCell(Text(r['selisih']?.toString() ?? '0')),
+                                        ],
+                                      )).toList(),
+                                    ),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
