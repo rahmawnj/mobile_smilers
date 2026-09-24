@@ -184,7 +184,7 @@ class _LinenMasukTable extends StatelessWidget {
   const _LinenMasukTable({required this.rows, required this.page, required this.perPage});
   final List<LinenMasukItem> rows;
   final int page, perPage;
-  @override Widget build(BuildContext context) => Container(
+  @override Widget build(BuildContext context) => TableSurface(
     
     
     child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
