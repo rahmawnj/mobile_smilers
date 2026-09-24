@@ -56,94 +56,90 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AppShell(
-      userName: widget.userName,
-      activeIndex: -1,
-      body: Scaffold(
-        backgroundColor: const Color(0xfff5f8fc),
-        appBar: AppBar(
-          title: const Text(
-            'SETTING',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      appBar: AppBar(
+        title: const Text(
+          'SETTING',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xff34495e),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 44),
+        children: [
+          _SettingMenu(
+            icon: Icons.lock_outline_rounded,
+            title: 'Ganti Sandi',
+            subtitle: 'Ubah kata sandi akun Anda',
+            onTap: () => _showInfo(
+              'Ganti Sandi',
+              'Halaman ganti sandi akan tersedia di sini.',
             ),
           ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: const Color(0xff34495e),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 18, 16, 44),
-          children: [
-            _SettingMenu(
-              icon: Icons.lock_outline_rounded,
-              title: 'Ganti Sandi',
-              subtitle: 'Ubah kata sandi akun Anda',
-              onTap: () => _showInfo(
-                'Ganti Sandi',
-                'Halaman ganti sandi akan tersedia di sini.',
-              ),
+          const SizedBox(height: 10),
+          _SettingMenu(
+            icon: Icons.menu_book_outlined,
+            title: 'Manual Book',
+            subtitle: 'Panduan penggunaan aplikasi SmileRS',
+            onTap: () => _showInfo(
+              'Manual Book',
+              'Panduan penggunaan aplikasi akan tersedia di sini.',
             ),
-            const SizedBox(height: 10),
-            _SettingMenu(
-              icon: Icons.menu_book_outlined,
-              title: 'Manual Book',
-              subtitle: 'Panduan penggunaan aplikasi SmileRS',
-              onTap: () => _showInfo(
-                'Manual Book',
-                'Panduan penggunaan aplikasi akan tersedia di sini.',
-              ),
+          ),
+          const SizedBox(height: 10),
+          _SettingMenu(
+            icon: Icons.info_outline_rounded,
+            title: 'Tentang SmileRS',
+            subtitle: 'Informasi tentang aplikasi SmileRS',
+            onTap: () => _showInfo(
+              'Tentang SmileRS',
+              'SmileRS adalah sistem manajemen linen untuk rumah sakit.',
             ),
-            const SizedBox(height: 10),
-            _SettingMenu(
-              icon: Icons.info_outline_rounded,
-              title: 'Tentang SmileRS',
-              subtitle: 'Informasi tentang aplikasi SmileRS',
-              onTap: () => _showInfo(
-                'Tentang SmileRS',
-                'SmileRS adalah sistem manajemen linen untuk rumah sakit.',
-              ),
-            ),
-            const SizedBox(height: 54),
-            Center(
-              child: SizedBox(
-                width: 190,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _isLoggingOut ? null : _logout,
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: const Color(0xffe85d5d),
-                    disabledBackgroundColor: const Color(0xffe8a1a1),
-                    foregroundColor: Colors.white,
-                    disabledForegroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+          ),
+          const SizedBox(height: 54),
+          Center(
+            child: SizedBox(
+              width: 190,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _isLoggingOut ? null : _logout,
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: const Color(0xffe85d5d),
+                  disabledBackgroundColor: const Color(0xffe8a1a1),
+                  foregroundColor: Colors.white,
+                  disabledForegroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: _isLoggingOut
-                      ? const SizedBox(
-                          width: 19,
-                          height: 19,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text(
-                          'Keluar',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
                 ),
+                child: _isLoggingOut
+                    ? const SizedBox(
+                        width: 19,
+                        height: 19,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'Keluar',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
