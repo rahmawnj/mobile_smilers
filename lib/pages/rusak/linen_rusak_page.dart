@@ -217,7 +217,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                   ),
                 ),
                 child: const Icon(
-                  Icons.home_rounded,
+                  Icons.arrow_back_rounded,
                   color: Colors.white,
                   size: 20,
                 ),
