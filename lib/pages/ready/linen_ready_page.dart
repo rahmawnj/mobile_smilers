@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../api/api_service.dart';
 import '../../widgets/pagination_widget.dart';
 import '../../widgets/shared_widgets.dart';
-import '../detail_pages.dart';
+import 'linen_ready_detail_page.dart';
 
 class LinenReadyPage extends StatefulWidget {
   const LinenReadyPage({super.key, required this.userName});
