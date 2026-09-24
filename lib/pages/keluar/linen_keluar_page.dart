@@ -219,14 +219,64 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         const SizedBox(height:12),
         if(_loading)const Center(child:Padding(padding:EdgeInsets.all(30),child:CircularProgressIndicator()))
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
-        else Container(width:double.infinity,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
-          headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(fontSize:9),columnSpacing:22,
-          columns:const [DataColumn(label:Text('No.')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('QR Code')),DataColumn(label:Text('RFID')),DataColumn(label:Text('Ke Ruangan')),DataColumn(label:Text('Jam')),DataColumn(label:Text('Tanggal')),DataColumn(label:Text('User'))],
-          rows:rows.asMap().entries.map((e){final n=((meta?.currentPage??_page)-1)*(meta?.perPage??_perPage)+e.key+1;return DataRow(cells:[DataCell(Text('${n}')),DataCell(Text(e.value.namaLinen)),DataCell(Text(e.value.qrCode)),DataCell(Text(e.value.tagRfid)),DataCell(Text(e.value.keRuangan)),DataCell(Text(e.value.jam)),DataCell(Text(e.value.tanggal)),DataCell(Text(e.value.user))]);}).toList(),
-        ))),
+        else TableSurface(
+          child: LayoutBuilder(builder: (context, constraints) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: constraints.maxWidth,
+                child: DataTable(
+                  headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
+                  headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
+                  dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
+                  columnSpacing: 24,
+                  columns: const [
+                    DataColumn(label: Text('No.')),
+                    DataColumn(label: Text('Nama Linen')),
+                    DataColumn(label: Text('QR Code')),
+                    DataColumn(label: Text('RFID')),
+                    DataColumn(label: Text('Ke Ruangan')),
+                    DataColumn(label: Text('Jam')),
+                    DataColumn(label: Text('Tanggal')),
+                    DataColumn(label: Text('User')),
+                  ],
+                  rows: rows.asMap().entries.map((e) {
+                    final n = ((meta?.currentPage ?? _page) - 1) * (meta?.perPage ?? _perPage) + e.key + 1;
+                    return DataRow(cells: [
+                      DataCell(Text(n.toString())),
+                      DataCell(Text(e.value.namaLinen.isEmpty ? '-' : e.value.namaLinen)),
+                      DataCell(Text(e.value.qrCode.isEmpty ? '-' : e.value.qrCode)),
+                      DataCell(Text(e.value.tagRfid.isEmpty ? '-' : e.value.tagRfid)),
+                      DataCell(Text(e.value.keRuangan.isEmpty ? '-' : e.value.keRuangan)),
+                      DataCell(Text(e.value.jam.isEmpty ? '-' : e.value.jam)),
+                      DataCell(Text(e.value.tanggal.isEmpty ? '-' : e.value.tanggal)),
+                      DataCell(Text(e.value.user.isEmpty ? '-' : e.value.user)),
+                    ]);
+                  }).toList(),
+                ),
+              ),
+            );
+          }),
+        ),
         if(!_loading&&_error==null&&rows.isEmpty)const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data Linen & Tirai Keluar.'))),
-        if(meta!=null)Row(children:[const Text('Tampilkan',style:TextStyle(fontSize:9)),const SizedBox(width:8),DropdownButton<int>(value:_perPage,items:const [10,25,50,100].map((v)=>DropdownMenuItem(value:v,child:Text('${v}'))).toList(),onChanged:(v){if(v==null)return;setState(()=>{_perPage=v,_page=1});_load();}),const Spacer(),Text('Total ${meta.total}',style:const TextStyle(fontSize:9))]),
-        if(meta!=null)AppPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
+        if(meta!=null) ...[
+          AppPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
+          const SizedBox(height:6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [10,25,50,100].map((n) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              child: ChoiceChip(
+                label: Text('${n}'),
+                selected: _perPage == n,
+                onSelected: (_) {
+                  setState(() { _perPage = n; _page = 1; });
+                  _load();
+                },
+              ),
+            )).toList(),
+          ),
+        ],
       ]))),
     ]));
   }
