@@ -100,7 +100,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           Expanded(child:TextField(controller:_searchController,onSubmitted:(_){setState(()=>_page=1);_load();},decoration:InputDecoration(
             hintText:'Cari nama linen, RFID, QR Code, user...',prefixIcon:const Icon(Icons.search_rounded),filled:true,fillColor:Colors.white,
             border:OutlineInputBorder(borderRadius:BorderRadius.circular(20),borderSide:BorderSide.none)))),
-          const SizedBox(width:8),ElevatedButton.icon(onPressed:_scan,icon:const Icon(Icons.qr_code_scanner_rounded),label:const Text('Scan'))]),
+        ]),
         const SizedBox(height:10),
         Container(
           width:double.infinity,
