@@ -148,13 +148,34 @@ class _RekapCard extends StatelessWidget {
   Widget build(BuildContext context)=>Container(padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),child:Column(children:[Icon(icon,size:20,color:const Color(0xff1261dc)),const SizedBox(height:6),Text(value,style:const TextStyle(fontSize:18,fontWeight:FontWeight.w800)),const SizedBox(height:2),Text(title,textAlign:TextAlign.center,style:const TextStyle(fontSize:8,color:Color(0xff6f7f8d))) ]));
 }
 class _RekapTable extends StatelessWidget {
-  const _RekapTable({required this.rows}); final List<RekapanTransaksiItem> rows;
+  const _RekapTable({required this.rows});
+
+  final List<RekapanTransaksiItem> rows;
+
   @override
-  Widget build(BuildContext context)=>Container(width:double.infinity,child:SingleChildScrollView(scrollDirection:Axis.horizontal,child:DataTable(
-    headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),
-    headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),
-    dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),
-    columns:const [DataColumn(label:Text('Tanggal')),DataColumn(label:Text('Keluar')),DataColumn(label:Text('Masuk')),DataColumn(label:Text('Berat Masuk'))],
-    rows:rows.map((r)=>DataRow(cells:[DataCell(Text(r.tanggal)),DataCell(Text('${r.jumlahLinenKeluar}')),DataCell(Text('${r.jumlahLinenMasuk}')),DataCell(Text('${r.beratLinenMasuk}'))])).toList(),
-  )));
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: constraints.maxWidth),
+        child: DataTable(
+          headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
+          headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
+          dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
+          columns: const [
+            DataColumn(label: Text('Tanggal')),
+            DataColumn(label: Text('Keluar')),
+            DataColumn(label: Text('Masuk')),
+            DataColumn(label: Text('Berat Masuk')),
+          ],
+          rows: rows.map((r) => DataRow(cells: [
+            DataCell(Text(r.tanggal)),
+            DataCell(Text('${r.jumlahLinenKeluar}')),
+            DataCell(Text('${r.jumlahLinenMasuk}')),
+            DataCell(Text('${r.beratLinenMasuk}')),
+          ])).toList(),
+        ),
+      ),
+    ),
+  );
 }
