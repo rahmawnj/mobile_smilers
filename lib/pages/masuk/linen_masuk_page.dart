@@ -231,6 +231,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     return AppShell(
       userName: widget.userName,
       activeIndex: -1,
+      showBottomNavigation: false,
       body: Column(
         children: [
           DetailHeader(
