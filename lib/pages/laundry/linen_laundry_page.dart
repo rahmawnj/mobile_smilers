@@ -254,27 +254,15 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                           style: TextStyle(fontSize: 9),
                                         ),
                                         const SizedBox(width: 8),
-                                        DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: _perPage,
-                                            isDense: true,
-                                            items: const [10, 25, 50, 100]
-                                                .map(
-                                                  (v) => DropdownMenuItem<int>(
-                                                    value: v,
-                                                    child: Text('$v'),
-                                                  ),
-                                                )
-                                                .toList(),
-                                            onChanged: (v) {
-                                              if (v == null) return;
-                                              setState(() {
-                                                _perPage = v;
-                                                _page = 1;
-                                              });
-                                              _load();
-                                            },
-                                          ),
+                                        AppPerPageDropdown(
+                                          value: _perPage,
+                                          onChanged: (v) {
+                                            setState(() {
+                                              _perPage = v;
+                                              _page = 1;
+                                            });
+                                            _load();
+                                          },
                                         ),
                                       ],
                                     ),
