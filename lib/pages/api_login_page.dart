@@ -182,25 +182,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                               ),
                       ),
                       const SizedBox(height: 16),
-                      Text(
-                        _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : 'APLIKASI',
-                        style: TextStyle(
-                          color: Color(0xff173A58),
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 2,
-                        ),
-                      ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'SmileRS',
-                        style: TextStyle(
-                          color: Color(0xff8291A0),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
                       const SizedBox(height: 28),
                       TextField(
                         controller: _usernameController,
@@ -303,13 +285,13 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : '',
+                      const Text(
+                        'SmileRS',
                         style: TextStyle(
-                          color: Color(0xffA0ADB6),
-                          fontSize: 8,
+                          color: Color(0xff8291A0),
+                          fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: .7,
+                          letterSpacing: 1.2,
                         ),
                       ),
                     ],
