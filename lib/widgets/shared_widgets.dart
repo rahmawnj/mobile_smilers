@@ -1,6 +1,34 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+
+class TableSurface extends StatelessWidget {
+  const TableSurface({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 6,
+            spreadRadius: 0,
+            offset: Offset(0, 2),
+            color: Color(0x18000000),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: child,
+      ),
+    );
+  }
+}
+
 import 'package:flutter/services.dart';
 
 import '../api/api_service.dart';
