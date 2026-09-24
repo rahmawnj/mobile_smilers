@@ -132,237 +132,6 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
     }
   }
 
-  Future<void> _create() async {
-    await _loadFormData();
-
-    if (_rooms.isEmpty || _linens.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Data ruangan atau item linen belum tersedia.'),
-        ),
-      );
-      return;
-    }
-
-    DateTime selectedDate = DateTime.now();
-    int? selectedRoom = _roomId ?? _toInt(_rooms.first['id']);
-    final reasonController = TextEditingController();
-    final quantities = <int, int>{};
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: const Text('Buat Permintaan Linen'),
-              content: SizedBox(
-                width: 600,
-                height: 500,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(
-                          'Tanggal: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.calendar_month),
-                          onPressed: () async {
-                            final picked = await showDatePicker(
-                              context: dialogContext,
-                              initialDate: selectedDate,
-                              firstDate: DateTime(2020),
-                              lastDate: DateTime(2100),
-                            );
-                            if (picked != null) {
-                              setDialogState(() {
-                                selectedDate = picked;
-                              });
-                            }
-                          },
-                        ),
-                      ),
-                      DropdownButtonFormField<int>(
-                        value: selectedRoom,
-                        isExpanded: true,
-                        decoration: const InputDecoration(labelText: 'Ruangan'),
-                        items: _rooms.map((room) {
-                          final id = _toInt(room['id']);
-                          final name = room['nama_ruangan']?.toString() ??
-                              room['nama']?.toString() ??
-                              '-';
-                          return DropdownMenuItem<int>(
-                            value: id,
-                            child: Text(name),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setDialogState(() {
-                            selectedRoom = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      TextField(
-                        controller: reasonController,
-                        maxLines: 2,
-                        decoration: const InputDecoration(
-                          labelText: 'Alasan Permintaan',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextField(
-                          controller: _itemSearch,
-                          decoration: const InputDecoration(
-                            labelText: 'Cari Item Linen',
-                            hintText: 'Nama kategori atau sub kategori',
-                            prefixIcon: Icon(Icons.search),
-                            border: OutlineInputBorder(),
-                          ),
-                          onSubmitted: (_) async {
-                            final result = await ApiService.instance
-                                .getPermintaanLinenItemDropdown(
-                              search: _itemSearch.text.trim().isEmpty
-                                  ? null
-                                  : _itemSearch.text.trim(),
-                            );
-                            if (!mounted) return;
-                            setState(() {
-                              _formData['linen'] = result;
-                            });
-                            setDialogState(() {});
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Item Linen',
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      ..._linens.map((linen) {
-                        final id = _toInt(linen['id'] ?? linen['linen_id']);
-                        final category =
-                            linen['nama_kategori_linen']?.toString() ?? '-';
-                        final subCategory =
-                            linen['sub_kategori_linen']?.toString() ?? '-';
-
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text('$category • $subCategory'),
-                              ),
-                              SizedBox(
-                                width: 90,
-                                child: TextFormField(
-                                  initialValue:
-                                      quantities[id]?.toString() ?? '',
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Jumlah',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  onChanged: (value) {
-                                    quantities[id] = _toInt(value);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext, false),
-                  child: const Text('Batal'),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(dialogContext, true),
-                  child: const Text('Simpan'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-
-    if (confirmed != true || selectedRoom == null) {
-      reasonController.dispose();
-      return;
-    }
-
-    final items = quantities.entries
-        .where((entry) => entry.value > 0)
-        .map((entry) => <String, dynamic>{
-              'linen_id': entry.key,
-              'jumlah': entry.value,
-            })
-        .toList();
-
-    if (items.isEmpty) {
-      reasonController.dispose();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih minimal satu linen.')),
-      );
-      return;
-    }
-
-    setState(() {
-      _saving = true;
-    });
-
-    try {
-      final date =
-          '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}';
-
-      final result = await ApiService.instance.createPermintaanLinen(
-        tanggalPermintaan: date,
-        ruanganId: selectedRoom!,
-        alasanPermintaan: reasonController.text.trim(),
-        items: items,
-      );
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            result['message']?.toString() ?? 'Permintaan berhasil dibuat',
-          ),
-        ),
-      );
-      _page = 1;
-      await _load();
-    } on ApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message)),
-        );
-      }
-    } finally {
-      reasonController.dispose();
-      if (mounted) {
-        setState(() {
-          _saving = false;
-        });
-      }
-    }
-  }
-
   Future<void> _showDetail(int id) async {
     try {
       final result = await ApiService.instance.getPermintaanLinenDetail(id);
@@ -531,7 +300,19 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
-                  onPressed: _saving ? null : _create,
+                  onPressed: () async {
+                    final created = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder: (_) => PermintaanLinenFormPage(
+                          userName: widget.userName,
+                        ),
+                      ),
+                    );
+                    if (created == true && mounted) {
+                      _page = 1;
+                      _load();
+                    }
+                  },
                   icon: const Icon(Icons.add),
                   label: const Text('Buat Permintaan'),
                 ),
