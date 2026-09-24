@@ -175,7 +175,7 @@ class _LinenKeluarScanPageState extends State<LinenKeluarScanPage> {
                       ),
                     )
                   else
-                    SingleChildScrollView(
+                    TableSurface(child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
                         headingRowColor: WidgetStateProperty.all(
@@ -219,6 +219,7 @@ class _LinenKeluarScanPageState extends State<LinenKeluarScanPage> {
                           );
                         }).toList(),
                       ),
+                    ),
                     ),
                 ],
               ),
