@@ -212,7 +212,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                           ),
                         ),
                         const Text(
-                          'Per halaman',
+                          'Jumlah',
                           style: TextStyle(
                             color: Color(0xff8b99a5),
                             fontSize: 9,
@@ -233,13 +233,19 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                             },
                           ),
                         ),
+                        const SizedBox(width: 12),
+                        if (meta.lastPage > 1)
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: AppPagination(
+                                meta: meta,
+                                onPage: _changePage,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    if (meta.lastPage > 1)
-                      AppPagination(
-                        meta: meta,
-                        onPage: _changePage,
-                      ),
                   ],
                 ],
               ),
