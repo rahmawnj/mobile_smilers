@@ -160,19 +160,9 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                             ),
                           ),
                           const SizedBox(width: 14),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<int>(
-                              value: _perPage,
-                              isDense: true,
-                              items: const [
-                                DropdownMenuItem(value: 10, child: Text('10')),
-                                DropdownMenuItem(value: 20, child: Text('20')),
-                                DropdownMenuItem(value: 50, child: Text('50')),
-                              ],
-                              onChanged: (value) {
-                                if (value != null) _changePerPage(value);
-                              },
-                            ),
+                          AppPerPageDropdown(
+                            value: _perPage,
+                            onChanged: _changePerPage,
                           ),
                         ],
                       ),
