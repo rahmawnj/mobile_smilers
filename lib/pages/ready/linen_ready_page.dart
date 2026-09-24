@@ -111,11 +111,11 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     final rows = _response?.data ?? const <LinenCategory>[];
     final meta = _response?.meta;
 
-    return AppShell(
-      userName: widget.userName,
-      activeIndex: 0,
-      embedded: true,
-      body: Column(
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
         children: [
           DetailHeader(
             title: 'Linen & Tirai Ready',
@@ -191,6 +191,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
           ),
         ],
       ),
+    ),
     );
   }
 
