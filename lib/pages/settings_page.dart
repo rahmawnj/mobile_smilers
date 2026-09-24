@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
+import '../widgets/shared_widgets.dart';
 import 'api_login_page.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -248,23 +249,7 @@ class _SettingsHero extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Material(
-                  color: Colors.white.withValues(alpha: .16),
-                  borderRadius: BorderRadius.circular(13),
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    borderRadius: BorderRadius.circular(13),
-                    child: const SizedBox(
-                      width: 42,
-                      height: 42,
-                      child: Icon(
-                        Icons.arrow_back_rounded,
-                        color: Colors.white,
-                        size: 21,
-                      ),
-                    ),
-                  ),
-                ),
+                const AppBackButton(),
                 const SizedBox(width: 14),
                 const Expanded(
                   child: Column(
