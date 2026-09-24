@@ -144,41 +144,6 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
       return;
     }
 
-
-      try {
-        final result = await ApiService.instance.getPermintaanLinenFormData();
-        if (!mounted) return;
-        setState(() {
-          _formData = result.data;
-        });
-      } on ApiException catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.message)),
-          );
-        }
-        return;
-      } catch (_) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Data form Permintaan Linen belum dapat dimuat.'),
-            ),
-          );
-        }
-        return;
-      }
-    }
-
-    if (_rooms.isEmpty || _linens.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Data ruangan atau linen untuk form belum tersedia.'),
-        ),
-      );
-      return;
-    }
-
     DateTime selectedDate = DateTime.now();
     int? selectedRoom = _roomId ?? _toInt(_rooms.first['id']);
     final reasonController = TextEditingController();
