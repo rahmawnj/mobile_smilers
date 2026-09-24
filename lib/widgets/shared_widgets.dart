@@ -11,6 +11,7 @@ import '../pages/rekap_page.dart';
 import '../pages/belum_kembali_page.dart';
 import '../pages/detail_pages.dart';
 import '../pages/ready/linen_ready_page.dart';
+import '../pages/ruangan/linen_ruangan_page.dart';
 import '../app_navigation.dart';
 
 class TableSurface extends StatelessWidget {
