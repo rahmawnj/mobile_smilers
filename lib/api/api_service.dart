@@ -216,7 +216,6 @@ class LinenLaundryDetailResponse {
   const LinenLaundryDetailResponse({required this.data,required this.meta});
   final List<LinenLaundryDetailItem> data; final LinenMeta meta;
   factory LinenLaundryDetailResponse.fromJson(Map<String,dynamic> j)=>LinenLaundryDetailResponse(data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenLaundryDetailItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
-  }
 }
 class LinenRuanganItem {
   const LinenRuanganItem({required this.id,required this.namaRuangan,required this.stokAwal,required this.hilang,required this.linenDiRuangan});
