@@ -284,10 +284,38 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: _openCreateForm,
-                    icon: const Icon(Icons.add_rounded),
-                    label: const Text('Tambah'),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _openCreateForm,
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        height: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xff1261dc),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.add_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              'Tambah',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
