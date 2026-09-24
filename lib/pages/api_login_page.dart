@@ -182,6 +182,17 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                               ),
                       ),
                       const SizedBox(height: 16),
+                      Text(
+                        _appInfo?.appName.isNotEmpty == true
+                            ? _appInfo!.appName
+                            : 'SmileRS',
+                        style: const TextStyle(
+                          color: Color(0xff173A58),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 2,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       const SizedBox(height: 28),
                       TextField(
