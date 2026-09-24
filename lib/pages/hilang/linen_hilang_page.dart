@@ -508,44 +508,63 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-            headingRowColor: WidgetStateProperty.all(
-              const Color(0xff1261dc),
+              headingRowColor: WidgetStateProperty.all(
+                const Color(0xff1261dc),
+              ),
+              headingTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+              ),
+              dataTextStyle: const TextStyle(
+                color: Color(0xff465564),
+                fontSize: 9,
+              ),
+              columnSpacing: 26,
+              horizontalMargin: 14,
+              columns: const [
+                DataColumn(label: Text('ID')),
+                DataColumn(label: Text('Ruangan')),
+                DataColumn(label: Text('Kategori')),
+                DataColumn(label: Text('Jenis Linen')),
+                DataColumn(label: Text('QR Code')),
+                DataColumn(label: Text('RFID')),
+                DataColumn(label: Text('Terakhir Transaksi')),
+                DataColumn(label: Text('Tanggal Hilang')),
+              ],
+              rows: rows.map((item) {
+                return DataRow(
+                  cells: [
+                    DataCell(Text(item.id.toString())),
+                    DataCell(
+                      Text(item.namaRuangan.isEmpty ? '-' : item.namaRuangan),
+                    ),
+                    DataCell(
+                      Text(
+                        item.kategoriLinen.isEmpty ? '-' : item.kategoriLinen,
+                      ),
+                    ),
+                    DataCell(
+                      Text(item.jenisLinen.isEmpty ? '-' : item.jenisLinen),
+                    ),
+                    DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
+                    DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
+                    DataCell(
+                      Text(
+                        item.tanggalTerakhirTransaksi.isEmpty
+                            ? '-'
+                            : item.tanggalTerakhirTransaksi,
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        item.tanggalHilang.isEmpty ? '-' : item.tanggalHilang,
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
             ),
-            headingTextStyle: const TextStyle(
-              color: Colors.white,
-              fontSize: 9,
-              fontWeight: FontWeight.w700,
-            ),
-            dataTextStyle: const TextStyle(
-              color: Color(0xff465564),
-              fontSize: 9,
-            ),
-            columnSpacing: 26,
-            horizontalMargin: 14,
-            columns: const [
-              DataColumn(label: Text('ID')),
-              DataColumn(label: Text('Ruangan')),
-              DataColumn(label: Text('Kategori')),
-              DataColumn(label: Text('Jenis Linen')),
-              DataColumn(label: Text('QR Code')),
-              DataColumn(label: Text('RFID')),
-              DataColumn(label: Text('Terakhir Transaksi')),
-              DataColumn(label: Text('Tanggal Hilang')),
-            ],
-            rows: rows.map((item) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(item.id.toString())),
-                  DataCell(Text(item.namaRuangan.isEmpty ? '-' : item.namaRuangan)),
-                  DataCell(Text(item.kategoriLinen.isEmpty ? '-' : item.kategoriLinen)),
-                  DataCell(Text(item.jenisLinen.isEmpty ? '-' : item.jenisLinen)),
-                  DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
-                  DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
-                  DataCell(Text(item.tanggalTerakhirTransaksi.isEmpty ? '-' : item.tanggalTerakhirTransaksi)),
-                  DataCell(Text(item.tanggalHilang.isEmpty ? '-' : item.tanggalHilang)),
-                ],
-              );
-            }).toList(),
           ),
         ),
       ),
