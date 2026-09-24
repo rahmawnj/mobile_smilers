@@ -266,6 +266,7 @@ class LinenRuanganBaHilangResponse {
   factory LinenRuanganBaHilangResponse.fromJson(Map<String,dynamic> j) {
     final room = Map<String,dynamic>.from((j['ruangan'] as Map?) ?? const {});
     return LinenRuanganBaHilangResponse(ruanganId:_toInt(room['id']),ruanganName:room['nama_ruangan']?.toString()??'',data:(j['data'] as List? ?? const []).whereType<Map>().map((e)=>LinenRuanganBaHilangItem.fromJson(Map<String,dynamic>.from(e))).toList(),meta:LinenMeta.fromJson(Map<String,dynamic>.from((j['meta'] as Map?)??const {})));
+  }
 }
 class LinenRusakItem {
   const LinenRusakItem({required this.id,required this.linenId,required this.namaLinen,required this.tagRfid,required this.qrCode,required this.jam,required this.tanggal,required this.tahunPembuatan});
