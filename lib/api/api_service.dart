@@ -555,9 +555,9 @@ class ApiService {
   ApiService._();
 
   Future<StreamResponse> getStream() async {
-    final baseUrl = await ApiConfig.getBaseUrl();
+    final mobileUrl = await ApiConfig.getMobileUrl();
     final response = await http.get(
-      Uri.parse('$baseUrl/stream'),
+      Uri.parse('$mobileUrl/stream'),
       headers: const {'Accept': 'application/json'},
     ).timeout(const Duration(seconds: 10));
 
