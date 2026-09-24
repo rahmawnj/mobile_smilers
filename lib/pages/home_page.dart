@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
-import 'detail_pages.dart';
 import 'ruangan/linen_ruangan_page.dart';
 import 'laundry/linen_laundry_page.dart';
 import 'laundry/linen_laundry_detail_page.dart';
