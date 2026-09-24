@@ -1160,7 +1160,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
       Expanded(child: RefreshIndicator(onRefresh: _load, child: _loading ? const Center(child: CircularProgressIndicator()) : _error != null ? ListView(children: [Padding(padding: const EdgeInsets.all(24), child: Column(children: [const Icon(Icons.cloud_off_rounded), const SizedBox(height: 10), Text('_error!', textAlign: TextAlign.center), const SizedBox(height: 12), ElevatedButton(onPressed: _load, child: const Text('Coba Lagi'))]))]) : ListView(padding: const EdgeInsets.fromLTRB(16,14,16,24), children: [
         Container(width: double.infinity, padding: const EdgeInsets.fromLTRB(14,4,14,4), decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20)), child: DropdownButtonHideUnderline(child: DropdownButton<String?>(value: _selectedCategory,isExpanded:true,hint:const Text('Filter Kategori'),items:[const DropdownMenuItem<String?>(value:null,child:Text('Semua Kategori')),...categoryNames.map((n)=>DropdownMenuItem<String?>(value:n,child:Text(n)))],onChanged:(v)=>setState(()=>_selectedCategory=v)))),
         const SizedBox(height: 12),
-        Container(width: double.infinity, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
+        TableSurface(child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
         if(filtered.isEmpty) const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data untuk kategori ini.'))),
         if(_meta!=null) AppPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
       ]))),
@@ -1284,11 +1284,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                           : ListView(
                               padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
                               children: [
-                                Container(
-                                  width: double.infinity,
-                                  
-                                  
-                                  child: LayoutBuilder(
+                                TableSurface(child: LayoutBuilder(
                                     builder: (context, constraints) {
                                       final tableWidth = constraints.maxWidth;
 
@@ -1528,11 +1524,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                           : ListView(
                               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                               children: [
-                                Container(
-                                  width: double.infinity,
-                                  
-                                  
-                                  child: LayoutBuilder(
+                                TableSurface(child: LayoutBuilder(
                                     builder: (context, constraints) {
                                       final tableWidth =
                                           constraints.maxWidth < 680
@@ -1783,11 +1775,7 @@ class _RoomDetailTable extends StatelessWidget {
       children: [
         SectionTitle(title: title),
         const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          
-          
-          child: LayoutBuilder(
+        TableSurface(child: LayoutBuilder(
             builder: (context, constraints) {
               const tableWidth = 1100.0;
               return SingleChildScrollView(
@@ -2293,11 +2281,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                               ),
                             ],
                             const SizedBox(height: 12),
-                            Container(
-                              width: double.infinity,
-                              
-                              
-                              child: LayoutBuilder(
+                            TableSurface(child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   final tableWidth = constraints.maxWidth;
                                   return SingleChildScrollView(
@@ -2550,11 +2534,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            Container(
-                              width: double.infinity,
-                              
-                              
-                              child: LayoutBuilder(
+                            TableSurface(child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   final tableWidth = constraints.maxWidth;
                                   return SingleChildScrollView(
@@ -2774,11 +2754,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                               ),
                             ),
                             const SizedBox(height: 12),
-                            Container(
-                              width: double.infinity,
-                              
-                              
-                              child: LayoutBuilder(
+                            TableSurface(child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   final tableWidth = constraints.maxWidth;
 
