@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../api/api_service.dart';
-import '../pages/account_settings_page.dart';
+import '../pages/settings_page.dart';
 import '../pages/dashboard_page.dart';
 import '../pages/keluar_masuk_page.dart';
 import '../pages/rekap_page.dart';
@@ -476,13 +476,13 @@ class DashboardHeader extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => AccountSettingsPage(
+                        builder: (_) => SettingsPage(
                           userName: userName,
                         ),
                       ),
                     );
                   },
-                  icon: Icons.group_rounded,
+                  icon: Icons.settings_rounded,
                 ),
               ],
             ),
