@@ -5,42 +5,7 @@ import 'package:file_picker/file_picker.dart';
 
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
-
-class _MetaPagination extends StatelessWidget {
-  const _MetaPagination({required this.meta, required this.onPage});
-  final LinenMeta meta;
-  final ValueChanged<int> onPage;
-
-  @override
-  Widget build(BuildContext context) {
-    if (meta.lastPage <= 1) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 100),
-      child: Material(
-        color: Colors.transparent,
-        child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          OutlinedButton(
-            onPressed: meta.currentPage > 1 ? () => onPage(meta.currentPage - 1) : null,
-            child: const Text('Sebelumnya'),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            'Halaman ${meta.currentPage} dari ${meta.lastPage}',
-            style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
-          ),
-          const SizedBox(width: 12),
-          OutlinedButton(
-            onPressed: meta.currentPage < meta.lastPage ? () => onPage(meta.currentPage + 1) : null,
-            child: const Text('Berikutnya'),
-          ),
-        ],
-        ),
-      ),
-    );
-  }
-}
+import '../widgets/pagination_widget.dart';
 
 class LinenCategoryDetailPage extends StatefulWidget {
   const LinenCategoryDetailPage({
@@ -179,7 +144,7 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
                                 'Total ' + _items!.meta.total.toString() + ' item',
                                 style: const TextStyle(color: Color(0xff8b99a5), fontSize: 9),
                               ),
-                              _MetaPagination(meta: _items!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                              AppPagination(meta: _items!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
                             ],
                           ),
               ),
@@ -425,7 +390,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
               : Column(children: [
                   _LinenMasukTable(rows: rows, page: _response!.meta.currentPage, perPage: _response!.meta.perPage),
                   const SizedBox(height: 10),
-                  _MetaPagination(meta: _response!.meta, onPage: (p) { setState(() => _page = p); _load(); }),
+                  AppPagination(meta: _response!.meta, onPage: (p) { setState(() => _page = p); _load(); }),
                   const SizedBox(height: 6),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [10,25,50,100].map((n) => Padding(padding: const EdgeInsets.symmetric(horizontal: 3), child: ChoiceChip(label: Text('$n'), selected: _perPage == n, onSelected: (_) { setState(() { _perPage = n; _page = 1; }); _load(); }))).toList()),
                 ]),
@@ -1124,7 +1089,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                   ),
                                   const SizedBox(height: 10),
                                   if (meta != null)
-                                    _MetaPagination(
+                                    AppPagination(
                                       meta: meta,
                                       onPage: (page) {
                                         setState(() {
@@ -1200,7 +1165,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
         const SizedBox(height: 12),
         Container(width: double.infinity, decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(18),boxShadow:[BoxShadow(color:Colors.black.withValues(alpha:.05),blurRadius:18,offset:const Offset(0,7))]),clipBehavior:Clip.antiAlias, child: LayoutBuilder(builder:(context,constraints){ final width=constraints.maxWidth<680?680.0:constraints.maxWidth; return SingleChildScrollView(scrollDirection:Axis.horizontal,child:SizedBox(width:width,child:DataTable(headingRowColor:WidgetStateProperty.all(const Color(0xff1261dc)),headingTextStyle:const TextStyle(color:Colors.white,fontSize:9,fontWeight:FontWeight.w700),dataTextStyle:const TextStyle(color:Color(0xff465564),fontSize:9),columnSpacing:28,horizontalMargin:16,columns:const [DataColumn(label:Text('Nama Category')),DataColumn(label:Text('Nama Linen')),DataColumn(label:Text('Ready')),DataColumn(label:Text('Action'))],rows:filtered.map((item)=>DataRow(cells:[DataCell(Text(item.namaKategoriLinen)),DataCell(Text(item.namaLinen)),DataCell(Text(item.ready.toString())),DataCell(TextButton(onPressed:()=>_openDetail(item),child:const Text('Detail')))])).toList()))); })),
         if(filtered.isEmpty) const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data untuk kategori ini.'))),
-        if(_meta!=null) _MetaPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
+        if(_meta!=null) AppPagination(meta:_meta!,onPage:(page){setState(()=>_page=page);_load();}),
       ]))),
     ]));
   }
@@ -1413,7 +1378,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                                     },
                                   ),
                                 ),
-                                _MetaPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                                AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
                               ],
                             ),
             ),
@@ -1644,7 +1609,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                     },
                                   ),
                                 ),
-                                if (_meta != null) _MetaPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
+                                if (_meta != null) AppPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
                               ],
                             ),
             ),
@@ -1786,7 +1751,7 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                                   )
                                   .toList(),
                             ),
-                            if (_response != null) _MetaPagination(meta: _response!.meta, onPage: (page) { setState(() => _detailPage = page); _load(); }),
+                            if (_response != null) AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _detailPage = page); _load(); }),
                             const SizedBox(height: 18),
                             _RoomDetailTable(
                               title: 'BA Hilang',
@@ -1805,7 +1770,7 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                                   )
                                   .toList(),
                             ),
-                            if (_baResponse != null) _MetaPagination(meta: _baResponse!.meta, onPage: (page) { setState(() => _baPage = page); _load(); }),
+                            if (_baResponse != null) AppPagination(meta: _baResponse!.meta, onPage: (page) { setState(() => _baPage = page); _load(); }),
                           ],
                         ),
             ),
@@ -2411,7 +2376,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                                 child: Center(child: Text('Tidak ada data Linen & Tirai Hilang.')),
                               ),
                             if (_meta != null)
-                              _MetaPagination(
+                              AppPagination(
                                 meta: _meta!,
                                 onPage: (page) {
                                   setState(() => _page = page);
@@ -2687,7 +2652,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                                 child: Center(child: Text('Tidak ada data Linen & Tirai Rusak.')),
                               ),
                             if (_meta != null)
-                              _MetaPagination(
+                              AppPagination(
                                 meta: _meta!,
                                 onPage: (page) {
                                   setState(() => _page = page);
@@ -2943,7 +2908,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                                   child: Text('Tidak ada data untuk kategori ini.'),
                                 ),
                               ),
-                            if (_meta != null) _MetaPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
+                            if (_meta != null) AppPagination(meta: _meta!, onPage: (page) { setState(() => _page = page); _load(); }),
                           ],
                         ),
             ),
@@ -3088,7 +3053,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         ))),
         if(!_loading&&_error==null&&rows.isEmpty)const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data Linen & Tirai Keluar.'))),
         if(meta!=null)Row(children:[const Text('Tampilkan',style:TextStyle(fontSize:9)),const SizedBox(width:8),DropdownButton<int>(value:_perPage,items:const [10,25,50,100].map((v)=>DropdownMenuItem(value:v,child:Text('${v}'))).toList(),onChanged:(v){if(v==null)return;setState(()=>{_perPage=v,_page=1});_load();}),const Spacer(),Text('Total ${meta.total}',style:const TextStyle(fontSize:9))]),
-        if(meta!=null)_MetaPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
+        if(meta!=null)AppPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
       ]))),
     ]));
   }

@@ -2,43 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
+import '../widgets/pagination_widget.dart';
 
 
-class _MetaPagination extends StatelessWidget {
-  const _MetaPagination({required this.meta, required this.onPage});
-  final LinenMeta meta;
-  final ValueChanged<int> onPage;
-
-  @override
-  Widget build(BuildContext context) {
-    if (meta.lastPage <= 1) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 100),
-      child: Material(
-        color: Colors.transparent,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            OutlinedButton(
-              onPressed: meta.currentPage > 1 ? () => onPage(meta.currentPage - 1) : null,
-              child: const Text('Sebelumnya'),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Halaman ' + meta.currentPage.toString() + ' dari ' + meta.lastPage.toString(),
-              style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
-            ),
-            const SizedBox(width: 12),
-            OutlinedButton(
-              onPressed: meta.currentPage < meta.lastPage ? () => onPage(meta.currentPage + 1) : null,
-              child: const Text('Berikutnya'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 class InOutPage extends StatefulWidget {
   const InOutPage({super.key, required this.userName, this.embedded = false});
   final String userName;
@@ -179,7 +145,7 @@ class _InOutPageState extends State<InOutPage> {
                               )
                             : Column(children: [
                                 _InOutTable(rows: rows),
-                                if (_response != null) _MetaPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                                if (_response != null) AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
                               ]),
               ),
             ),
