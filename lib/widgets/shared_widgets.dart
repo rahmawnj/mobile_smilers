@@ -1199,7 +1199,6 @@ class RoomTable extends StatelessWidget {
     return Container(
       width: double.infinity,
       
-      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
