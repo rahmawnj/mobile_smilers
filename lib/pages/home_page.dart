@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
 import 'detail_pages.dart';
+import 'ruangan/linen_ruangan_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key, required this.userName, this.embedded = false});
