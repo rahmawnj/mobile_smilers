@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../api/api_service.dart';
 import '../../widgets/pagination_widget.dart';
 import '../../widgets/shared_widgets.dart';
+import 'linen_ruangan_detail_page.dart';
 
 class LinenRuanganPage extends StatefulWidget {
   const LinenRuanganPage({super.key, required this.userName});
