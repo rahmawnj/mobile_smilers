@@ -22,7 +22,7 @@ class AppPagination extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 12, bottom: 100),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _PaginationButton(
             icon: Icons.chevron_left_rounded,
