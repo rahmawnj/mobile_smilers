@@ -176,7 +176,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
             userName: widget.userName,
           ),
           Expanded(
-            child: AppRefreshIndicator(
+            child: AppAppRefreshIndicator(
               onRefresh: _load,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
