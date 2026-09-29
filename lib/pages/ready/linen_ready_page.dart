@@ -206,7 +206,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                               'Menampilkan ${rows.length} dari ${meta.total} kategori',
                               style: const TextStyle(
                                 color: Color(0xff8b99a5),
-                                fontSize: 9,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -215,7 +215,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                               'Jumlah',
                               style: TextStyle(
                                 color: Color(0xff8b99a5),
-                                fontSize: 9,
+                                fontSize: 10,
                               ),
                             ),
                             const SizedBox(width: 6),
@@ -383,14 +383,14 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                 ),
                 headingTextStyle: const TextStyle(
                   color: Colors.white,
-                  fontSize: 9,
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
                 ),
                 dataTextStyle: const TextStyle(
                   color: Color(0xff465564),
-                  fontSize: 9,
+                  fontSize: 10,
                 ),
-                columnSpacing: 28,
+                columnSpacing: 18,
                 horizontalMargin: 16,
                 columns: const [
                   DataColumn(label: Text('Kategori')),
