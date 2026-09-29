@@ -152,7 +152,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                             'Total ' + meta.total.toString() + ' linen rusak',
                             style: const TextStyle(
                               color: Color(0xff7d8c99),
-                              fontSize: 9,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -210,7 +210,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                   widget.userName,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: .75),
-                    fontSize: 9,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -262,7 +262,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
             'Masukkan RFID atau QR Code linen yang rusak.',
             style: TextStyle(
               color: Colors.white.withValues(alpha: .78),
-              fontSize: 9,
+              fontSize: 10,
             ),
           ),
           const SizedBox(height: 12),
@@ -337,13 +337,13 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
           child: DataTable(
             headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
             headingTextStyle: const TextStyle(
-              color: Colors.white,
-              fontSize: 9,
+                  color: Colors.white,
+                  fontSize: 10,
               fontWeight: FontWeight.w700,
             ),
             dataTextStyle: const TextStyle(
               color: Color(0xff465564),
-              fontSize: 9,
+              fontSize: 10,
             ),
             columnSpacing: 26,
             horizontalMargin: 14,
