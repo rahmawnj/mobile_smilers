@@ -389,10 +389,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                   ),
                   const SizedBox(height: 12),
                   if (_loading)
-                    const Padding(
-                      padding: EdgeInsets.all(44),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
+                      const AppPageLoading()
                   else if (_error != null)
                     _buildError()
                   else if (rows.isEmpty)
