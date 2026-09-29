@@ -70,11 +70,6 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
   @override
   Widget build(BuildContext context) {
     final rows = _response?.data ?? const <LinenLaundryDetailItem>[];
-    final categoryName = widget.categoryName.trim().isEmpty
-        ? (rows.isNotEmpty && rows.first.namaKategoriLinen.trim().isNotEmpty
-            ? rows.first.namaKategoriLinen
-            : '-')
-        : widget.categoryName;
     final totalLinen = _response?.meta.total ?? 0;
     final linenName = rows.isNotEmpty && rows.first.namaLinen.trim().isNotEmpty
         ? rows.first.namaLinen
@@ -127,7 +122,6 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                         children: [
                           _buildSummaryCard(
                             linenName: linenName,
-                            categoryName: categoryName,
                             totalLinen: totalLinen,
                           ),
                           const SizedBox(height: 18),
@@ -265,7 +259,6 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
 
   Widget _buildSummaryCard({
     required String linenName,
-    required String categoryName,
     required int totalLinen,
   }) {
     return Container(
@@ -313,26 +306,6 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                 const SizedBox(height: 3),
                 Text(
                   linenName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color(0xff263746),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Nama Kategori Linen',
-                  style: TextStyle(
-                    color: Color(0xff8b99a5),
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  categoryName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
