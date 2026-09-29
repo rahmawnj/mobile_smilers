@@ -393,23 +393,25 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                 columnSpacing: 18,
                 horizontalMargin: 16,
                 columns: const [
-                  DataColumn(label: Text('Kategori')),
-                  DataColumn(label: Text('Sub Kategori')),
-                  DataColumn(label: Text('Stock Ready')),
-                  DataColumn(label: Text('Hilang')),
+                  DataColumn(label: Text('No')),
+                  DataColumn(label: Text('Nama Kategori')),
+                  DataColumn(label: Text('Nama Item')),
+                  DataColumn(label: Text('Stok Ready')),
                   DataColumn(label: Text('Action')),
                 ],
-                rows: rows.map((category) {
+                rows: rows.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final category = entry.value;
                   final sub = category.subKategoriLinen.trim().isEmpty
                       ? '-'
                       : category.subKategoriLinen;
 
                   return DataRow(
                     cells: [
+                      DataCell(Text((index + 1).toString())),
                       DataCell(Text(category.namaKategoriLinen)),
                       DataCell(Text(sub)),
                       DataCell(Text(category.jumlahStok.toString())),
-                      DataCell(Text(category.jumlahHilang.toString())),
                       DataCell(
                         IconButton(
                           tooltip: 'Detail',
