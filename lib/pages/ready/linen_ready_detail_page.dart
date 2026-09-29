@@ -119,20 +119,18 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
                               else
                                 DetailTable(
                                   columns: const [
-                                    'ID',
-                                    'Kode Linen',
-                                    'Tag RFID',
+                                    'No.',
                                     'QR Code',
-                                    'Status',
+                                    'Tag RFID',
+                                    'Nama Linen',
                                   ],
-                                  rows: _items!.data
+                                  rows: _items!.data.asMap().entries
                                       .map(
-                                        (item) => [
-                                          item.id,
-                                          item.kodeLinen,
-                                          item.tagRfid,
-                                          item.qrCode,
-                                          item.status,
+                                        (entry) => [
+                                          entry.key + 1,
+                                          entry.value.qrCode,
+                                          entry.value.tagRfid,
+                                          entry.value.namaLinen,
                                         ],
                                       )
                                       .toList(),
