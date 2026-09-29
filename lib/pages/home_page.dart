@@ -283,10 +283,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             const SizedBox(height: 8),
                             if (_loading)
-                              const Padding(
-                                padding: EdgeInsets.all(28),
-                                child: Center(child: CircularProgressIndicator()),
-                              )
+                              const AppPageLoading()
                             else if (_inOutRows.isEmpty)
                               const Padding(
                                 padding: EdgeInsets.all(24),
