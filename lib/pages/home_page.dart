@@ -304,15 +304,15 @@ class _DashboardPageState extends State<DashboardPage> {
                                         const Color(0xff1261dc),
                                       ),
                                       headingTextStyle: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 9,
+                  color: Colors.white,
+                  fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                       ),
                                       dataTextStyle: const TextStyle(
                                         color: Color(0xff465564),
-                                        fontSize: 9,
+                                        fontSize: 10,
                                       ),
-                                      columnSpacing: 28,
+                                      columnSpacing: 18,
                                       columns: const [
                                         DataColumn(label: Text('Ruangan')),
                                         DataColumn(label: Text('Masuk')),
@@ -468,7 +468,7 @@ class _LinenCategoryCard extends StatelessWidget {
                       subCategory,
                       style: const TextStyle(
                         color: Color(0xff8b99a5),
-                        fontSize: 9,
+                        fontSize: 10,
                       ),
                     ),
                   ],
