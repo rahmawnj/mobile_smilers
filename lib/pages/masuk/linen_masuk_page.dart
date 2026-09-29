@@ -239,7 +239,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
             userName: widget.userName,
           ),
           Expanded(
-            child: RefreshIndicator(
+            child: AppRefreshIndicator(
               onRefresh: _load,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
