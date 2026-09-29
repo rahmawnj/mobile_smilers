@@ -213,9 +213,9 @@ class LinenLaundryItem {
   factory LinenLaundryItem.fromJson(Map<String,dynamic> j) => LinenLaundryItem(id:_toInt(j['id']),namaLinen:j['nama_linen']?.toString()??'',namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',ready:j['ready']);
 }
 class LinenLaundryDetailItem {
-  const LinenLaundryDetailItem({required this.id,required this.kodeLinen,required this.namaLinen,required this.namaKategoriLinen,required this.jumlahPencucian});
-  final int id; final String kodeLinen; final String namaLinen; final String namaKategoriLinen; final int jumlahPencucian;
-  factory LinenLaundryDetailItem.fromJson(Map<String,dynamic> j)=>LinenLaundryDetailItem(id:_toInt(j['id']),kodeLinen:j['kode_linen']?.toString()??'',namaLinen:j['nama_linen']?.toString()??'',namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',jumlahPencucian:_toInt(j['jumlah_pencucian']));
+  const LinenLaundryDetailItem({required this.id,required this.kodeLinen,required this.namaLinen,required this.namaKategoriLinen,required this.jumlahPencucian,required this.status});
+  final int id; final String kodeLinen; final String namaLinen; final String namaKategoriLinen; final int jumlahPencucian; final String status;
+  factory LinenLaundryDetailItem.fromJson(Map<String,dynamic> j)=>LinenLaundryDetailItem(id:_toInt(j['id']),kodeLinen:j['kode_linen']?.toString()??'',namaLinen:j['nama_linen']?.toString()??'',namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',jumlahPencucian:_toInt(j['jumlah_pencucian']),status:j['status']?.toString()??'');
 }
 class LinenLaundryDetailResponse {
   const LinenLaundryDetailResponse({required this.data,required this.meta});
