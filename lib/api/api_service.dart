@@ -125,6 +125,7 @@ class LinenItem {
   const LinenItem({
     required this.id,
     required this.kodeLinen,
+    required this.namaLinen,
     required this.tagRfid,
     required this.qrCode,
     required this.status,
@@ -132,6 +133,7 @@ class LinenItem {
 
   final int id;
   final String kodeLinen;
+  final String namaLinen;
   final String tagRfid;
   final String qrCode;
   final String status;
@@ -140,6 +142,9 @@ class LinenItem {
     return LinenItem(
       id: (json['id'] as num?)?.toInt() ?? 0,
       kodeLinen: json['kode_linen']?.toString() ?? '',
+      namaLinen: (json['nama_linen']?.toString().trim().isNotEmpty ?? false)
+          ? json['nama_linen'].toString().trim()
+          : (json['kode_linen']?.toString() ?? '-'),
       tagRfid: json['tag_rfid']?.toString() ?? '',
       qrCode: json['qr_code']?.toString() ?? '',
       status: json['status']?.toString() ?? '',
