@@ -1714,3 +1714,74 @@ class AppRefreshIndicator extends StatelessWidget {
     );
   }
 }
+
+/// ===============================================================
+/// APP PAGE LOADING
+/// ===============================================================
+/// Loading state utama saat halaman sedang mengambil data.
+class AppPageLoading extends StatelessWidget {
+  const AppPageLoading({
+    super.key,
+    this.message = 'Memuat data...',
+    this.subtitle = 'Mohon tunggu sebentar',
+  });
+
+  final String message;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 42, horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 58,
+              height: 58,
+              decoration: BoxDecoration(
+                color: const Color(0xffeaf2ff),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xff1261dc).withValues(alpha: .10),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(15),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.8,
+                  color: Color(0xff1261dc),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xff334454),
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xff8b99a5),
+                fontSize: 9,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
