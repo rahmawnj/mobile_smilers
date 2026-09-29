@@ -100,7 +100,7 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(children: [
-                Expanded(child: Text('Periode: ${_date(_range!.start)} - ${_date(_range!.end)}', style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)))),
+                Expanded(child: Text('Periode: ${_date(_range!.start)} - ${_date(_range!.end)}', style: const TextStyle(fontSize: 10, color: Color(0xff6f7f8d)))),
                 TextButton(onPressed: () { setState(() => _range = null); _load(); }, child: const Text('Reset')),
               ]),
             ),
@@ -160,8 +160,10 @@ class _RekapTable extends StatelessWidget {
         constraints: BoxConstraints(minWidth: constraints.maxWidth),
         child: DataTable(
           headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-          headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
-          dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
+          headingTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10, fontWeight: FontWeight.w700),
+          dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 10),
           columns: const [
             DataColumn(label: Text('Tanggal')),
             DataColumn(label: Text('Keluar')),
