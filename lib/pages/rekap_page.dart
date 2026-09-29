@@ -111,7 +111,7 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
                 child: _loading
-                  ? const Padding(padding: EdgeInsets.all(50), child: Center(child: CircularProgressIndicator()))
+                    ? const AppPageLoading()
                   : _error != null
                     ? Center(child: Column(children: [const SizedBox(height:40), const Icon(Icons.cloud_off_rounded,size:36), const SizedBox(height:10), Text(_error!,textAlign:TextAlign.center), const SizedBox(height:12), ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
                     : Column(children: [
