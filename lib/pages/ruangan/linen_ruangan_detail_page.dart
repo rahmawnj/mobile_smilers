@@ -6,11 +6,14 @@ import '../../widgets/shared_widgets.dart';
 
 class LinenRuanganDetailPage extends StatefulWidget {
   const LinenRuanganDetailPage({
-    super.key, required this.roomId, required this.roomName, required this.userName,
+    super.key, required this.roomId, required this.roomName, required this.userName, required this.stokAwal, required this.hilang, required this.jumlahLinen,
   });
   final int roomId;
   final String roomName;
   final String userName;
+  final int stokAwal;
+  final int hilang;
+  final int jumlahLinen;
 
   @override
   State<LinenRuanganDetailPage> createState() => _LinenRuanganDetailPageState();
@@ -62,6 +65,27 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
         child: Column(
           children: [
             DetailHeader(title: 'Detail Ruangan - $roomName', userName: widget.userName),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withValues(alpha: .05), blurRadius: 14, offset: const Offset(0, 4)),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(child: _SummaryItem(label: 'Nama Ruangan', value: roomName)),
+                    Expanded(child: _SummaryItem(label: 'Stok Awal', value: widget.stokAwal.toString())),
+                    Expanded(child: _SummaryItem(label: 'Hilang', value: widget.hilang.toString())),
+                    Expanded(child: _SummaryItem(label: 'Jumlah Linen', value: widget.jumlahLinen.toString())),
+                  ],
+                ),
+              ),
+            ),
             Expanded(
               child: AppRefreshIndicator(
                 onRefresh: _load,
@@ -124,6 +148,24 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
       ),
     );
   }
+}
+
+class _SummaryItem extends StatelessWidget {
+  const _SummaryItem({required this.label, required this.value});
+  final String label;
+  final String value;
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 6),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: Color(0xff8b99a5), fontSize: 9, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 4),
+        Text(value, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Color(0xff334454), fontSize: 12, fontWeight: FontWeight.w800)),
+      ],
+    ),
+  );
 }
 
 class _RoomDetailTable extends StatelessWidget {
