@@ -322,12 +322,12 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                           const Color(0xff1261dc),
                                         ),
                                         headingTextStyle: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 9,
+                  color: Colors.white,
+                  fontSize: 10,
                                           fontWeight: FontWeight.w700,
                                         ),
                                         dataTextStyle: const TextStyle(
-                                          fontSize: 9,
+                                          fontSize: 10,
                                         ),
                                         columns: const [
                                           DataColumn(label: Text('No.')),
