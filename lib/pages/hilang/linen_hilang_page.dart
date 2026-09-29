@@ -1,6 +1,5 @@
 import 'dart:ui' show PointerDeviceKind;
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../api/api_service.dart';
