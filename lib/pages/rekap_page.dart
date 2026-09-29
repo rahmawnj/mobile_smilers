@@ -105,7 +105,7 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
               ]),
             ),
           Expanded(
-            child: AppRefreshIndicator(
+            child: AppAppRefreshIndicator(
               onRefresh: _load,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
