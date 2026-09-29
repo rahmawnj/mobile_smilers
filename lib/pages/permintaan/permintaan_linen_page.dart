@@ -290,7 +290,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
             ),
           ),
           Expanded(
-            child: RefreshIndicator(
+            child: AppRefreshIndicator(
               onRefresh: _load,
               child: LayoutBuilder(builder: (context, constraints) { return SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
