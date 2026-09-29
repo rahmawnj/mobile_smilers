@@ -135,7 +135,7 @@ class _InOutPageState extends State<InOutPage> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
                 child: _loading
-                    ? const Padding(padding: EdgeInsets.all(50), child: Center(child: CircularProgressIndicator()))
+                    ? const AppPageLoading()
                     : _error != null
                         ? _InOutError(message: _error!, onRetry: _load)
                         : rows.isEmpty
