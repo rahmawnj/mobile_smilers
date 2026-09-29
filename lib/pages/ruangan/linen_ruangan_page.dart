@@ -115,7 +115,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
             child: AppRefreshIndicator(
               onRefresh: _load,
               child: _loading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const AppPageLoading()
                   : _error != null
                       ? ListView(
                           children: [
