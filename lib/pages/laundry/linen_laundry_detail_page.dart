@@ -182,6 +182,9 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                                           DataColumn(
                                             label: Text('Jumlah Pencucian'),
                                           ),
+                                          DataColumn(
+                                            label: Text('Status'),
+                                          ),
                                         ],
                                         rows: rows.asMap().entries.map(
                                           (entry) {
@@ -225,6 +228,13 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                                                   Text(
                                                     item.jumlahPencucian
                                                         .toString(),
+                                                  ),
+                                                ),
+                                                DataCell(
+                                                  Text(
+                                                    item.status.isEmpty
+                                                        ? '-'
+                                                        : item.status,
                                                   ),
                                                 ),
                                               ],
