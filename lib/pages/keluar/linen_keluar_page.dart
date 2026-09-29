@@ -108,7 +108,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     final meta=_response?.meta;
     return AppShell(userName:widget.userName,activeIndex:-1,body:Column(children:[
       DetailHeader(title:'Linen & Tirai Keluar',userName:widget.userName),
-      Expanded(child:RefreshIndicator(onRefresh:() async=>Future.wait([_load(),_loadQueue()]),child:ListView(padding:const EdgeInsets.fromLTRB(16,14,16,100),children:[
+      Expanded(child:AppRefreshIndicator(onRefresh:() async=>Future.wait([_load(),_loadQueue()]),child:ListView(padding:const EdgeInsets.fromLTRB(16,14,16,100),children:[
         Row(children:[
           Expanded(child:TextField(controller:_searchController,onSubmitted:(_){setState(()=>_page=1);_load();},decoration:InputDecoration(
             hintText:'Cari nama linen, RFID, QR Code, user...',prefixIcon:const Icon(Icons.search_rounded),filled:true,fillColor:Colors.white,
