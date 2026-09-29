@@ -21,9 +21,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   String? _error;
   LinenListResponse<LinenCategory>? _response;
   List<Map<String, dynamic>> _categoryOptions = [];
-  List<LinenDropdownSubCategory> _subCategoryOptions = [];
   int? _selectedCategoryId;
-  String? _selectedSubCategory;
   int _page = 1;
   int _perPage = 10;
 
@@ -41,7 +39,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     try {
       final results = await Future.wait([
         ApiService.instance.getLinenCategoryDropdown(),
-        ApiService.instance.getLinenSubCategoryDropdown(),
       ]);
 
       if (!mounted) return;
@@ -53,10 +50,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
           final name = _toOptionName(item);
           return id != null && name.isNotEmpty;
         }).toList();
-        _subCategoryOptions =
-            (results[1] as List<LinenDropdownSubCategory>)
-                .where((item) => item.subKategoriLinen.trim().isNotEmpty)
-                .toList();
       });
     } catch (_) {
       // Filter options are auxiliary; the main /linen list can still load.
@@ -170,9 +163,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     final rows = allRows.where((category) {
       final categoryMatches =
           _selectedCategoryId == null || category.id == _selectedCategoryId;
-      final subCategoryMatches = _selectedSubCategory == null ||
-          category.subKategoriLinen.trim() == _selectedSubCategory;
-      return categoryMatches && subCategoryMatches;
+      return categoryMatches;
     }).toList();
     final meta = _response?.meta;
 
@@ -261,7 +252,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
       onSubmitted: (_) => _search(),
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
-        hintText: 'Cari kategori / sub kategori...',
+        hintText: 'Cari kategori...',
         prefixIcon: const Icon(Icons.search_rounded, size: 20),
         suffixIcon: _searchController.text.isEmpty
             ? null
@@ -325,34 +316,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                     }),
           ),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _FilterDropdown<String>(
-            label: 'Sub Kategori',
-            value: _selectedSubCategory,
-            items: _subCategoryOptions.map((item) {
-              return DropdownMenuItem<String>(
-                value: item.subKategoriLinen,
-                child: Text(
-                  item.subKategoriLinen,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedSubCategory = value;
-                _page = 1;
-              });
-            },
-            onClear: _selectedSubCategory == null
-                ? null
-                : () => setState(() {
-                      _selectedSubCategory = null;
-                      _page = 1;
-                    }),
-          ),
-        ),
+
       ],
     );
   }
