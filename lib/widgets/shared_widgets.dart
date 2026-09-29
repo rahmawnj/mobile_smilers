@@ -1686,3 +1686,31 @@ class _BlurCircle extends StatelessWidget {
     );
   }
 }
+
+/// ===============================================================
+/// APP REFRESH INDICATOR
+/// ===============================================================
+/// Pull-to-refresh yang dipakai seragam di seluruh halaman data.
+class AppRefreshIndicator extends StatelessWidget {
+  const AppRefreshIndicator({
+    super.key,
+    required this.onRefresh,
+    required this.child,
+  });
+
+  final Future<void> Function() onRefresh;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: const Color(0xff1261dc),
+      backgroundColor: Colors.white,
+      strokeWidth: 2.4,
+      displacement: 34,
+      edgeOffset: 0,
+      child: child,
+    );
+  }
+}
