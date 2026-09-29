@@ -191,10 +191,10 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                               ),
                                               DataColumn(label: Text('Action')),
                                             ],
-                                            rows: _items.map((item) {
+                                            rows: _items.asMap().entries.map((entry) {\n                                              final index = entry.key;\n                                              final item = entry.value;
                                               return DataRow(
                                                 cells: [
-                                                  DataCell(Text(item.namaRuangan)),
+                                                  DataCell(Text(((_page - 1) * _perPage + index + 1).toString())),\n                                                  DataCell(Text(item.namaRuangan)),
                                                   DataCell(Text(item.stokAwal.toString())),
                                                   DataCell(Text(item.hilang.toString())),
                                                   DataCell(Text(item.linenDiRuangan.toString())),
