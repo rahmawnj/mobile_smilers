@@ -42,7 +42,9 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
     setState(() => _loading = true);
     try {
       final results = await Future.wait([
-        ApiService.instance.getPermintaanLinenRuanganDropdown(),
+        _rooms.isEmpty
+            ? ApiService.instance.getPermintaanLinenRuanganDropdown()
+            : Future.value(_rooms),
         ApiService.instance.getPermintaanLinenItemDropdown(search: search),
       ]);
       if (!mounted) return;
@@ -183,7 +185,13 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                                     return DropdownMenuItem<int>(
                                       value: id,
                                       child: Text(
-                                        room['nama_ruangan']?.toString() ?? '-',
+                                        [
+                                          room['nama_ruangan']?.toString() ?? '-',
+                                          if ((room['nama_kepala_ruangan']?.toString() ?? '').trim().isNotEmpty &&
+                                              room['nama_kepala_ruangan']?.toString() != '-')
+                                            'Kepala: ${room['nama_kepala_ruangan']}',
+                                        ].join(' • '),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     );
                                   }).toList(),
@@ -225,14 +233,19 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                                     final category =
                                         linen['nama_kategori_linen']?.toString() ?? '-';
                                     final subCategory =
-                                        linen['sub_kategori_linen']?.toString() ?? '-';
+                                        linen['sub_kategori_linen']?.toString().trim() ?? '';
 
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: 10),
                                       child: Row(
                                         children: [
                                           Expanded(
-                                            child: Text('$category • $subCategory'),
+                                            child: Text(
+                                                subCategory.isEmpty
+                                                    ? category
+                                                    : '$category • $subCategory',
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                           ),
                                           SizedBox(
                                             width: 110,
