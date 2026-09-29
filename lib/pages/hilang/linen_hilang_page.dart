@@ -427,7 +427,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                             'Total ${meta.total} linen hilang',
                             style: const TextStyle(
                               color: Color(0xff7d8c99),
-                              fontSize: 9,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -436,7 +436,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                             'Tampilkan',
                             style: TextStyle(
                               color: Color(0xff7d8c99),
-                              fontSize: 9,
+                              fontSize: 10,
                             ),
                           ),
                           const SizedBox(width: 6),
@@ -499,13 +499,13 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                 const Color(0xff1261dc),
               ),
               headingTextStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 9,
+                  color: Colors.white,
+                  fontSize: 10,
                 fontWeight: FontWeight.w700,
               ),
               dataTextStyle: const TextStyle(
                 color: Color(0xff465564),
-                fontSize: 9,
+                fontSize: 10,
               ),
               columnSpacing: 26,
               horizontalMargin: 14,
@@ -829,7 +829,7 @@ class _LinenHilangFormDialogState extends State<_LinenHilangFormDialog> {
               const SizedBox(height: 4),
               const Text(
                 'PDF, DOC, DOCX, JPG, JPEG, PNG — maksimal 10 MB.',
-                style: TextStyle(fontSize: 9, color: Color(0xff7d8c99)),
+                style: TextStyle(fontSize: 10, color: Color(0xff7d8c99)),
               ),
             ],
           ),
