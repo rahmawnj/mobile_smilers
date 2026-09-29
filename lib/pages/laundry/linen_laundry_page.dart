@@ -118,7 +118,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
               ),
             ),
             Expanded(
-              child: RefreshIndicator(
+              child: AppRefreshIndicator(
                 onRefresh: _load,
                 child: _loading
                     ? const Center(child: CircularProgressIndicator())
