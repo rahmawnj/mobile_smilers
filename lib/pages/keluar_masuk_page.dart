@@ -129,7 +129,7 @@ class _InOutPageState extends State<InOutPage> {
               ),
             ),
           Expanded(
-            child: RefreshIndicator(
+            child: AppRefreshIndicator(
               onRefresh: _load,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
