@@ -126,6 +126,7 @@ class LinenItem {
     required this.id,
     required this.kodeLinen,
     required this.namaLinen,
+    required this.subKategoriLinen,
     required this.tagRfid,
     required this.qrCode,
     required this.status,
@@ -134,6 +135,7 @@ class LinenItem {
   final int id;
   final String kodeLinen;
   final String namaLinen;
+  final String subKategoriLinen;
   final String tagRfid;
   final String qrCode;
   final String status;
@@ -145,6 +147,7 @@ class LinenItem {
       namaLinen: (json['nama_linen']?.toString().trim().isNotEmpty ?? false)
           ? json['nama_linen'].toString().trim()
           : (json['kode_linen']?.toString() ?? '-'),
+      subKategoriLinen: json['sub_kategori_linen']?.toString().trim() ?? '',
       tagRfid: json['tag_rfid']?.toString() ?? '',
       qrCode: json['qr_code']?.toString() ?? '',
       status: json['status']?.toString() ?? '',
@@ -752,10 +755,14 @@ class ApiService {
     int kategoriLinen, {
     int? perPage,
     int? page,
+    String? subKategori,
   }) async {
     final query = <String, String>{};
     if (perPage != null) query['per_page'] = perPage.toString();
     if (page != null) query['page'] = page.toString();
+    if (subKategori != null && subKategori.trim().isNotEmpty) {
+      query['sub_kategori_linen'] = subKategori.trim();
+    }
 
     final data = await _get('/linen/$kategoriLinen/items', query: query);
     final items = (data['data'] as List? ?? const [])
