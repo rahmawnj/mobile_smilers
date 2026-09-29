@@ -405,7 +405,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                           'Total \${meta.total} linen masuk',
                           style: const TextStyle(
                             color: Color(0xff7d8c99),
-                            fontSize: 9,
+                            fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -452,15 +452,15 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
               const Color(0xff1261dc),
             ),
             headingTextStyle: const TextStyle(
-              color: Colors.white,
-              fontSize: 9,
+                  color: Colors.white,
+                  fontSize: 10,
               fontWeight: FontWeight.w700,
             ),
             dataTextStyle: const TextStyle(
               color: Color(0xff465564),
-              fontSize: 9,
+              fontSize: 10,
             ),
-            columnSpacing: 24,
+            columnSpacing: 16,
             horizontalMargin: 14,
             columns: const [
               DataColumn(label: Text('ID')),
