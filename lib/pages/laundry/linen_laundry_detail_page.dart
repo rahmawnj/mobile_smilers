@@ -70,158 +70,279 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
   @override
   Widget build(BuildContext context) {
     final rows = _response?.data ?? const <LinenLaundryDetailItem>[];
+    final categoryName = widget.categoryName.trim().isEmpty
+        ? (rows.isNotEmpty && rows.first.namaKategoriLinen.trim().isNotEmpty
+            ? rows.first.namaKategoriLinen
+            : '-')
+        : widget.categoryName;
+    final totalLinen = _response?.meta.total ?? 0;
 
-    return Scaffold(
-      backgroundColor: const Color(0xfff5f8fc),
-      body: SafeArea(
-        child: Column(
-          children: [
-            DetailHeader(
-              title: 'Detail Laundry - ${widget.categoryName}',
-              userName: widget.userName,
-            ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _load,
-                child: _loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _error != null
-                        ? ListView(
-                            children: [
-                              Padding(
+    return AppShell(
+      userName: widget.userName,
+      activeIndex: -1,
+      body: Column(
+        children: [
+          DetailHeader(
+            title: 'Linen & Tirai di Laundry',
+            userName: widget.userName,
+          ),
+          Expanded(
+            child: AppRefreshIndicator(
+              onRefresh: _load,
+              child: _loading
+                  ? const AppPageLoading()
+                  : _error != null
+                      ? ListView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                children: [
+                                  const Icon(Icons.cloud_off_rounded),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    _error!,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: _load,
+                                    child: const Text('Coba Lagi'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(
+                            16,
+                            14,
+                            16,
+                            90,
+                          ),
+                          children: [
+                            _buildSummaryCard(
+                              categoryName: categoryName,
+                              totalLinen: totalLinen,
+                            ),
+                            const SizedBox(height: 18),
+                            SectionTitle(title: 'Detail Linen'),
+                            const SizedBox(height: 10),
+                            if (rows.isEmpty)
+                              Container(
+                                width: double.infinity,
                                 padding: const EdgeInsets.all(24),
-                                child: Column(
-                                  children: [
-                                    const Icon(Icons.cloud_off_rounded),
-                                    const SizedBox(height: 10),
-                                    Text(_error!, textAlign: TextAlign.center),
-                                    const SizedBox(height: 12),
-                                    ElevatedButton(
-                                      onPressed: _load,
-                                      child: const Text('Coba Lagi'),
-                                    ),
-                                  ],
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
+                                child: const Text(
+                                  'Belum ada detail linen di laundry.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xff6f7f8d),
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              )
+                            else
+                              TableSurface(
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: SizedBox(
+                                        width: constraints.maxWidth,
+                                        child: DataTable(
+                                          headingRowColor:
+                                              WidgetStateProperty.all(
+                                            const Color(0xff1261dc),
+                                          ),
+                                          headingTextStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          dataTextStyle: const TextStyle(
+                                            color: Color(0xff465564),
+                                            fontSize: 10,
+                                          ),
+                                          columnSpacing: 18,
+                                          horizontalMargin: 16,
+                                          columns: const [
+                                            DataColumn(label: Text('No')),
+                                            DataColumn(
+                                              label: Text('Kode Linen'),
+                                            ),
+                                            DataColumn(
+                                              label: Text('Nama Linen'),
+                                            ),
+                                            DataColumn(
+                                              label: Text('Nama Kategori Linen'),
+                                            ),
+                                            DataColumn(
+                                              label: Text('Jumlah Pencucian'),
+                                            ),
+                                          ],
+                                          rows: rows.asMap().entries.map(
+                                            (entry) {
+                                              final index = entry.key;
+                                              final item = entry.value;
+
+                                              return DataRow(
+                                                cells: [
+                                                  DataCell(
+                                                    Text(
+                                                      ((_page - 1) * 10 +
+                                                              index +
+                                                              1)
+                                                          .toString(),
+                                                    ),
+                                                  ),
+                                                  DataCell(
+                                                    Text(
+                                                      item.kodeLinen.isEmpty
+                                                          ? '-'
+                                                          : item.kodeLinen,
+                                                    ),
+                                                  ),
+                                                  DataCell(
+                                                    Text(
+                                                      item.namaLinen.isEmpty
+                                                          ? '-'
+                                                          : item.namaLinen,
+                                                    ),
+                                                  ),
+                                                  DataCell(
+                                                    Text(
+                                                      item.namaKategoriLinen
+                                                              .isEmpty
+                                                          ? '-'
+                                                          : item
+                                                              .namaKategoriLinen,
+                                                    ),
+                                                  ),
+                                                  DataCell(
+                                                    Text(
+                                                      item.jumlahPencucian
+                                                          .toString(),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ).toList(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            if (_response != null) ...[
+                              const SizedBox(height: 8),
+                              AppPagination(
+                                meta: _response!.meta,
+                                onPage: (page) {
+                                  setState(() => _page = page);
+                                  _load();
+                                },
                               ),
                             ],
-                          )
-                        : rows.isEmpty
-                            ? ListView(
-                                children: const [
-                                  Padding(
-                                    padding: EdgeInsets.all(24),
-                                    child: Center(
-                                      child: Text(
-                                        'Belum ada detail linen di laundry.',
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : ListView(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  14,
-                                  16,
-                                  24,
-                                ),
-                                children: [
-                                  TableSurface(
-                                    child: LayoutBuilder(
-                                      builder: (context, constraints) {
-                                        return SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: SizedBox(
-                                            width: constraints.maxWidth,
-                                            child: DataTable(
-                                              headingRowColor:
-                                                  WidgetStateProperty.all(
-                                                const Color(0xff1261dc),
-                                              ),
-                                              headingTextStyle:
-                                                  const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              dataTextStyle: const TextStyle(
-                                                color: Color(0xff465564),
-                                                fontSize: 9,
-                                              ),
-                                              columnSpacing: 28,
-                                              horizontalMargin: 16,
-                                              columns: const [
-                                                DataColumn(label: Text('ID')),
-                                                DataColumn(
-                                                  label: Text('Kode Linen'),
-                                                ),
-                                                DataColumn(
-                                                  label: Text('Nama Linen'),
-                                                ),
-                                                DataColumn(
-                                                  label: Text('Kategori'),
-                                                ),
-                                                DataColumn(
-                                                  label: Text('Jumlah Pencucian'),
-                                                ),
-                                              ],
-                                              rows: rows.map((item) {
-                                                return DataRow(
-                                                  cells: [
-                                                    DataCell(
-                                                      Text(item.id.toString()),
-                                                    ),
-                                                    DataCell(
-                                                      Text(
-                                                        item.kodeLinen.isEmpty
-                                                            ? '-'
-                                                            : item.kodeLinen,
-                                                      ),
-                                                    ),
-                                                    DataCell(
-                                                      Text(
-                                                        item.namaLinen.isEmpty
-                                                            ? '-'
-                                                            : item.namaLinen,
-                                                      ),
-                                                    ),
-                                                    DataCell(
-                                                      Text(
-                                                        item.namaKategoriLinen
-                                                                .isEmpty
-                                                            ? '-'
-                                                            : item
-                                                                .namaKategoriLinen,
-                                                      ),
-                                                    ),
-                                                    DataCell(
-                                                      Text(
-                                                        item.jumlahPencucian
-                                                            .toString(),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              }).toList(),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  AppPagination(
-                                    meta: _response!.meta,
-                                    onPage: (page) {
-                                      setState(() => _page = page);
-                                      _load();
-                                    },
-                                  ),
-                                ],
-                              ),
-              ),
+                          ],
+                        ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard({
+    required String categoryName,
+    required int totalLinen,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xff183b56).withValues(alpha: .07),
+            blurRadius: 18,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: const Color(0xffeaf2ff),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.local_laundry_service_rounded,
+              color: Color(0xff1261dc),
+              size: 23,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Linen & Tirai di Laundry',
+                  style: TextStyle(
+                    color: Color(0xff8b99a5),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  categoryName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xff263746),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Text(
+                'JUMLAH LINEN',
+                style: TextStyle(
+                  color: Color(0xff8b99a5),
+                  fontSize: 8,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: .4,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                totalLinen.toString(),
+                style: const TextStyle(
+                  color: Color(0xff1261dc),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
