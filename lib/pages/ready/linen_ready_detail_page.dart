@@ -205,6 +205,7 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
             },
     );
   }
+}
 
 class _FilterDropdown<T> extends StatelessWidget {
   const _FilterDropdown({
