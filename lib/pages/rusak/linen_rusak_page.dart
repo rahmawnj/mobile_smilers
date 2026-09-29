@@ -136,11 +136,8 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                     _buildSearchBar(),
                     const SizedBox(height: 14),
                     if (_loading)
-                      const Padding(
-                        padding: EdgeInsets.all(44),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    else if (_error != null)
+                      const AppPageLoading()
+                  else if (_error != null)
                       _buildError()
                     else if (rows.isEmpty)
                       _buildEmpty()
