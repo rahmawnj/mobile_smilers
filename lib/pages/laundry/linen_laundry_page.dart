@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../api/api_service.dart';
@@ -21,6 +23,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
   int _page = 1;
   int _perPage = 10;
   final TextEditingController _searchController = TextEditingController();
+  Timer? _searchDebounce;
 
   @override
   void initState() {
@@ -30,6 +33,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -75,6 +79,11 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
     _load();
   }
 
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 450), _search);
+  }
+
   void _openDetail(LinenLaundryItem item) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -104,10 +113,24 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
               child: TextField(
                 controller: _searchController,
+                onChanged: _onSearchChanged,
                 onSubmitted: (_) => _search(),
+                textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
                   hintText: 'Cari linen / kategori...',
                   prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                  suffixIcon: _searchController.text.isEmpty
+                      ? null
+                      : IconButton(
+                          tooltip: 'Bersihkan',
+                          onPressed: () {
+                            _searchController.clear();
+                            _searchDebounce?.cancel();
+                            setState(() => _page = 1);
+                            _load();
+                          },
+                          icon: const Icon(Icons.close_rounded, size: 18),
+                        ),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -121,7 +144,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
               child: AppRefreshIndicator(
                 onRefresh: _load,
                 child: _loading
-                  ? const AppPageLoading()
+                    ? const AppPageLoading()
                     : _error != null
                         ? ListView(
                             children: [
@@ -166,8 +189,8 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                             const Color(0xff1261dc),
                                           ),
                                           headingTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
+                                            color: Colors.white,
+                                            fontSize: 10,
                                             fontWeight: FontWeight.w700,
                                           ),
                                           dataTextStyle: const TextStyle(
@@ -177,22 +200,30 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                           columnSpacing: 18,
                                           horizontalMargin: 16,
                                           columns: const [
+                                            DataColumn(label: Text('No')),
                                             DataColumn(
                                               label: Text('Nama Linen'),
                                             ),
                                             DataColumn(
-                                              label: Text('Kategori'),
+                                              label: Text(
+                                                'Nama Kategori Linen',
+                                              ),
                                             ),
-                                            DataColumn(
-                                              label: Text('Ready'),
-                                            ),
-                                            DataColumn(
-                                              label: Text('Detail'),
-                                            ),
+                                            DataColumn(label: Text('Ready')),
+                                            DataColumn(label: Text('Action')),
                                           ],
-                                          rows: rows.map((item) {
+                                          rows: rows.asMap().entries.map((entry) {
+                                            final index = entry.key;
+                                            final item = entry.value;
+
                                             return DataRow(
                                               cells: [
+                                                DataCell(
+                                                  Text(((_page - 1) * _perPage +
+                                                          index +
+                                                          1)
+                                                      .toString()),
+                                                ),
                                                 DataCell(
                                                   Text(
                                                     item.namaLinen.isEmpty
@@ -286,4 +317,3 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
     );
   }
 }
-
