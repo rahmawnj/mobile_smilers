@@ -30,6 +30,7 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
   int? _roomId;
   DateTime _date = DateTime.now();
   final Set<int> _selected = {};
+  final _itemSearchController = TextEditingController();
   PlatformFile? _file;
 
   @override
@@ -187,6 +188,12 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
   }
 
   @override
+  void dispose() {
+    _itemSearchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f8fc),
@@ -323,17 +330,60 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
             child: const Text('Tidak ada linen aktif di ruangan ini.'),
           )
         else
-          Container(
-            constraints: const BoxConstraints(maxHeight: 320),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _itemSearchController,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: 'Cari nama linen / QR Code / RFID...',
+                  prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                  suffixIcon: _itemSearchController.text.isEmpty
+                      ? null
+                      : IconButton(
+                          onPressed: () {
+                            _itemSearchController.clear();
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.close_rounded, size: 19),
+                        ),
+                  filled: true,
+                  fillColor: const Color(0xfff7f9fc),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xffe1e7ed)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 320),
             decoration: BoxDecoration(
               border: Border.all(color: Color(0xffe1e7ed)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: _items.length,
+              itemCount: _items.where((item) {
+                final query = _itemSearchController.text.trim().toLowerCase();
+                if (query.isEmpty) return true;
+                return item.namaLinen.toLowerCase().contains(query) ||
+                    item.qrCode.toLowerCase().contains(query) ||
+                    item.tagRfid.toLowerCase().contains(query) ||
+                    item.kategoriLinen.toLowerCase().contains(query);
+              }).length,
               itemBuilder: (_, index) {
-                final item = _items[index];
+                final query = _itemSearchController.text.trim().toLowerCase();
+                final filteredItems = _items.where((item) {
+                  if (query.isEmpty) return true;
+                  return item.namaLinen.toLowerCase().contains(query) ||
+                      item.qrCode.toLowerCase().contains(query) ||
+                      item.tagRfid.toLowerCase().contains(query) ||
+                      item.kategoriLinen.toLowerCase().contains(query);
+                }).toList();
+                if (index >= filteredItems.length) return const SizedBox.shrink();
+                final item = filteredItems[index];
                 final selected = _selected.contains(item.linenId);
                 return CheckboxListTile(
                   dense: true,
@@ -356,6 +406,8 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
                 );
               },
             ),
+          ),
+            ],
           ),
         const SizedBox(height: 18),
         OutlinedButton.icon(
