@@ -168,15 +168,15 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                               const Color(0xff1261dc),
                                             ),
                                             headingTextStyle: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 9,
+                  color: Colors.white,
+                  fontSize: 10,
                                               fontWeight: FontWeight.w700,
                                             ),
                                             dataTextStyle: const TextStyle(
                                               color: Color(0xff465564),
-                                              fontSize: 9,
+                                              fontSize: 10,
                                             ),
-                                            columnSpacing: 28,
+                                            columnSpacing: 18,
                                             horizontalMargin: 16,
                                             columns: const [
                                               DataColumn(
@@ -221,7 +221,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
-                                          const Text('Jumlah', style: TextStyle(fontSize: 9)),
+                                          const Text('Jumlah', style: TextStyle(fontSize: 10)),
                                           const SizedBox(width: 8),
                                           AppPerPageDropdown(
                                             value: _perPage,
