@@ -227,9 +227,11 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                 width: constraints.maxWidth,
                 child: DataTable(
                   headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-                  headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
-                  dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
-                  columnSpacing: 24,
+                  headingTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10, fontWeight: FontWeight.w700),
+                  dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 10),
+                  columnSpacing: 16,
                   columns: const [
                     DataColumn(label: Text('No.')),
                     DataColumn(label: Text('Nama Linen')),
