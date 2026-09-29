@@ -166,15 +166,15 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                             const Color(0xff1261dc),
                                           ),
                                           headingTextStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 9,
+                  color: Colors.white,
+                  fontSize: 10,
                                             fontWeight: FontWeight.w700,
                                           ),
                                           dataTextStyle: const TextStyle(
                                             color: Color(0xff465564),
-                                            fontSize: 9,
+                                            fontSize: 10,
                                           ),
-                                          columnSpacing: 28,
+                                          columnSpacing: 18,
                                           horizontalMargin: 16,
                                           columns: const [
                                             DataColumn(
@@ -251,7 +251,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                       children: [
                                         const Text(
                                           'Jumlah',
-                                          style: TextStyle(fontSize: 9),
+                                          style: TextStyle(fontSize: 10),
                                         ),
                                         const SizedBox(width: 8),
                                         AppPerPageDropdown(
