@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../api/api_service.dart';
@@ -26,6 +28,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   int _perPage = 10;
 
   final TextEditingController _searchController = TextEditingController();
+  Timer? _searchDebounce;
 
   @override
   void initState() {
@@ -61,7 +64,8 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   }
 
   int? _toOptionId(Map<String, dynamic> item) {
-    final value = item['id'] ?? item['kategori_linen'] ?? item['kategori_linen_id'];
+    final value =
+        item['id'] ?? item['kategori_linen'] ?? item['kategori_linen_id'];
     if (value is num) return value.toInt();
     return int.tryParse(value?.toString() ?? '');
   }
@@ -78,6 +82,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -123,8 +128,14 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     _load();
   }
 
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 450), _search);
+  }
+
   void _resetSearch() {
     _searchController.clear();
+    _searchDebounce?.cancel();
     setState(() => _page = 1);
     _load();
   }
@@ -170,140 +181,117 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
       body: SafeArea(
         bottom: false,
         child: Column(
-        children: [
-          DetailHeader(
-            title: 'Linen & Tirai Ready',
-            userName: widget.userName,
-          ),
-          Expanded(
-            child: AppRefreshIndicator(
-              onRefresh: _load,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
-                children: [
-                  _buildSearchBar(),
-                  const SizedBox(height: 10),
-                  _buildFilters(),
-                  const SizedBox(height: 14),
-                  if (_loading)
-                    const AppPageLoading()
-                  else if (_error != null)
-                    _buildError()
-                  else if (rows.isEmpty)
-                    _buildEmpty()
-                  else
-                    _buildTable(rows),
-                  if (!_loading && _error == null && meta != null) ...[
+          children: [
+            DetailHeader(
+              title: 'Linen & Tirai Ready',
+              userName: widget.userName,
+            ),
+            Expanded(
+              child: AppRefreshIndicator(
+                onRefresh: _load,
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                  children: [
+                    _buildSearchBar(),
                     const SizedBox(height: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Menampilkan ${rows.length} dari ${meta.total} kategori',
-                              style: const TextStyle(
-                                color: Color(0xff8b99a5),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
+                    _buildFilters(),
+                    const SizedBox(height: 14),
+                    if (_loading)
+                      const AppPageLoading()
+                    else if (_error != null)
+                      _buildError()
+                    else if (rows.isEmpty)
+                      _buildEmpty()
+                    else
+                      _buildTable(rows),
+                    if (!_loading && _error == null && meta != null) ...[
+                      const SizedBox(height: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Menampilkan ${rows.length} dari ${meta.total} kategori',
+                                style: const TextStyle(
+                                  color: Color(0xff8b99a5),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 18),
-                            const Text(
-                              'Jumlah',
-                              style: TextStyle(
-                                color: Color(0xff8b99a5),
-                                fontSize: 10,
+                              const SizedBox(width: 18),
+                              const Text(
+                                'Jumlah',
+                                style: TextStyle(
+                                  color: Color(0xff8b99a5),
+                                  fontSize: 10,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            AppPerPageDropdown(
-                              value: _perPage,
-                              onChanged: _changePerPage,
-                            ),
-                          ],
-                        ),
-                        if (meta.lastPage > 1)
-                          AppPagination(
-                            meta: meta,
-                            onPage: _changePage,
+                              const SizedBox(width: 6),
+                              AppPerPageDropdown(
+                                value: _perPage,
+                                onChanged: _changePerPage,
+                              ),
+                            ],
                           ),
-                      ],
-                    ),
+                          if (meta.lastPage > 1)
+                            AppPagination(
+                              meta: meta,
+                              onPage: _changePage,
+                            ),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
     );
   }
 
   Widget _buildSearchBar() {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: _searchController,
-            onSubmitted: (_) => _search(),
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              hintText: 'Cari kategori / sub kategori...',
-              prefixIcon: const Icon(Icons.search_rounded, size: 20),
-              suffixIcon: _searchController.text.isEmpty
-                  ? null
-                  : IconButton(
-                      tooltip: 'Bersihkan',
-                      onPressed: _resetSearch,
-                      icon: const Icon(Icons.close_rounded, size: 18),
-                    ),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
+    return TextField(
+      controller: _searchController,
+      onChanged: _onSearchChanged,
+      onSubmitted: (_) => _search(),
+      textInputAction: TextInputAction.search,
+      decoration: InputDecoration(
+        hintText: 'Cari kategori / sub kategori...',
+        prefixIcon: const Icon(Icons.search_rounded, size: 20),
+        suffixIcon: _searchController.text.isEmpty
+            ? null
+            : IconButton(
+                tooltip: 'Bersihkan',
+                onPressed: _resetSearch,
+                icon: const Icon(Icons.close_rounded, size: 18),
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: Color(0xff159cf1),
-                  width: 1,
-                ),
-              ),
-            ),
-          ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
         ),
-        const SizedBox(width: 8),
-        Material(
-          color: const Color(0xff1261dc),
+        border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          child: InkWell(
-            onTap: _search,
-            borderRadius: BorderRadius.circular(10),
-            child: const SizedBox(
-              width: 46,
-              height: 46,
-              child: Icon(
-                Icons.search_rounded,
-                color: Colors.white,
-                size: 21,
-              ),
-            ),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Color(0xff159cf1),
+            width: 1,
           ),
         ),
-      ],
+      ),
     );
   }
 
