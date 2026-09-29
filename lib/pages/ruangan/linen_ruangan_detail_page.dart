@@ -73,10 +73,11 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
         ? _response!.ruanganName
         : widget.roomName;
 
-    return AppShell(
-      userName: widget.userName,
-      activeIndex: 0,
-      body: Column(
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
         children: [
           DetailHeader(
             title: 'Detail Ruangan - $roomName',
@@ -113,117 +114,126 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                             _RoomDetailTable(
                               title: 'Linen di Ruangan',
                               columns: const [
-                                'ID',
-                                'Linen ID',
+                                'No',
                                 'Nama Linen',
-                                'Nama Category',
+                                'Nama Kategori Linen',
                                 'Status',
                                 'Tanggal Keluar',
                                 'Jam Keluar',
                               ],
-                              rows: detailRows
+                              rows: detailRows.asMap().entries
                                   .map(
-                                    (item) => [
-                                      item.id,
-                                      item.linenId,
-                                      item.namaLinen,
-                                      item.namaKategoriLinen,
-                                      item.status,
-                                      item.tanggalKeluar,
-                                      item.jamKeluar,
+                                    (entry) => [
+                                      ((_detailPage - 1) * 10 + entry.key + 1),
+                                      entry.value.namaLinen,
+                                      entry.value.namaKategoriLinen,
+                                      entry.value.status,
+                                      entry.value.tanggalKeluar,
+                                      entry.value.jamKeluar,
                                     ],
                                   )
-                                  .toList(),
-                            ),
-                            if (_response != null) AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _detailPage = page); _load(); }),
-                            const SizedBox(height: 18),
-                            _RoomDetailTable(
-                              title: 'BA Hilang',
-                              columns: const [
-                                'ID',
+                                  .toList(),columns: const [
+                                'No',
                                 'Waktu Hilang',
                                 'File BA',
                               ],
-                              rows: baRows
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                          children: [
+                            _RoomDetailTable(
+                              title: 'Linen di Ruangan',
+                              columns: const [
+                                'No',
+                                'Nama Linen',
+                                'Nama Kategori Linen',
+                                'Status',
+                                'Tanggal Keluar',
+                                'Jam Keluar',
+                              ],
+                              rows: detailRows.asMap().entries
                                   .map(
-                                    (item) => [
-                                      item.id,
-                                      item.waktuHilang,
-                                      item.fileUrl.isEmpty ? '-' : item.fileUrl,
+                                    (entry) => [
+                                      ((_detailPage - 1) * 10 + entry.key + 1),
+                                      entry.value.namaLinen,
+                                      entry.value.namaKategoriLinen,
+                                      entry.value.status,
+                                      entry.value.tanggalKeluar,
+                                      entry.value.jamKeluar,
+                                    ],
+                                  )
+                                  .toList(),rows: baRows.asMap().entries
+                                  .map(
+                                    (entry) => [
+                                      ((_baPage - 1) * 10 + entry.key + 1),
+                                      entry.value.waktuHilang,
+                                      entry.value.fileUrl.isEmpty ? '-' : entry.value.fileUrl,
+                                    ],
+                                  )
+                                  .toList(),                              ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                          children: [
+                            _RoomDetailTable(
+                              title: 'Linen di Ruangan',
+                              columns: const [
+                                'No',
+                                'Nama Linen',
+                                'Nama Kategori Linen',
+                                'Status',
+                                'Tanggal Keluar',
+                                'Jam Keluar',
+                              ],
+                              rows: detailRows.asMap().entries
+                                  .map(
+                                    (entry) => [
+                                      ((_detailPage - 1) * 10 + entry.key + 1),
+                                      entry.value.namaLinen,
+                                      entry.value.namaKategoriLinen,
+                                      entry.value.status,
+                                      entry.value.tanggalKeluar,
+                                      entry.value.jamKeluar,
+                                    ],
+                                  )
+                                  .toList(),columns: const [
+                                'No',
+                                'Waktu Hilang',
+                                'File BA',
+                              ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                          children: [
+                            _RoomDetailTable(
+                              title: 'Linen di Ruangan',
+                              columns: const [
+                                'No',
+                                'Nama Linen',
+                                'Nama Kategori Linen',
+                                'Status',
+                                'Tanggal Keluar',
+                                'Jam Keluar',
+                              ],
+                              rows: detailRows.asMap().entries
+                                  .map(
+                                    (entry) => [
+                                      ((_detailPage - 1) * 10 + entry.key + 1),
+                                      entry.value.namaLinen,
+                                      entry.value.namaKategoriLinen,
+                                      entry.value.status,
+                                      entry.value.tanggalKeluar,
+                                      entry.value.jamKeluar,
                                     ],
                                   )
                                   .toList(),
-                            ),
-                            if (_baResponse != null) AppPagination(meta: _baResponse!.meta, onPage: (page) { setState(() => _baPage = page); _load(); }),
-                          ],
-                        ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RoomDetailTable extends StatelessWidget {
-  const _RoomDetailTable({
-    required this.title,
-    required this.columns,
-    required this.rows,
-  });
-
-  final String title;
-  final List<String> columns;
-  final List<List<dynamic>> rows;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionTitle(title: title),
-        const SizedBox(height: 8),
-        TableSurface(child: LayoutBuilder(
-            builder: (context, constraints) {
-              final tableWidth = constraints.maxWidth < 680 ? 680.0 : constraints.maxWidth;
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: tableWidth,
-                  child: DataTable(
-                    headingRowColor: WidgetStateProperty.all(
-                      const Color(0xff1261dc),
-                    ),
-                    headingTextStyle: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    dataTextStyle: const TextStyle(
-                      color: Color(0xff465564),
-                      fontSize: 9,
-                    ),
-                    columnSpacing: 18,
-                    horizontalMargin: 10,
-                    columns: columns
-                        .map((column) => DataColumn(label: Text(column)))
-                        .toList(),
-                    rows: rows
-                        .map(
-                          (row) => DataRow(
-                            cells: row
-                                .map((value) => DataCell(Text(value.toString())))
-                                .toList(),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
