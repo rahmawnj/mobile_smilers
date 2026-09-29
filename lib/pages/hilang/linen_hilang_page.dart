@@ -20,13 +20,11 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
   bool _loading = true;
   bool _roomsLoading = true;
   bool _categoriesLoading = true;
-  bool _submitting = false;
   String? _error;
 
   LinenListResponse<LinenHilangItem>? _response;
   List<LinenHilangRuanganOption> _rooms = const [];
   List<Map<String, dynamic>> _categories = const [];
-  List<LinenHilangRuanganItem> _roomItems = const [];
 
   int _page = 1;
   int _perPage = 10;
@@ -117,30 +115,6 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
     }
   }
 
-  Future<void> _loadRoomItems(int roomId) async {
-    try {
-      final response = await ApiService.instance.getLinenHilangRuanganList(
-        ruanganId: roomId,
-        perPage: 100,
-        page: 1,
-      );
-      if (!mounted) return;
-      setState(() => _roomItems = response.data);
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _roomItems = const []);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e is ApiException
-                ? e.message
-                : 'Gagal mengambil linen aktif di ruangan.',
-          ),
-        ),
-      );
-    }
-  }
-
   Future<void> _pickRange() async {
     final range = await showDateRangePicker(
       context: context,
@@ -168,81 +142,22 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
   }
 
   Future<void> _openCreateForm() async {
-    if (_rooms.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Data ruangan belum tersedia.')),
-      );
-      return;
-    }
-
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (_) => _LinenHilangFormDialog(
-        rooms: _rooms,
-        initialRoomId: _filterRoom,
-        loadRoomItems: _loadRoomItems,
-        roomItems: _roomItems,
-        submitting: _submitting,
-        onSubmit: _submitCreate,
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => LinenHilangCreatePage(
+          userName: widget.userName,
+          initialRoomId: _filterRoom,
+        ),
       ),
     );
 
     if (result == true) {
-      _roomItems = const [];
       _page = 1;
       await _load();
-    }
-  }
-
-  Future<bool> _submitCreate({
-    required String tanggal,
-    required int ruanganId,
-    required List<int> linenIds,
-    required PlatformFile? file,
-  }) async {
-    if (linenIds.isEmpty) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih minimal satu linen.')),
+        const SnackBar(content: Text('Linen hilang berhasil ditambahkan.')),
       );
-      return false;
-    }
-
-    setState(() => _submitting = true);
-    try {
-      final response = await ApiService.instance.createLinenHilang(
-        tanggal: tanggal,
-        ruanganId: ruanganId,
-        linenIds: linenIds,
-        beritaAcaraBytes: file?.bytes,
-        beritaAcaraName: file?.name,
-        beritaAcaraPath: file?.path,
-      );
-
-      if (!mounted) return false;
-      Navigator.of(context).pop(true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            response['message']?.toString() ??
-                'Linen hilang berhasil ditambahkan.',
-          ),
-        ),
-      );
-      return true;
-    } on ApiException catch (e) {
-      if (!mounted) return false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      );
-      return false;
-    } catch (_) {
-      if (!mounted) return false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gagal menyimpan Linen Hilang.')),
-      );
-      return false;
-    } finally {
-      if (mounted) setState(() => _submitting = false);
     }
   }
 
@@ -586,291 +501,5 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
   int _toInt(dynamic value) {
     if (value is num) return value.toInt();
     return int.tryParse(value?.toString() ?? '') ?? 0;
-  }
-}
-
-class _LinenHilangFormDialog extends StatefulWidget {
-  const _LinenHilangFormDialog({
-    required this.rooms,
-    required this.initialRoomId,
-    required this.loadRoomItems,
-    required this.roomItems,
-    required this.submitting,
-    required this.onSubmit,
-  });
-
-  final List<LinenHilangRuanganOption> rooms;
-  final int? initialRoomId;
-  final Future<void> Function(int roomId) loadRoomItems;
-  final List<LinenHilangRuanganItem> roomItems;
-  final bool submitting;
-  final Future<bool> Function({
-    required String tanggal,
-    required int ruanganId,
-    required List<int> linenIds,
-    required PlatformFile? file,
-  }) onSubmit;
-
-  @override
-  State<_LinenHilangFormDialog> createState() => _LinenHilangFormDialogState();
-}
-
-class _LinenHilangFormDialogState extends State<_LinenHilangFormDialog> {
-  late int? _roomId = widget.initialRoomId;
-  DateTime _date = DateTime.now();
-  bool _loadingItems = false;
-  bool _pickingFile = false;
-  List<LinenHilangRuanganItem> _items = const [];
-  final Set<int> _selected = {};
-  PlatformFile? _file;
-
-  @override
-  void initState() {
-    super.initState();
-    if (_roomId != null) _loadItems();
-  }
-
-  Future<void> _loadItems() async {
-    if (_roomId == null) return;
-    setState(() => _loadingItems = true);
-    try {
-      final response = await ApiService.instance.getLinenHilangRuanganList(
-        ruanganId: _roomId!,
-        perPage: 100,
-        page: 1,
-      );
-      if (!mounted) return;
-      setState(() {
-        _items = response.data;
-        _selected.clear();
-        _loadingItems = false;
-      });
-    } on ApiException catch (e) {
-      if (!mounted) return;
-      setState(() => _loadingItems = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      );
-    } catch (_) {
-      if (!mounted) return;
-      setState(() => _loadingItems = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gagal mengambil linen aktif di ruangan.')),
-      );
-    }
-  }
-
-  Future<void> _pickFile() async {
-    if (_pickingFile || widget.submitting) return;
-
-    setState(() => _pickingFile = true);
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
-        withData: true,
-        allowMultiple: false,
-      );
-      if (!mounted || result == null || result.files.isEmpty) return;
-
-      final file = result.files.single;
-      if (file.size > 10 * 1024 * 1024) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ukuran berita acara maksimal 10 MB.')),
-        );
-        return;
-      }
-
-      setState(() => _file = file);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal membuka pemilih berkas: $e')),
-      );
-    } finally {
-      if (mounted) setState(() => _pickingFile = false);
-    }
-  }
-
-  Future<void> _submit() async {
-    if (_roomId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih ruangan terlebih dahulu.')),
-      );
-      return;
-    }
-    if (_selected.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih minimal satu linen.')),
-      );
-      return;
-    }
-
-    final ok = await widget.onSubmit(
-      tanggal:
-          '${_date.year.toString().padLeft(4, '0')}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}',
-      ruanganId: _roomId!,
-      linenIds: _selected.toList(),
-      file: _file,
-    );
-    if (!ok && mounted) setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Tambah Linen Hilang'),
-      content: SizedBox(
-        width: MediaQuery.sizeOf(context).width < 620
-            ? MediaQuery.sizeOf(context).width - 48
-            : 620,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DropdownButtonFormField<int>(
-                value: _roomId,
-                decoration: const InputDecoration(
-                  labelText: 'Ruangan',
-                  border: OutlineInputBorder(),
-                ),
-                items: widget.rooms
-                    .map(
-                      (room) => DropdownMenuItem<int>(
-                        value: room.id,
-                        child: Text(
-                          '${room.namaRuangan} • ${room.namaKepalaRuangan}',
-                        ),
-                      ),
-                    )
-                    .toList(),
-                onChanged: widget.submitting
-                    ? null
-                    : (value) {
-                        setState(() {
-                          _roomId = value;
-                          _items = const [];
-                          _selected.clear();
-                        });
-                        if (value != null) _loadItems();
-                      },
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: widget.submitting
-                          ? null
-                          : () async {
-                              final d = await showDatePicker(
-                                context: context,
-                                initialDate: _date,
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2100),
-                              );
-                              if (d != null) setState(() => _date = d);
-                            },
-                      icon: const Icon(Icons.event_rounded),
-                      label: Text(
-                        'Tanggal: ${_date.day.toString().padLeft(2, '0')}/${_date.month.toString().padLeft(2, '0')}/${_date.year}',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              const Text(
-                'Pilih Linen Aktif di Ruangan',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 8),
-              if (_loadingItems)
-                const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (_items.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(14),
-                  child: Text('Tidak ada linen aktif di ruangan ini.'),
-                )
-              else
-                Container(
-                  constraints: const BoxConstraints(maxHeight: 260),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xffe1e7ed)),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _items.length,
-                    itemBuilder: (_, index) {
-                      final item = _items[index];
-                      final selected = _selected.contains(item.linenId);
-                      return CheckboxListTile(
-                        dense: true,
-                        value: selected,
-                        onChanged: widget.submitting
-                            ? null
-                            : (checked) {
-                                setState(() {
-                                  if (checked == true) {
-                                    _selected.add(item.linenId);
-                                  } else {
-                                    _selected.remove(item.linenId);
-                                  }
-                                });
-                              },
-                        title: Text(item.namaLinen),
-                        subtitle: Text(
-                          '${item.kategoriLinen} • ${item.qrCode} • ${item.tagRfid}',
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              const SizedBox(height: 14),
-              OutlinedButton.icon(
-                onPressed: widget.submitting || _pickingFile ? null : _pickFile,
-                icon: const Icon(Icons.attach_file_rounded),
-                label: Text(
-                  _pickingFile
-                      ? 'Membuka pemilih berkas...'
-                      : _file == null
-                          ? 'Pilih Berita Acara'
-                      : '${_file!.name} (${(_file!.size / 1024 / 1024).toStringAsFixed(2)} MB)',
-                        ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'PDF, DOC, DOCX, JPG, JPEG, PNG — maksimal 10 MB.',
-                style: TextStyle(fontSize: 10, color: Color(0xff7d8c99)),
-              ),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: widget.submitting
-              ? null
-              : () => Navigator.of(context).pop(false),
-          child: const Text('Batal'),
-        ),
-        ElevatedButton.icon(
-          onPressed: widget.submitting ? null : _submit,
-          icon: widget.submitting
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.save_rounded),
-          label: const Text('Simpan'),
-        ),
-      ],
-    );
   }
 }
