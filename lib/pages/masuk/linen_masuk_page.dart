@@ -108,45 +108,12 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   }
 
   Future<void> _scan() async {
-    final controller = TextEditingController();
-
     final value = await showDialog<String>(
       context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Scan Linen Masuk'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            textInputAction: TextInputAction.done,
-            decoration: const InputDecoration(
-              labelText: 'RFID / QR Code',
-              hintText: 'Masukkan RFID atau QR Code',
-            ),
-            onSubmitted: (value) {
-              Navigator.of(dialogContext).pop(value.trim());
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Batal'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(controller.text.trim());
-              },
-              icon: const Icon(Icons.qr_code_scanner_rounded),
-              label: const Text('Scan'),
-            ),
-          ],
-        );
-      },
+      builder: (dialogContext) => const _ScanLinenMasukDialog(),
     );
 
-    controller.dispose();
-
-    if (value == null || value.isEmpty || _scanning) return;
+    if (!mounted || value == null || value.isEmpty || _scanning) return;
 
     setState(() => _scanning = true);
     try {
@@ -536,6 +503,64 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       child: Center(
         child: Text('Belum ada data Linen & Tirai Masuk.'),
       ),
+    );
+  }
+}
+
+
+class _ScanLinenMasukDialog extends StatefulWidget {
+  const _ScanLinenMasukDialog();
+
+  @override
+  State<_ScanLinenMasukDialog> createState() => _ScanLinenMasukDialogState();
+}
+
+class _ScanLinenMasukDialogState extends State<_ScanLinenMasukDialog> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final value = _controller.text.trim();
+    if (value.isEmpty) return;
+    Navigator.of(context).pop(value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Scan Linen Masuk'),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        textInputAction: TextInputAction.done,
+        decoration: const InputDecoration(
+          labelText: 'RFID / QR Code',
+          hintText: 'Masukkan RFID atau QR Code',
+        ),
+        onSubmitted: (_) => _submit(),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Batal'),
+        ),
+        ElevatedButton.icon(
+          onPressed: _submit,
+          icon: const Icon(Icons.qr_code_scanner_rounded),
+          label: const Text('Scan'),
+        ),
+      ],
     );
   }
 }
