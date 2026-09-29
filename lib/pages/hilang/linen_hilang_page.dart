@@ -411,11 +411,8 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                     if (_roomsLoading || _categoriesLoading)
                       const LinearProgressIndicator(minHeight: 2),
                     if (_loading)
-                      const Padding(
-                        padding: EdgeInsets.all(44),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    else if (_error != null)
+                      const AppPageLoading()
+                  else if (_error != null)
                       _buildError()
                     else if (rows.isEmpty)
                       _buildEmpty()
