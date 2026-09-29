@@ -187,10 +187,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                   _buildFilters(),
                   const SizedBox(height: 14),
                   if (_loading)
-                    const Padding(
-                      padding: EdgeInsets.all(40),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
+                    const AppPageLoading()
                   else if (_error != null)
                     _buildError()
                   else if (rows.isEmpty)
