@@ -619,6 +619,7 @@ class _LinenHilangFormDialogState extends State<_LinenHilangFormDialog> {
   late int? _roomId = widget.initialRoomId;
   DateTime _date = DateTime.now();
   bool _loadingItems = false;
+  bool _pickingFile = false;
   List<LinenHilangRuanganItem> _items = const [];
   final Set<int> _selected = {};
   PlatformFile? _file;
@@ -660,23 +661,35 @@ class _LinenHilangFormDialogState extends State<_LinenHilangFormDialog> {
   }
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
-      withData: true,
-    );
-    if (result == null || result.files.isEmpty) return;
+    if (_pickingFile || widget.submitting) return;
 
-    final file = result.files.single;
-    if (file.size > 10 * 1024 * 1024) {
+    setState(() => _pickingFile = true);
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
+        withData: true,
+        allowMultiple: false,
+      );
+      if (!mounted || result == null || result.files.isEmpty) return;
+
+      final file = result.files.single;
+      if (file.size > 10 * 1024 * 1024) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ukuran berita acara maksimal 10 MB.')),
+        );
+        return;
+      }
+
+      setState(() => _file = file);
+    } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ukuran berita acara maksimal 10 MB.')),
+        SnackBar(content: Text('Gagal membuka pemilih berkas: $e')),
       );
-      return;
+    } finally {
+      if (mounted) setState(() => _pickingFile = false);
     }
-
-    setState(() => _file = file);
   }
 
   Future<void> _submit() async {
@@ -708,7 +721,9 @@ class _LinenHilangFormDialogState extends State<_LinenHilangFormDialog> {
     return AlertDialog(
       title: const Text('Tambah Linen Hilang'),
       content: SizedBox(
-        width: 620,
+        width: MediaQuery.sizeOf(context).width < 620
+            ? MediaQuery.sizeOf(context).width - 48
+            : 620,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -818,13 +833,15 @@ class _LinenHilangFormDialogState extends State<_LinenHilangFormDialog> {
                 ),
               const SizedBox(height: 14),
               OutlinedButton.icon(
-                onPressed: widget.submitting ? null : _pickFile,
+                onPressed: widget.submitting || _pickingFile ? null : _pickFile,
                 icon: const Icon(Icons.attach_file_rounded),
                 label: Text(
-                  _file == null
-                      ? 'Pilih Berita Acara'
+                  _pickingFile
+                      ? 'Membuka pemilih berkas...'
+                      : _file == null
+                          ? 'Pilih Berita Acara'
                       : '${_file!.name} (${(_file!.size / 1024 / 1024).toStringAsFixed(2)} MB)',
-                ),
+                        ),
               ),
               const SizedBox(height: 4),
               const Text(
