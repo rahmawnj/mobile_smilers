@@ -92,7 +92,7 @@ class _DashboardPageState extends State<DashboardPage> {
       userName: widget.userName,
       activeIndex: 0,
       embedded: widget.embedded,
-      body: RefreshIndicator(
+      body: AppRefreshIndicator(
         onRefresh: _loadLinen,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
