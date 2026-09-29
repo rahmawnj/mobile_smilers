@@ -296,10 +296,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
                 child: _loading
-                    ? const Padding(
-                        padding: EdgeInsets.all(50),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
+                    ? const AppPageLoading()
                     : _error != null
                         ? Padding(
                             padding: const EdgeInsets.all(40),
