@@ -23,12 +23,27 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
   String? _error;
   LinenCategory? _detail;
   LinenItemsResponse? _items;
+  List<LinenDropdownSubCategory> _subCategoryOptions = [];
+  String? _selectedSubCategory;
   int _page = 1;
 
   @override
   void initState() {
     super.initState();
+    _loadFilterOptions();
     _load();
+  }
+
+  Future<void> _loadFilterOptions() async {
+    try {
+      final options = await ApiService.instance.getLinenSubCategoryDropdown();
+      if (!mounted) return;
+      setState(() {
+        _subCategoryOptions = options
+            .where((item) => item.subKategoriLinen.trim().isNotEmpty)
+            .toList();
+      });
+    } catch (_) {}
   }
 
   Future<void> _load() async {
@@ -40,7 +55,12 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
     try {
       final results = await Future.wait([
         ApiService.instance.getLinenCategory(widget.category.id),
-        ApiService.instance.getLinenItems(widget.category.id, perPage: 10, page: _page),
+        ApiService.instance.getLinenItems(
+          widget.category.id,
+          perPage: 10,
+          page: _page,
+          subKategori: _selectedSubCategory,
+        ),
       ]);
 
       if (!mounted) return;
@@ -114,6 +134,8 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
                               const SizedBox(height: 18),
                               const SectionTitle(title: 'Detail Linen Ready'),
                               const SizedBox(height: 8),
+                              _buildSubCategoryFilter(),
+                              const SizedBox(height: 12),
                               if (_items!.data.isEmpty)
                                 const _EmptyDetail(message: 'Tidak ada item linen ready.')
                               else
@@ -149,6 +171,106 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
         ],
       ),
     ),
+    );
+  }
+
+  Widget _buildSubCategoryFilter() {
+    return _FilterDropdown<String>(
+      label: 'Sub Kategori',
+      value: _selectedSubCategory,
+      items: _subCategoryOptions.map((item) {
+        return DropdownMenuItem<String>(
+          value: item.subKategoriLinen,
+          child: Text(
+            item.subKategoriLinen,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedSubCategory = value;
+          _page = 1;
+        });
+        _load();
+      },
+      onClear: _selectedSubCategory == null
+          ? null
+          : () {
+              setState(() {
+                _selectedSubCategory = null;
+                _page = 1;
+              });
+              _load();
+            },
+    );
+  }
+
+class _FilterDropdown<T> extends StatelessWidget {
+  const _FilterDropdown({
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    required this.onClear,
+  });
+
+  final String label;
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+  final VoidCallback? onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xffe5ebf1)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                value: value,
+                isExpanded: true,
+                isDense: true,
+                hint: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Color(0xff7f8c98),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 18,
+                  color: Color(0xff7f8c98),
+                ),
+                items: items,
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+          if (onClear != null)
+            IconButton(
+              tooltip: 'Reset $label',
+              onPressed: onClear,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+              icon: const Icon(
+                Icons.close_rounded,
+                size: 15,
+                color: Color(0xff9aa8b5),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
