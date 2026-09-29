@@ -125,7 +125,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
           children: [
             _buildHeader(),
             Expanded(
-              child: RefreshIndicator(
+              child: AppRefreshIndicator(
                 onRefresh: _load,
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
