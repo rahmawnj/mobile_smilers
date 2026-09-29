@@ -300,13 +300,15 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
     return TextField(
       controller: _searchController,
       onSubmitted: (_) => _search(),
+      onChanged: (_) {
+        if (_searchController.text.trim().isEmpty) {
+          _page = 1;
+          _load();
+        }
+      },
       decoration: InputDecoration(
         hintText: 'Cari nama linen / RFID / QR Code...',
         prefixIcon: const Icon(Icons.search_rounded, size: 20),
-        suffixIcon: IconButton(
-          onPressed: _search,
-          icon: const Icon(Icons.arrow_forward_rounded),
-        ),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
