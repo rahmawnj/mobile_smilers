@@ -76,8 +76,14 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
             : '-')
         : widget.categoryName;
     final totalLinen = _response?.meta.total ?? 0;
+    final linenName = rows.isNotEmpty && rows.first.namaLinen.trim().isNotEmpty
+        ? rows.first.namaLinen
+        : '-';
 
-    return Column(
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      body: SafeArea(
+        child: Column(
       children: [
         DetailHeader(
           title: 'Linen & Tirai di Laundry',
@@ -120,6 +126,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                         ),
                         children: [
                           _buildSummaryCard(
+                            linenName: linenName,
                             categoryName: categoryName,
                             totalLinen: totalLinen,
                           ),
@@ -248,13 +255,16 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                           ],
                         ],
                       ),
-          ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildSummaryCard({
+    required String linenName,
     required String categoryName,
     required int totalLinen,
   }) {
@@ -293,14 +303,34 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Linen & Tirai di Laundry',
+                  'Nama Linen',
                   style: TextStyle(
                     color: Color(0xff8b99a5),
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 3),
+                Text(
+                  linenName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xff263746),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Nama Kategori Linen',
+                  style: TextStyle(
+                    color: Color(0xff8b99a5),
+                    fontSize: 8,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
                 Text(
                   categoryName,
                   maxLines: 1,
