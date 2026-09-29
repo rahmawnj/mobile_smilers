@@ -217,7 +217,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           ),
         ),
         const SizedBox(height:12),
-        if(_loading)const Center(child:Padding(padding:EdgeInsets.all(30),child:CircularProgressIndicator()))
+        if (_loading) const AppPageLoading()
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
         else TableSurface(
           child: LayoutBuilder(builder: (context, constraints) {
