@@ -49,7 +49,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
   void _openDetail(LinenRuanganItem item) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => LinenRuanganDetailPage(
-        roomId: item.id, roomName: item.namaRuangan, userName: widget.userName,
+        roomId: item.id, roomName: item.namaRuangan, userName: widget.userName, stokAwal: item.stokAwal, hilang: item.hilang, jumlahLinen: item.linenDiRuangan,
       ),
     ));
   }
