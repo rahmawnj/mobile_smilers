@@ -125,7 +125,7 @@ class _LinenKeluarScanPageState extends State<LinenKeluarScanPage> {
         title: const Text('Scan Linen Keluar'),
         leading: const BackButton(),
       ),
-      body: RefreshIndicator(
+      body: AppRefreshIndicator(
         onRefresh: _loadQueue,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
