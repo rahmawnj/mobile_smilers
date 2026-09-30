@@ -165,17 +165,23 @@ class _RekapTable extends StatelessWidget {
                   fontSize: 10, fontWeight: FontWeight.w700),
           dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 10),
           columns: const [
+            DataColumn(label: Text('No')),
             DataColumn(label: Text('Tanggal')),
-            DataColumn(label: Text('Keluar')),
-            DataColumn(label: Text('Masuk')),
-            DataColumn(label: Text('Berat Masuk')),
+            DataColumn(label: Text('Jumlah Linen Keluar')),
+            DataColumn(label: Text('Jumlah Linen Masuk')),
+            DataColumn(label: Text('Berat Linen Masuk')),
           ],
-          rows: rows.map((r) => DataRow(cells: [
-            DataCell(Text(r.tanggal)),
-            DataCell(Text('${r.jumlahLinenKeluar}')),
-            DataCell(Text('${r.jumlahLinenMasuk}')),
-            DataCell(Text('${r.beratLinenMasuk}')),
-          ])).toList(),
+          rows: rows.asMap().entries.map((entry) {
+            final index = entry.key;
+            final r = entry.value;
+            return DataRow(cells: [
+              DataCell(Text('${index + 1}')),
+              DataCell(Text(r.tanggal)),
+              DataCell(Text('${r.jumlahLinenKeluar}')),
+              DataCell(Text('${r.jumlahLinenMasuk}')),
+              DataCell(Text(r.beratLinenMasuk)),
+            ]);
+          }).toList(),
         ),
       ),
     ),
