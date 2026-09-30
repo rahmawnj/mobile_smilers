@@ -319,7 +319,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
     );
   }
 
-  Widget _buildTable(List<LinenRusakItem> rows, LinenMeta? meta) {
+  Widget _buildTable(List<LinenRusakItem> rows, LinenMeta meta) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -358,7 +358,12 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
               DataColumn(label: Text('Tanggal')),
               DataColumn(label: Text('Tahun Pembuatan')),
             ],
-            rows: rows.asMap().entries.map((entry) {\n              final index = entry.key;\n              final item = entry.value;\n              final number = meta == null\n                  ? index + 1\n                  : (meta.currentPage - 1) * meta.perPage + index + 1;
+            rows: rows.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              final number = meta == null
+                  ? index + 1
+                  : (meta.currentPage - 1) * meta.perPage + index + 1;
               return DataRow(
                 cells: [
                   DataCell(Text(number.toString())),
