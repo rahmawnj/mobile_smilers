@@ -321,8 +321,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                             columnSpacing: 18,
                                             columns: const [
                                               DataColumn(label: Text('Nama Ruangan')),
-                                              DataColumn(label: Text('Masuk')),
-                                              DataColumn(label: Text('Keluar')),
+                                              DataColumn(label: Text('Linen Masuk')),
+                                              DataColumn(label: Text('Linen Keluar')),
                                               DataColumn(label: Text('Selisih')),
                                             ],
                                             rows: _inOutRows.map((r) => DataRow(
