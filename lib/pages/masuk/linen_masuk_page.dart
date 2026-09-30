@@ -39,10 +39,10 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     super.dispose();
   }
 
-  String _date(DateTime d) => '\${d.month}/\${d.day}/\${d.year}';
+  String _date(DateTime d) => '${d.month}/${d.day}/${d.year}';
 
   String _range(DateTimeRange r) =>
-      '\${_date(r.start)} - \${_date(r.end)}';
+      '${_date(r.start)} - ${_date(r.end)}';
 
   bool _isSingleDate(DateTimeRange r) =>
       r.start.year == r.end.year &&
@@ -356,7 +356,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                   ),
                   const SizedBox(height: 12),
                   if (_loading)
-                      const AppPageLoading()
+                    const AppPageLoading()
                   else if (_error != null)
                     _buildError()
                   else if (rows.isEmpty)
@@ -369,7 +369,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          'Total \${meta.total} linen masuk',
+                          'Total ${meta.total} linen masuk',
                           style: const TextStyle(
                             color: Color(0xff7d8c99),
                             fontSize: 10,
@@ -419,8 +419,8 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
               const Color(0xff1261dc),
             ),
             headingTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
+              color: Colors.white,
+              fontSize: 10,
               fontWeight: FontWeight.w700,
             ),
             dataTextStyle: const TextStyle(
@@ -430,37 +430,43 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
             columnSpacing: 16,
             horizontalMargin: 14,
             columns: const [
-              DataColumn(label: Text('ID')),
+              DataColumn(label: Text('No')),
               DataColumn(label: Text('Nama Linen')),
-              DataColumn(label: Text('Kategori')),
+              DataColumn(label: Text('Nama Kategori Linen')),
               DataColumn(label: Text('QR Code')),
-              DataColumn(label: Text('RFID')),
+              DataColumn(label: Text('Tag RFID')),
               DataColumn(label: Text('Dari Ruangan')),
               DataColumn(label: Text('Jam')),
               DataColumn(label: Text('Tanggal')),
               DataColumn(label: Text('Keterangan')),
             ],
-            rows: rows.map((item) {
+            rows: rows.asMap().entries.map((entry) {
+              final item = entry.value;
+              final no = entry.key + 1;
               return DataRow(
                 cells: [
-                  DataCell(Text(item.id.toString())),
-                  DataCell(Text(
-                    item.namaLinen.isEmpty ? '-' : item.namaLinen,
-                  )),
-                  DataCell(Text(
-                    item.namaKategoriLinen.isEmpty
-                        ? '-'
-                        : item.namaKategoriLinen,
-                  )),
-                  DataCell(Text(
-                    item.qrCode.isEmpty ? '-' : item.qrCode,
-                  )),
-                  DataCell(Text(
-                    item.tagRfid.isEmpty ? '-' : item.tagRfid,
-                  )),
-                  DataCell(Text(
-                    item.dariRuangan.isEmpty ? '-' : item.dariRuangan,
-                  )),
+                  DataCell(Text(no.toString())),
+                  DataCell(
+                    Text(item.namaLinen.isEmpty ? '-' : item.namaLinen),
+                  ),
+                  DataCell(
+                    Text(
+                      item.namaKategoriLinen.isEmpty
+                          ? '-'
+                          : item.namaKategoriLinen,
+                    ),
+                  ),
+                  DataCell(
+                    Text(item.qrCode.isEmpty ? '-' : item.qrCode),
+                  ),
+                  DataCell(
+                    Text(item.tagRfid.isEmpty ? '-' : item.tagRfid),
+                  ),
+                  DataCell(
+                    Text(
+                      item.dariRuangan.isEmpty ? '-' : item.dariRuangan,
+                    ),
+                  ),
                   DataCell(Text(item.jam.isEmpty ? '-' : item.jam)),
                   DataCell(
                     Text(item.tanggal.isEmpty ? '-' : item.tanggal),
@@ -506,7 +512,6 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     );
   }
 }
-
 
 class _ScanLinenMasukDialog extends StatefulWidget {
   const _ScanLinenMasukDialog();
