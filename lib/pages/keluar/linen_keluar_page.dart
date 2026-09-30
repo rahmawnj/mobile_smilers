@@ -116,15 +116,17 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           const SizedBox(width:8),
           ElevatedButton.icon(
             onPressed: () async {
-              await Navigator.of(context).push(
+              final saved = await Navigator.of(context).push<bool>(
                 MaterialPageRoute(
-                  builder: (_) => LinenKeluarScanPage(userName: widget.userName),
+                  builder: (_) => LinenKeluarFormPage(userName: widget.userName),
                 ),
               );
-              if (mounted) await _load();
+              if (saved == true && mounted) {
+                await Future.wait([_load(), _loadQueue()]);
+              }
             },
-            icon: const Icon(Icons.qr_code_scanner_rounded),
-            label: const Text('Scan'),
+            icon: const Icon(Icons.assignment_rounded),
+            label: const Text('Form'),
           ),
         ]),
         const SizedBox(height:10),
@@ -157,12 +159,12 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         const SizedBox(height:12),
         InkWell(
           onTap: () async {
-            final saved = await Navigator.of(context).push<bool>(
+            await Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => LinenKeluarFormPage(userName: widget.userName),
+                builder: (_) => LinenKeluarScanPage(userName: widget.userName),
               ),
             );
-            if (saved == true && mounted) {
+            if (mounted) {
               await Future.wait([_load(), _loadQueue()]);
             }
           },
@@ -184,8 +186,8 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
             child: const Row(
               children: [
                 Icon(
-                  Icons.assignment_rounded,
-                  color: Color(0xff159cf1),
+                  Icons.qr_code_scanner_rounded,
+                  color: Color(0xff1261dc),
                   size: 26,
                 ),
                 SizedBox(width: 12),
@@ -194,7 +196,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Form Linen Keluar',
+                        'Scan Linen',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
@@ -202,7 +204,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                       ),
                       SizedBox(height: 3),
                       Text(
-                        'Isi ruangan tujuan, user, lalu lanjut ke halaman scan.',
+                        'Scan RFID / QR Code linen dan masukkan ke antrean.',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black54,
