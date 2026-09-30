@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/shared_widgets.dart';
 
 import '../api/api_service.dart';
@@ -18,6 +19,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
   final _passwordController = TextEditingController(text: 'password');
 
   bool _obscurePassword = true;
+  bool _rememberMe = false;
   bool _isLoading = false;
   AppInfo? _appInfo;
   String _appLogoUrl = '';
@@ -26,6 +28,13 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
   void initState() {
     super.initState();
     _loadAppInfo();
+    _loadRememberMe();
+  }
+
+  Future<void> _loadRememberMe() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() => _rememberMe = prefs.getBool('remember_me') ?? false);
   }
 
   Future<void> _loadAppInfo() async {
@@ -73,6 +82,9 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
         password: password,
         deviceName: 'mobile-app',
       );
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('remember_me', _rememberMe);
 
       if (!mounted) return;
 
@@ -226,7 +238,57 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: Checkbox(
+                              value: _rememberMe,
+                              onChanged: (value) {
+                                setState(() => _rememberMe = value ?? false);
+                              },
+                              activeColor: const Color(0xff118D9A),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              side: const BorderSide(
+                                color: Color(0xffB5C0C9),
+                                width: 1.4,
+                              ),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Remember Me',
+                            style: TextStyle(
+                              color: Color(0xff526575),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text(
+                              'Lupa password?',
+                              style: TextStyle(
+                                color: Color(0xff118D9A),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
                       SizedBox(
                         width: double.infinity,
                         height: 50,
