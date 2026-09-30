@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../api/api_service.dart';
@@ -15,6 +17,7 @@ class LinenMasukPage extends StatefulWidget {
 
 class _LinenMasukPageState extends State<LinenMasukPage> {
   final _searchController = TextEditingController();
+  Timer? _searchDebounce;
   LinenListResponse<LinenMasukItem>? _response;
   List<LinenRoomOption> _rooms = const [];
   bool _loading = true;
@@ -35,6 +38,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -59,6 +63,15 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     } finally {
       if (mounted) setState(() => _roomsLoading = false);
     }
+  }
+
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 450), () {
+      if (!mounted) return;
+      setState(() => _page = 1);
+      _load();
+    });
   }
 
   Future<void> _load() async {
@@ -169,6 +182,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
 
   void _resetFilters() {
     _searchController.clear();
+    _searchDebounce?.cancel();
     setState(() {
       _filterRoom = null;
       _selectedDateRange = null;
@@ -217,22 +231,12 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                       Expanded(
                         child: TextField(
                           controller: _searchController,
-                          onSubmitted: (_) {
-                            setState(() => _page = 1);
-                            _load();
-                          },
+                          onChanged: _onSearchChanged,
                           decoration: InputDecoration(
                             hintText: 'Cari nama linen, RFID, QR Code...',
                             prefixIcon: const Icon(
                               Icons.search_rounded,
                               size: 20,
-                            ),
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() => _page = 1);
-                                _load();
-                              },
-                              icon: const Icon(Icons.arrow_forward_rounded),
                             ),
                             filled: true,
                             fillColor: Colors.white,
