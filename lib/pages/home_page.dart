@@ -316,7 +316,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       ),
                                       columnSpacing: 18,
                                       columns: const [
-                                        DataColumn(label: Text('Ruangan')),
+                                        DataColumn(label: Text('Nama Ruangan')),
                                         DataColumn(label: Text('Masuk')),
                                         DataColumn(label: Text('Keluar')),
                                         DataColumn(label: Text('Selisih')),
