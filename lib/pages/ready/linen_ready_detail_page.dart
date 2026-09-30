@@ -139,23 +139,24 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
                               if (_items!.data.isEmpty)
                                 const _EmptyDetail(message: 'Tidak ada item linen ready.')
                               else
-                                DetailTable(
+                                AppDataTable(
                                   columns: const [
-                                    'No.',
-                                    'QR Code',
-                                    'Tag RFID',
-                                    'Nama Linen',
+                                    DataColumn(label: Text('No.')),
+                                    DataColumn(label: Text('QR Code')),
+                                    DataColumn(label: Text('Tag RFID')),
+                                    DataColumn(label: Text('Nama Linen')),
                                   ],
-                                  rows: _items!.data.asMap().entries
-                                      .map(
-                                        (entry) => [
-                                          entry.key + 1,
-                                          entry.value.qrCode,
-                                          entry.value.tagRfid,
-                                          entry.value.namaLinen,
-                                        ],
-                                      )
-                                      .toList(),
+                                  rows: _items!.data.asMap().entries.map((entry) {
+                                    final index = entry.key;
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(Text(((_page - 1) * 10 + index + 1).toString())),
+                                        DataCell(Text(entry.value.qrCode)),
+                                        DataCell(Text(entry.value.tagRfid)),
+                                        DataCell(Text(entry.value.namaLinen)),
+                                      ],
+                                    );
+                                  }).toList(),
                                 ),
                               const SizedBox(height: 12),
                               Text(
