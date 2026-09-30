@@ -175,8 +175,8 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                         borderRadius: BorderRadius.circular(20),
                         child: _appLogoUrl.isEmpty
                             ? const SizedBox(
-                                width: 66,
-                                height: 66,
+                                width: 82,
+                                height: 82,
                                 child: Icon(
                                   Icons.local_hospital_rounded,
                                   color: Color(0xff159cf1),
@@ -184,8 +184,8 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                               )
                             : Image.network(
                                 _appLogoUrl,
-                                width: 66,
-                                height: 66,
+                                width: 82,
+                                height: 82,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, __, ___) =>
                                     const Icon(
