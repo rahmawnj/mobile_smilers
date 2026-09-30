@@ -299,11 +299,15 @@ class _DashboardPageState extends State<DashboardPage> {
                               )
                             else
                               TableSurface(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minWidth: constraints.maxWidth,
+                                        ),
+                                        child: DataTable(
                                       headingRowColor: WidgetStateProperty.all(
                                         const Color(0xff1261dc),
                                       ),
@@ -336,8 +340,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                             ),
                                           )
                                           .toList(),
-                                    ),
-                                  ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                           ],
