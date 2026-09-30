@@ -303,9 +303,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     builder: (context, constraints) {
                                       return SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
-                                        child: SizedBox(
-                                          width: 700,
-                                          child: DataTable(
+                                        child: DataTable(
                                             headingRowColor: WidgetStateProperty.all(
                                               const Color(0xff1261dc),
                                             ),
@@ -318,7 +316,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                               color: Color(0xff465564),
                                               fontSize: 10,
                                             ),
-                                            columnSpacing: 18,
+                                            columnSpacing: 12,
+                                            horizontalMargin: 8,
                                             columns: const [
                                               DataColumn(label: Text('Nama Ruangan')),
                                               DataColumn(label: Text('Linen Masuk')),
