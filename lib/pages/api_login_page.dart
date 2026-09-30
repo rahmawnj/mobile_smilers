@@ -142,11 +142,12 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xff0D7F83),
-              Color(0xff167FA5),
-              Color(0xff174D83),
-              Color(0xff122F58),
+              Color(0xff7DE2C3),
+              Color(0xff9BE5D2),
+              Color(0xff83D7DF),
+              Color(0xff8CCCF2),
             ],
+            stops: [0.0, 0.38, 0.70, 1.0],
           ),
         ),
         child: SafeArea(
