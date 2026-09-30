@@ -137,6 +137,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const SizedBox(height: 12),
                             const SectionTitle(title: 'Data Linen & Tirai'),
                             const SizedBox(height: 14),
                             Row(
@@ -194,6 +195,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const SizedBox(height: 12),
                             const SectionTitle(title: 'Transaksi Linen & Tirai'),
                             const SizedBox(height: 14),
                             Row(
@@ -262,10 +264,12 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const SizedBox(height: 12),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 const SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
+                                const SizedBox(height: 6),
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: TextButton(
@@ -283,7 +287,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 12),
                             if (_loading)
                               const AppPageLoading()
                             else if (_inOutRows.isEmpty)
@@ -302,33 +306,33 @@ class _DashboardPageState extends State<DashboardPage> {
                                         child: SizedBox(
                                           width: constraints.maxWidth,
                                           child: DataTable(
-                                      headingRowColor: WidgetStateProperty.all(
-                                        const Color(0xff1261dc),
-                                      ),
-                                      headingTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      dataTextStyle: const TextStyle(
-                                        color: Color(0xff465564),
-                                        fontSize: 10,
-                                      ),
-                                      columnSpacing: 18,
-                                      columns: const [
-                                        DataColumn(label: Text('Nama Ruangan')),
-                                        DataColumn(label: Text('Masuk')),
-                                        DataColumn(label: Text('Keluar')),
-                                        DataColumn(label: Text('Selisih')),
-                                      ],
-                                      rows: _inOutRows.map((r) => DataRow(
-                                        cells: [
-                                          DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
-                                          DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
-                                          DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
-                                          DataCell(Text(r['selisih']?.toString() ?? '0')),
-                                        ],
-                                      )).toList(),
+                                            headingRowColor: WidgetStateProperty.all(
+                                              const Color(0xff1261dc),
+                                            ),
+                                            headingTextStyle: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            dataTextStyle: const TextStyle(
+                                              color: Color(0xff465564),
+                                              fontSize: 10,
+                                            ),
+                                            columnSpacing: 18,
+                                            columns: const [
+                                              DataColumn(label: Text('Nama Ruangan')),
+                                              DataColumn(label: Text('Masuk')),
+                                              DataColumn(label: Text('Keluar')),
+                                              DataColumn(label: Text('Selisih')),
+                                            ],
+                                            rows: _inOutRows.map((r) => DataRow(
+                                              cells: [
+                                                DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
+                                                DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
+                                                DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
+                                                DataCell(Text(r['selisih']?.toString() ?? '0')),
+                                              ],
+                                            )).toList(),
                                           ),
                                         ),
                                       );
