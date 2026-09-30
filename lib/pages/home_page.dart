@@ -137,7 +137,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SectionTitle(title: 'Data Linen & Tirai'),
+                            const Transform.translate(
+                              offset: Offset(-16, 0),
+                              child: SectionTitle(title: 'Data Linen & Tirai'),
+                            ),
                             const SizedBox(height: 14),
                             Row(
                               children: [
@@ -194,7 +197,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SectionTitle(title: 'Transaksi Linen & Tirai'),
+                            const Transform.translate(
+                              offset: Offset(-16, 0),
+                              child: SectionTitle(title: 'Transaksi Linen & Tirai'),
+                            ),
                             const SizedBox(height: 14),
                             Row(
                               children: [
@@ -265,7 +271,10 @@ class _DashboardPageState extends State<DashboardPage> {
                             Row(
                               children: [
                                 const Expanded(
-                                  child: SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
+                                  child: Transform.translate(
+                                    offset: Offset(-16, 0),
+                                    child: SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
+                                  ),
                                 ),
                                 TextButton(
                                   onPressed: () {
