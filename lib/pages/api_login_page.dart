@@ -154,6 +154,46 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
           child: Stack(
             children: [
               Positioned(
+                left: 24,
+                right: 24,
+                bottom: 12,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _appInfo?.appName.isNotEmpty == true
+                          ? _appInfo!.appName
+                          : 'SmileRS',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    const Text(
+                      '© New SmileRS 2026',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: .8,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      'Support by PT Anugerah Global',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
                 top: 4,
                 right: 8,
                 child: IconButton(
@@ -219,17 +259,6 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                                       ),
                               ),
                               const SizedBox(height: 16),
-                              Text(
-                                _appInfo?.appName.isNotEmpty == true
-                                    ? _appInfo!.appName
-                                    : 'SmileRS',
-                                style: const TextStyle(
-                                  color: Color(0xff173A58),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 2,
-                                ),
-                              ),
                               const SizedBox(height: 28),
                               TextField(
                                 controller: _usernameController,
@@ -361,25 +390,6 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        '© New SmileRS 2026',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: .8,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      const Text(
-                        'Support by PT Anugerah Global',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
