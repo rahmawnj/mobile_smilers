@@ -106,7 +106,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
           return AlertDialog(
             title: Text('Permintaan #$id'),
             content: SizedBox(
-              width: 520,
+              width: 760,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,15 +116,57 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                     Text('Kepala Ruangan: ${data['nama_kepala_ruangan'] ?? '-'}'),
                     Text('Alasan: ${data['alasan_permintaan'] ?? '-'}'),
                     Text('Status: ${data['status'] ?? '-'}'),
-                    const Divider(),
-                    ...items.map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: Text(
-                          '${item['nama_linen'] ?? '-'} • ${item['kategori_linen'] ?? '-'} • Jumlah: ${item['jumlah'] ?? 0}',
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Data Barang',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 8),
+                    if (items.isEmpty)
+                      const Text('Tidak ada data barang.')
+                    else
+                      TableSurface(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            headingRowColor: WidgetStateProperty.all(
+                              const Color(0xff1261dc),
+                            ),
+                            headingTextStyle: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            dataTextStyle: const TextStyle(fontSize: 10),
+                            columns: const [
+                              DataColumn(label: Text('No')),
+                              DataColumn(label: Text('Nama Linen')),
+                              DataColumn(label: Text('Kategori Linen')),
+                              DataColumn(label: Text('Jumlah')),
+                            ],
+                            rows: items.asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final item = entry.value;
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text('${index + 1}')),
+                                  DataCell(
+                                    Text(item['nama_linen']?.toString() ?? '-'),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      item['kategori_linen']?.toString() ?? '-',
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(item['jumlah']?.toString() ?? '0'),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
