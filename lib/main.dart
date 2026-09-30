@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Linen Management',
+      title: 'Smile RS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Arial',
