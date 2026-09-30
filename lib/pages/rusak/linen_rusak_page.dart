@@ -142,7 +142,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                     else if (rows.isEmpty)
                       _buildEmpty()
                     else
-                      _buildTable(rows),
+                      _buildTable(rows, meta),
                     if (!_loading && _error == null && meta != null) ...[
                       const SizedBox(height: 8),
                       Row(
@@ -319,7 +319,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
     );
   }
 
-  Widget _buildTable(List<LinenRusakItem> rows) {
+  Widget _buildTable(List<LinenRusakItem> rows, LinenMeta? meta) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -358,10 +358,10 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
               DataColumn(label: Text('Tanggal')),
               DataColumn(label: Text('Tahun Pembuatan')),
             ],
-            rows: rows.map((item) {
+            rows: rows.asMap().entries.map((entry) {\n              final index = entry.key;\n              final item = entry.value;\n              final number = meta == null\n                  ? index + 1\n                  : (meta.currentPage - 1) * meta.perPage + index + 1;
               return DataRow(
                 cells: [
-                  DataCell(Text(item.id.toString())),
+                  DataCell(Text(number.toString())),
                   DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
                   DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
                   DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
