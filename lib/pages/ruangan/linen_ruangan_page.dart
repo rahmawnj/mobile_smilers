@@ -110,52 +110,46 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                   child: Center(child: Text('Tidak ada data Linen & Tirai di Ruangan.')),
                                 )
                               else
-                                TableSurface(
-                                  child: LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      final tableWidth = constraints.maxWidth < 680 ? 680.0 : constraints.maxWidth;
-                                      return SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: SizedBox(
-                                          width: tableWidth,
-                                          child: DataTable(
-                                            headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-                                            headingTextStyle: const TextStyle(
-                                              color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700,
-                                            ),
-                                            dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 10),
-                                            columnSpacing: 18, horizontalMargin: 10,
-                                            columns: const [
-                                              DataColumn(label: Text('No')),
-                                              DataColumn(label: Text('Nama Ruangan')),
-                                              DataColumn(label: Text('Stok Awal')),
-                                              DataColumn(label: Text('Hilang')),
-                                              DataColumn(label: Text('Linen di Ruangan')),
-                                              DataColumn(label: Text('Action')),
-                                            ],
-                                            rows: _items.asMap().entries.map((entry) {
-                                              final index = entry.key;
-                                              final item = entry.value;
-                                              return DataRow(cells: [
-                                                DataCell(Text(((_page - 1) * _perPage + index + 1).toString())),
-                                                DataCell(Text(item.namaRuangan)),
-                                                DataCell(Text(item.stokAwal.toString())),
-                                                DataCell(Text(item.hilang.toString())),
-                                                DataCell(Text(item.linenDiRuangan.toString())),
-                                                DataCell(
-                                                  IconButton(
-                                                    tooltip: 'Lihat detail',
-                                                    onPressed: () => _openDetail(item),
-                                                    icon: const Icon(Icons.visibility_rounded, size: 18),
-                                                  ),
-                                                ),
-                                              ]);
-                                            }).toList(),
+                                AppDataTable(
+                                  columns: const [
+                                    DataColumn(label: Text('No')),
+                                    DataColumn(label: Text('Nama Ruangan')),
+                                    DataColumn(label: Text('Stok Awal')),
+                                    DataColumn(label: Text('Hilang')),
+                                    DataColumn(label: Text('Linen di Ruangan')),
+                                    DataColumn(label: Text('Action')),
+                                  ],
+                                  rows: _items.asMap().entries.map((entry) {
+                                    final index = entry.key;
+                                    final item = entry.value;
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(
+                                          Text(
+                                            ((_page - 1) * _perPage + index + 1)
+                                                .toString(),
                                           ),
                                         ),
-                                      );
-                                    },
-                                  ),
+                                        DataCell(Text(item.namaRuangan)),
+                                        DataCell(Text(item.stokAwal.toString())),
+                                        DataCell(Text(item.hilang.toString())),
+                                        DataCell(
+                                          Text(item.linenDiRuangan.toString()),
+                                        ),
+                                        DataCell(
+                                          IconButton(
+                                            tooltip: 'Lihat detail',
+                                            onPressed: () => _openDetail(item),
+                                            icon: const Icon(
+                                              Icons.visibility_rounded,
+                                              size: 18,
+                                              color: Color(0xff1261dc),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
                                 ),
                               if (_meta != null) ...[
                                 const SizedBox(height: 8),
