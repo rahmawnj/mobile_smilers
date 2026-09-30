@@ -325,20 +325,31 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'SmileRS',
-                        style: TextStyle(
-                          color: Color(0xff8291A0),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
+
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 8),
+              const Text(
+                '© New SmileRS 2026',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: .8,
+                ),
+              ),
+              const SizedBox(height: 2),
+              const Text(
+                'Support by PT Anugerah Global',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 4),
               IconButton(
                 tooltip: 'Konfigurasi Server',
                 onPressed: () {
