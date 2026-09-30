@@ -181,29 +181,11 @@ class _RoomDetailTable extends StatelessWidget {
       children: [
         SectionTitle(title: title),
         const SizedBox(height: 8),
-        TableSurface(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final tableWidth = constraints.maxWidth < 680 ? 680.0 : constraints.maxWidth;
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: tableWidth,
-                  child: DataTable(
-                    headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-                    headingTextStyle: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
-                    dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 10),
-                    columnSpacing: 18,
-                    horizontalMargin: 10,
-                    columns: columns.map((column) => DataColumn(label: Text(column))).toList(),
-                    rows: rows.map((row) => DataRow(
-                      cells: row.map((value) => DataCell(Text(value.toString()))).toList(),
-                    )).toList(),
-                  ),
-                ),
-              );
-            },
-          ),
+        AppDataTable(
+          columns: columns.map((column) => DataColumn(label: Text(column))).toList(),
+          rows: rows.map((row) => DataRow(
+            cells: row.map((value) => DataCell(Text(value.toString()))).toList(),
+          )).toList(),
         ),
       ],
     );
