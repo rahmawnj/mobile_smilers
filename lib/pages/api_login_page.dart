@@ -306,9 +306,9 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                               : const Icon(Icons.login_rounded),
                           label: Text(_isLoading ? 'Menghubungkan...' : 'Masuk'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff1197A2),
+                            backgroundColor: const Color(0xff6CD4C5),
                             foregroundColor: Colors.white,
-                            disabledBackgroundColor: const Color(0xff9bbec2),
+                            disabledBackgroundColor: const Color(0xffA9DED7),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -319,7 +319,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                       SizedBox(
                         width: double.infinity,
                         height: 46,
-                        child: OutlinedButton.icon(
+                        child: ElevatedButton.icon(
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -329,9 +329,10 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                           },
                           icon: const Icon(Icons.play_circle_outline_rounded),
                           label: const Text('Stream Linen'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xff118D9A),
-                            side: const BorderSide(color: Color(0xff118D9A)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xff3BA9FD),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
