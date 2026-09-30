@@ -207,6 +207,7 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
     return AppShell(
       userName: widget.userName,
       activeIndex: -1,
+      showBottomNavigation: false,
       body: Column(
         children: [
           DetailHeader(title: 'Form Permintaan Linen & Tirai', userName: widget.userName),
