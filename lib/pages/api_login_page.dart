@@ -154,8 +154,11 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 370),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 370),
                 child: Container(
                   padding: const EdgeInsets.all(26),
                   decoration: BoxDecoration(
@@ -365,6 +368,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                   size: 22,
                 ),
               ),
+              ],
             ),
           ),
         ),
