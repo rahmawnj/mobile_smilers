@@ -139,8 +139,8 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [
               Color(0xff45D3B0),
               Color(0xff55D5C8),
@@ -159,216 +159,219 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                 children: [
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 370),
-                child: Container(
-                  padding: const EdgeInsets.all(26),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .97),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: .20),
-                        blurRadius: 35,
-                        offset: const Offset(0, 18),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
+                    child: Container(
+                      padding: const EdgeInsets.all(26),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: .97),
                         borderRadius: BorderRadius.circular(20),
-                        child: _appLogoUrl.isEmpty
-                            ? const SizedBox(
-                                width: 82,
-                                height: 82,
-                                child: Icon(
-                                  Icons.local_hospital_rounded,
-                                  color: Color(0xff159cf1),
-                                ),
-                              )
-                            : Image.network(
-                                _appLogoUrl,
-                                width: 82,
-                                height: 82,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
-                                    const Icon(
-                                  Icons.local_hospital_rounded,
-                                  color: Color(0xff159cf1),
-                                ),
-                              ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        _appInfo?.appName.isNotEmpty == true
-                            ? _appInfo!.appName
-                            : 'SmileRS',
-                        style: const TextStyle(
-                          color: Color(0xff173A58),
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const SizedBox(height: 28),
-                      TextField(
-                        controller: _usernameController,
-                        textInputAction: TextInputAction.next,
-                        decoration: _inputDecoration(
-                          'Username',
-                          Icons.person_outline_rounded,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
-                        onSubmitted: (_) => _login(),
-                        decoration: _inputDecoration(
-                          'Password',
-                          Icons.lock_outline_rounded,
-                          suffix: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              color: const Color(0xff8291A0),
-                            ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: .20),
+                            blurRadius: 35,
+                            offset: const Offset(0, 18),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 32,
-                            height: 32,
-                            child: Checkbox(
-                              value: _rememberMe,
-                              onChanged: (value) {
-                                setState(() => _rememberMe = value ?? false);
-                              },
-                              activeColor: const Color(0xff118D9A),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              side: const BorderSide(
-                                color: Color(0xffB5C0C9),
-                                width: 1.4,
-                              ),
-                              visualDensity: VisualDensity.compact,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Remember Me',
-                            style: TextStyle(
-                              color: Color(0xff526575),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-
                         ],
                       ),
-                      const SizedBox(height: 14),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton.icon(
-                          onPressed: _isLoading ? null : _login,
-                          icon: _isLoading
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: _appLogoUrl.isEmpty
+                                ? const SizedBox(
+                                    width: 82,
+                                    height: 82,
+                                    child: Icon(
+                                      Icons.local_hospital_rounded,
+                                      color: Color(0xff159cf1),
+                                    ),
+                                  )
+                                : Image.network(
+                                    _appLogoUrl,
+                                    width: 82,
+                                    height: 82,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Icon(
+                                      Icons.local_hospital_rounded,
+                                      color: Color(0xff159cf1),
+                                    ),
                                   ),
-                                )
-                              : const Icon(Icons.login_rounded),
-                          label: Text(_isLoading ? 'Menghubungkan...' : 'Masuk'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff6CD4C5),
-                            foregroundColor: Colors.white,
-                            disabledBackgroundColor: const Color(0xffA9DED7),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _appInfo?.appName.isNotEmpty == true
+                                ? _appInfo!.appName
+                                : 'SmileRS',
+                            style: const TextStyle(
+                              color: Color(0xff173A58),
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 2,
                             ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 46,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const StreamPage(),
+                          const SizedBox(height: 28),
+                          TextField(
+                            controller: _usernameController,
+                            textInputAction: TextInputAction.next,
+                            decoration: _inputDecoration(
+                              'Username',
+                              Icons.person_outline_rounded,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          TextField(
+                            controller: _passwordController,
+                            obscureText: _obscurePassword,
+                            onSubmitted: (_) => _login(),
+                            decoration: _inputDecoration(
+                              'Password',
+                              Icons.lock_outline_rounded,
+                              suffix: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: const Color(0xff8291A0),
+                                ),
                               ),
-                            );
-                          },
-                          icon: const Icon(Icons.play_circle_outline_rounded),
-                          label: const Text('Stream Linen'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff3BA9FD),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 32,
+                                height: 32,
+                                child: Checkbox(
+                                  value: _rememberMe,
+                                  onChanged: (value) {
+                                    setState(
+                                      () => _rememberMe = value ?? false,
+                                    );
+                                  },
+                                  activeColor: const Color(0xff118D9A),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  side: const BorderSide(
+                                    color: Color(0xffB5C0C9),
+                                    width: 1.4,
+                                  ),
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Text(
+                                'Remember Me',
+                                style: TextStyle(
+                                  color: Color(0xff526575),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton.icon(
+                              onPressed: _isLoading ? null : _login,
+                              icon: _isLoading
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Icon(Icons.login_rounded),
+                              label: Text(
+                                _isLoading ? 'Menghubungkan...' : 'Masuk',
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xff6CD4C5),
+                                foregroundColor: Colors.white,
+                                disabledBackgroundColor:
+                                    const Color(0xffA9DED7),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 46,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const StreamPage(),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.play_circle_outline_rounded,
+                              ),
+                              label: const Text('Stream Linen'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xff3BA9FD),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '© New SmileRS 2026',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: .8,
-                ),
-              ),
-              const SizedBox(height: 2),
-              const Text(
-                'Support by PT Anugerah Global',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 4),
-              IconButton(
-                tooltip: 'Konfigurasi Server',
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const ApiConfigPage(),
                     ),
-                  );
-                },
-                icon: const Icon(
-                  Icons.settings_outlined,
-                  color: Colors.white,
-                  size: 22,
-                ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    '© New SmileRS 2026',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: .8,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  const Text(
+                    'Support by PT Anugerah Global',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  IconButton(
+                    tooltip: 'Konfigurasi Server',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ApiConfigPage(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.settings_outlined,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ),
+                ],
               ),
-              ],
             ),
           ),
         ),
