@@ -159,20 +159,8 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                 bottom: 12,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: const [
                     Text(
-                      _appInfo?.appName.isNotEmpty == true
-                          ? _appInfo!.appName
-                          : 'SmileRS',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    const Text(
                       '© New SmileRS 2026',
                       style: TextStyle(
                         color: Colors.white,
@@ -181,8 +169,8 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                         letterSpacing: .8,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    const Text(
+                    SizedBox(height: 2),
+                    Text(
                       'Support by PT Anugerah Global',
                       style: TextStyle(
                         color: Colors.white,
@@ -259,6 +247,18 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                                       ),
                               ),
                               const SizedBox(height: 16),
+                              const SizedBox(height: 16),
+                              Text(
+                                _appInfo?.appName.isNotEmpty == true
+                                    ? _appInfo!.appName
+                                    : 'SmileRS',
+                                style: const TextStyle(
+                                  color: Color(0xff173A58),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 2,
+                                ),
+                              ),
                               const SizedBox(height: 28),
                               TextField(
                                 controller: _usernameController,
