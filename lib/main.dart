@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'api/api_service.dart';
 import 'pages/api_config_page.dart';
 import 'pages/api_login_page.dart';
@@ -53,9 +54,36 @@ class _AppStartupPageState extends State<AppStartupPage> {
 
     // URL yang pernah berhasil disimpan tetap dipakai.
     // Setiap kali app dibuka, cek kembali /app-info.
-    // Kalau server sudah tidak bisa diakses, paksa kembali ke konfigurasi.
+    // Kalau Remember Me aktif dan token masih valid, langsung masuk dashboard.
     try {
       await ApiService.instance.getAppInfo();
+
+      final prefs = await SharedPreferences.getInstance();
+      final rememberMe = prefs.getBool('remember_me') ?? false;
+      final token = await ApiService.instance.getToken();
+
+      if (rememberMe && token != null && token.isNotEmpty) {
+        try {
+          final user = await ApiService.instance.me();
+
+          if (!mounted) return;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => AppShell(
+                userName: user.name,
+                activeIndex: 0,
+                body: DashboardPage(
+                  userName: user.name,
+                  embedded: true,
+                ),
+              ),
+            ),
+          );
+          return;
+        } catch (_) {
+          await ApiService.instance.clearSession();
+        }
+      }
 
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
