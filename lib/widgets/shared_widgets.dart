@@ -802,7 +802,7 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-        left: 2,
+        left: 0,
         top: 10,
         bottom: 10,
       ),
