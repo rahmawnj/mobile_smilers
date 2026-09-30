@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
 import '../widgets/pagination_widget.dart';
+import 'keluar_masuk_detail_page.dart';
 
 
 class InOutPage extends StatefulWidget {
@@ -144,7 +145,7 @@ class _InOutPageState extends State<InOutPage> {
                                 child: Center(child: Text('Tidak ada data Keluar Masuk Linen & Tirai.')),
                               )
                             : Column(children: [
-                                _InOutTable(rows: rows),
+                                _InOutTable(rows: rows, userName: widget.userName),
                                 if (_response != null) AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
                               ]),
               ),
@@ -157,8 +158,9 @@ class _InOutPageState extends State<InOutPage> {
 }
 
 class _InOutTable extends StatelessWidget {
-  const _InOutTable({required this.rows});
+  const _InOutTable({required this.rows, required this.userName});
   final List<Map<String,dynamic>> rows;
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -176,17 +178,44 @@ class _InOutTable extends StatelessWidget {
                 columnSpacing: 12,
                 horizontalMargin: 8,
                 columns: const [
-            DataColumn(label: Text('Ruangan')),
-            DataColumn(label: Text('Masuk')),
-            DataColumn(label: Text('Keluar')),
-            DataColumn(label: Text('Selisih')),
+                  DataColumn(label: Text('No.')),
+                  DataColumn(label: Text('Nama Ruangan')),
+                  DataColumn(label: Text('Linen Masuk')),
+                  DataColumn(label: Text('Linen Keluar')),
+                  DataColumn(label: Text('Selisih')),
+                  DataColumn(label: Text('Action')),
                 ],
-                rows: rows.map((r) => DataRow(cells: [
-                  DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
-                  DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
-                  DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
-                  DataCell(Text(r['selisih']?.toString() ?? '0')),
-                ])).toList(),
+                rows: rows.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final r = entry.value;
+                  final ruanganId = int.tryParse(
+                    (r['ruangan_id'] ?? r['id'])?.toString() ?? '',
+                  );
+                  return DataRow(cells: [
+                    DataCell(Text('${index + 1}')),
+                    DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
+                    DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
+                    DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
+                    DataCell(Text(r['selisih']?.toString() ?? '0')),
+                    DataCell(
+                      IconButton(
+                        tooltip: 'Detail',
+                        onPressed: ruanganId == null ? null : () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => InOutDetailPage(
+                                userName: userName,
+                                ruanganId: ruanganId,
+                                namaRuangan: r['nama_ruangan']?.toString() ?? '-',
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.visibility_rounded, size: 18),
+                      ),
+                    ),
+                  ]);
+                }).toList(),
               ),
             ),
           );
@@ -195,7 +224,6 @@ class _InOutTable extends StatelessWidget {
     );
   }
 }
-
 class _InOutError extends StatelessWidget {
   const _InOutError({required this.message, required this.onRetry});
   final String message;
