@@ -145,107 +145,29 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
                               ),
                             )
                           else
-                            TableSurface(
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  return SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: SizedBox(
-                                      width: constraints.maxWidth,
-                                      child: DataTable(
-                                        headingRowColor:
-                                            WidgetStateProperty.all(
-                                          const Color(0xff1261dc),
-                                        ),
-                                        headingTextStyle: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        dataTextStyle: const TextStyle(
-                                          color: Color(0xff465564),
-                                          fontSize: 10,
-                                        ),
-                                        columnSpacing: 18,
-                                        horizontalMargin: 16,
-                                        columns: const [
-                                          DataColumn(label: Text('No')),
-                                          DataColumn(
-                                            label: Text('Kode Linen'),
-                                          ),
-                                          DataColumn(
-                                            label: Text('Nama Linen'),
-                                          ),
-                                          DataColumn(
-                                            label: Text('Nama Kategori Linen'),
-                                          ),
-                                          DataColumn(
-                                            label: Text('Jumlah Pencucian'),
-                                          ),
-                                          DataColumn(
-                                            label: Text('Status'),
-                                          ),
-                                        ],
-                                        rows: rows.asMap().entries.map(
-                                          (entry) {
-                                            final index = entry.key;
-                                            final item = entry.value;
-
-                                            return DataRow(
-                                              cells: [
-                                                DataCell(
-                                                  Text(
-                                                    ((_page - 1) * 10 +
-                                                            index +
-                                                            1)
-                                                        .toString(),
-                                                  ),
-                                                ),
-                                                DataCell(
-                                                  Text(
-                                                    item.kodeLinen.isEmpty
-                                                        ? '-'
-                                                        : item.kodeLinen,
-                                                  ),
-                                                ),
-                                                DataCell(
-                                                  Text(
-                                                    item.namaLinen.isEmpty
-                                                        ? '-'
-                                                        : item.namaLinen,
-                                                  ),
-                                                ),
-                                                DataCell(
-                                                  Text(
-                                                    item.namaKategoriLinen
-                                                            .isEmpty
-                                                        ? '-'
-                                                        : item
-                                                            .namaKategoriLinen,
-                                                  ),
-                                                ),
-                                                DataCell(
-                                                  Text(
-                                                    item.jumlahPencucian
-                                                        .toString(),
-                                                  ),
-                                                ),
-                                                DataCell(
-                                                  Text(
-                                                    item.status.isEmpty
-                                                        ? '-'
-                                                        : item.status,
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        ).toList(),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                            AppDataTable(
+                              columns: const [
+                                DataColumn(label: Text('No')),
+                                DataColumn(label: Text('Kode Linen')),
+                                DataColumn(label: Text('Nama Linen')),
+                                DataColumn(label: Text('Nama Kategori Linen')),
+                                DataColumn(label: Text('Jumlah Pencucian')),
+                                DataColumn(label: Text('Status')),
+                              ],
+                              rows: rows.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final item = entry.value;
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text(((_page - 1) * 10 + index + 1).toString())),
+                                    DataCell(Text(item.kodeLinen.isEmpty ? '-' : item.kodeLinen)),
+                                    DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+                                    DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
+                                    DataCell(Text(item.jumlahPencucian.toString())),
+                                    DataCell(Text(item.status.isEmpty ? '-' : item.status)),
+                                  ],
+                                );
+                              }).toList(),
                             ),
                           if (_response != null) ...[
                             const SizedBox(height: 8),
