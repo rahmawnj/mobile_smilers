@@ -299,31 +299,42 @@ class _DashboardPageState extends State<DashboardPage> {
                               TableSurface(
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      return SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: DataTable(
-                                          headingRowColor: WidgetStateProperty.all(
-                                            const Color(0xff1261dc),
-                                          ),
-                                          headingTextStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          dataTextStyle: const TextStyle(
-                                            color: Color(0xff465564),
-                                            fontSize: 10,
-                                          ),
-                                          columnSpacing: 12,
-                                          horizontalMargin: 8,
-                                          columns: const [
-                                            DataColumn(label: Text('Nama Ruangan')),
-                                            DataColumn(label: Text('Linen Masuk')),
-                                            DataColumn(label: Text('Linen Keluar')),
-                                            DataColumn(label: Text('Selisih')),
-                                          ],
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: DataTable(
+                                      headingRowColor: WidgetStateProperty.all(
+                                        const Color(0xff1261dc),
+                                      ),
+                                      headingTextStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      dataTextStyle: const TextStyle(
+                                        color: Color(0xff465564),
+                                        fontSize: 10,
+                                      ),
+                                      columnSpacing: 12,
+                                      horizontalMargin: 8,
+                                      columns: const [
+                                        DataColumn(label: Text('Nama Ruangan')),
+                                        DataColumn(label: Text('Linen Masuk')),
+                                        DataColumn(label: Text('Linen Keluar')),
+                                        DataColumn(label: Text('Selisih')),
+                                      ],
+                                      rows: _inOutRows.map((r) => DataRow(
+                                        cells: [
+                                          DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
+                                          DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
+                                          DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
+                                          DataCell(Text(r['selisih']?.toString() ?? '0')),
+                                        ],
+                                      )).toList(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                                           rows: _inOutRows.map((r) => DataRow(
                                             cells: [
                                               DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
