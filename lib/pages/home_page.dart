@@ -137,9 +137,9 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Transform.translate(
-                              offset: Offset(-16, 0),
-                              child: SectionTitle(title: 'Data Linen & Tirai'),
+                            Transform.translate(
+                              offset: const Offset(-16, 0),
+                              child: const SectionTitle(title: 'Data Linen & Tirai'),
                             ),
                             const SizedBox(height: 14),
                             Row(
@@ -197,9 +197,9 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Transform.translate(
-                              offset: Offset(-16, 0),
-                              child: SectionTitle(title: 'Transaksi Linen & Tirai'),
+                            Transform.translate(
+                              offset: const Offset(-16, 0),
+                              child: const SectionTitle(title: 'Transaksi Linen & Tirai'),
                             ),
                             const SizedBox(height: 14),
                             Row(
@@ -270,10 +270,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           children: [
                             Row(
                               children: [
-                                const Expanded(
+                                Expanded(
                                   child: Transform.translate(
-                                    offset: Offset(-16, 0),
-                                    child: SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
+                                    offset: const Offset(-16, 0),
+                                    child: const SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
                                   ),
                                 ),
                                 TextButton(
