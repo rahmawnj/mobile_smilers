@@ -15,6 +15,73 @@ import '../pages/ruangan/linen_ruangan_page.dart';
 import '../pages/laundry/linen_laundry_page.dart';
 import '../app_navigation.dart';
 
+class AppDataTable extends StatelessWidget {
+  const AppDataTable({
+    super.key,
+    required this.columns,
+    required this.rows,
+  });
+
+  final List<DataColumn> columns;
+  final List<DataRow> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    final styledRows = rows.asMap().entries.map((entry) {
+      final row = entry.value;
+      return DataRow(
+        selected: row.selected,
+        onSelectChanged: row.onSelectChanged,
+        color: WidgetStateProperty.resolveWith<Color?>(
+          (states) {
+            if (states.contains(WidgetState.selected)) {
+              return const Color(0xffe8f1ff);
+            }
+            return entry.key.isEven
+                ? const Color(0xfff5f6f8)
+                : Colors.white;
+          },
+        ),
+        cells: row.cells,
+      );
+    }).toList();
+
+    return TableSurface(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: DataTable(
+                headingRowColor:
+                    WidgetStateProperty.all(Colors.white),
+                headingTextStyle: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                ),
+                dataTextStyle: const TextStyle(
+                  color: Color(0xff465564),
+                  fontSize: 10,
+                ),
+                headingRowHeight: 36,
+                dataRowMinHeight: 32,
+                dataRowMaxHeight: 36,
+                columnSpacing: 8,
+                horizontalMargin: 6,
+                dividerThickness: .4,
+                columns: columns,
+                rows: styledRows,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class TableSurface extends StatelessWidget {
   const TableSurface({super.key, required this.child});
 
