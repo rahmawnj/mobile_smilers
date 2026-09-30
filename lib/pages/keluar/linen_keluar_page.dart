@@ -24,8 +24,8 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
 
   @override void initState(){super.initState();_loadOptions();_load();_loadQueue();}
   @override void dispose(){_searchController.dispose();super.dispose();}
-  String _date(DateTime d)=>'${d.month}/${d.day}/${d.year}';
-  String _range(DateTimeRange r)=>'${_date(r.start)} - ${_date(r.end)}';
+  String _date(DateTime d)=>'\${d.month}/\${d.day}/\${d.year}';
+  String _range(DateTimeRange r)=>'\${_date(r.start)} - \${_date(r.end)}';
   bool _isSingleDate(DateTimeRange r) =>
       r.start.year == r.end.year &&
       r.start.month == r.end.month &&
@@ -174,10 +174,10 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                   dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 10),
                   columnSpacing: 16,
                   columns: const [
-                    DataColumn(label: Text('No.')),
+                    DataColumn(label: Text('No')),
                     DataColumn(label: Text('Nama Linen')),
                     DataColumn(label: Text('QR Code')),
-                    DataColumn(label: Text('RFID')),
+                    DataColumn(label: Text('Tag RFID')),
                     DataColumn(label: Text('Ke Ruangan')),
                     DataColumn(label: Text('Jam')),
                     DataColumn(label: Text('Tanggal')),
