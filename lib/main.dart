@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'api/api_service.dart';
 import 'pages/api_config_page.dart';
 import 'pages/api_login_page.dart';
+import 'pages/dashboard_page.dart';
+import 'widgets/shared_widgets.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
