@@ -87,7 +87,13 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xff0D7F83), Color(0xff167FA5), Color(0xff174D83), Color(0xff122F58)],
+            colors: [
+              Color(0xff45D3B0),
+              Color(0xff55D5C8),
+              Color(0xff3EB9D7),
+              Color(0xff55A9E8),
+            ],
+            stops: [0.0, 0.38, 0.70, 1.0],
           ),
         ),
         child: SafeArea(
