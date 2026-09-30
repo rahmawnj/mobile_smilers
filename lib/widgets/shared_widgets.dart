@@ -411,9 +411,6 @@ class DashboardHeader extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: .16),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: .20),
-                          ),
                         ),
                         child: const Text(
                           'SUPERADMIN',
@@ -429,7 +426,7 @@ class DashboardHeader extends StatelessWidget {
                       const SizedBox(height: 12),
 
                       Text(
-                        'Halo, $userName',
+                        userName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
