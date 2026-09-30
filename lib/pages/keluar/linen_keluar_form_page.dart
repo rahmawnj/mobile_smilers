@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../api/api_service.dart';
-import 'linen_keluar_scan_page.dart';
+import '../../widgets/shared_widgets.dart';
 
 class LinenKeluarFormPage extends StatefulWidget {
   const LinenKeluarFormPage({super.key, required this.userName});
@@ -52,13 +52,67 @@ class _LinenKeluarFormPageState extends State<LinenKeluarFormPage> {
     }
   }
 
-  Future<void> _openScanPage() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => LinenKeluarScanPage(userName: widget.userName),
-      ),
-    );
-    await _loadQueue();
+  final _scanController = TextEditingController();
+  final _scanFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _scanController.dispose();
+    _scanFocusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _scan() async {
+    final value = _scanController.text.trim();
+    if (value.isEmpty) return;
+
+    try {
+      final response = await ApiService.instance.scanLinenKeluar(value);
+
+      if (!mounted) return;
+      _scanController.clear();
+      _scanFocusNode.requestFocus();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            response['message']?.toString() ??
+                'Item ditambahkan ke antrean.',
+          ),
+        ),
+      );
+      await _loadQueue();
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      _scanController.clear();
+      _scanFocusNode.requestFocus();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    }
+  }
+
+  Future<void> _deleteQueue(LinenScanQueueItem item) async {
+    try {
+      final response = await ApiService.instance.deleteLinenKeluarScan(
+        item.linenKeluarId,
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            response['message']?.toString() ?? 'Item dihapus.',
+          ),
+        ),
+      );
+      await _loadQueue();
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    }
   }
 
   Future<void> _save() async {
@@ -202,58 +256,169 @@ class _LinenKeluarFormPageState extends State<LinenKeluarFormPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  InkWell(
-                    onTap: _openScanPage,
-                    borderRadius: BorderRadius.circular(18),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: .05),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.qr_code_scanner_rounded,
-                            color: Color(0xff159cf1),
-                            size: 26,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Scan Linen',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  _queueLoading
-                                      ? 'Memuat antrean...'
-                                      : '${_queue?.total ?? 0} linen dalam antrean',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: .05),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(
+                              Icons.qr_code_scanner_rounded,
+                              color: Color(0xff1261dc),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Scan Linen',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: _scanController,
+                          focusNode: _scanFocusNode,
+                          autofocus: true,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _scan(),
+                          decoration: InputDecoration(
+                            hintText: 'Scan RFID / QR Code di sini...',
+                            prefixIcon: const Icon(Icons.nfc_rounded),
+                            suffixIcon: IconButton(
+                              onPressed: _scan,
+                              tooltip: 'Proses scan',
+                              icon: const Icon(Icons.arrow_forward_rounded),
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xfff5f8fc),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Color(0xff1261dc),
+                                width: 1.2,
+                              ),
                             ),
                           ),
-                          const Icon(Icons.chevron_right_rounded),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Arahkan scanner RFID/QR ke linen. Hasil scan akan langsung masuk ke antrean.',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: .05),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Antrean Scan (${_queue?.total ?? 0})',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        if (_queueLoading)
+                          const Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        else if ((_queue?.data ?? const <LinenScanQueueItem>[]).isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Center(
+                              child: Text('Belum ada linen yang discan.'),
+                            ),
+                          )
+                        else
+                          TableSurface(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: DataTable(
+                                headingRowColor: WidgetStateProperty.all(
+                                  const Color(0xff1261dc),
+                                ),
+                                headingTextStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                dataTextStyle: const TextStyle(fontSize: 9),
+                                columns: const [
+                                  DataColumn(label: Text('No.')),
+                                  DataColumn(label: Text('Linen ID')),
+                                  DataColumn(label: Text('Kategori')),
+                                  DataColumn(label: Text('QR Code')),
+                                  DataColumn(label: Text('RFID')),
+                                  DataColumn(label: Text('Waktu Scan')),
+                                  DataColumn(label: Text('Aksi')),
+                                ],
+                                rows: (_queue?.data ?? const <LinenScanQueueItem>[])
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  final item = entry.value;
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text('${entry.key + 1}')),
+                                      DataCell(Text('${item.linenId}')),
+                                      DataCell(Text(item.namaKategoriLinen)),
+                                      DataCell(Text(item.qrCode)),
+                                      DataCell(Text(item.tagRfid)),
+                                      DataCell(Text(item.waktuScan)),
+                                      DataCell(
+                                        IconButton(
+                                          onPressed: () => _deleteQueue(item),
+                                          tooltip: 'Hapus',
+                                          icon: const Icon(
+                                            Icons.delete_outline_rounded,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 20),
