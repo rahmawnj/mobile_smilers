@@ -304,7 +304,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       return SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: SizedBox(
-                                          width: constraints.maxWidth,
+                                          width: 700,
                                           child: DataTable(
                                             headingRowColor: WidgetStateProperty.all(
                                               const Color(0xff1261dc),
