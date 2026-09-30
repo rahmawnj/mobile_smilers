@@ -32,6 +32,7 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
   final Set<int> _selected = {};
   final _itemSearchController = TextEditingController();
   PlatformFile? _file;
+  Uint8List? _fileBytes;
 
   @override
   void initState() {
@@ -105,23 +106,27 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
 
     setState(() => _pickingFile = true);
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final file = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
-        withData: true,
-        allowMultiple: false,
       );
-      if (!mounted || result == null || result.files.isEmpty) return;
+      if (!mounted || file == null) return;
 
-      final file = result.files.single;
-      if (file.size > 10 * 1024 * 1024) {
+      final fileSize = file.lengthSync() ?? await file.length();
+      if (fileSize != null && fileSize > 10 * 1024 * 1024) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Ukuran berita acara maksimal 10 MB.')),
         );
         return;
       }
 
-      setState(() => _file = file);
+      final bytes = await file.readAsBytes();
+      if (!mounted) return;
+
+      setState(() {
+        _file = file;
+        _fileBytes = bytes;
+      });
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -157,9 +162,9 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
             '${_date.year.toString().padLeft(4, '0')}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}',
         ruanganId: _roomId!,
         linenIds: _selected.toList(),
-        beritaAcaraBytes: _file?.bytes,
+        beritaAcaraBytes: _fileBytes,
         beritaAcaraName: _file?.name,
-        beritaAcaraPath: _file?.path,
+        beritaAcaraPath: null,
       );
 
       if (!mounted) return;
@@ -424,7 +429,7 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
                 ? 'Membuka pemilih berkas...'
                 : _file == null
                     ? 'Pilih Berita Acara'
-                    : '${_file!.name} (${(_file!.size / 1024 / 1024).toStringAsFixed(2)} MB)',
+                    : '${_file!.name} (${((_file!.lengthSync() ?? 0) / 1024 / 1024).toStringAsFixed(2)} MB)',
           ),
         ),
         const SizedBox(height: 4),
