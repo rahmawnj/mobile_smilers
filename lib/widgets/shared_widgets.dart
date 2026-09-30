@@ -1499,7 +1499,7 @@ class BottomNavigation extends StatelessWidget {
                         Expanded(
                           child: _NavItem(
                             icon: Icons.receipt_long_rounded,
-                            label: 'Rekap',
+                            label: 'Rekapan Transaksi',
                             active: activeIndex == 3,
                             onTap: () {
                               AppNavigation.goToIndex(
