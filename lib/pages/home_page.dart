@@ -262,22 +262,24 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Expanded(
-                                  child: const SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => InOutPage(
-                                          userName: widget.userName,
+                                const SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => InOutPage(
+                                            userName: widget.userName,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('Lihat Semua'),
+                                      );
+                                    },
+                                    child: const Text('Lihat Semua'),
+                                  ),
                                 ),
                               ],
                             ),
