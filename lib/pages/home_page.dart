@@ -298,65 +298,27 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                               )
                             else
-                              TableSurface(
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          minWidth: constraints.maxWidth,
-                                        ),
-                                        child: DataTable(
-                                      headingRowColor: WidgetStateProperty.all(
-                                        Colors.white,
+                              AppDataTable(
+                                columns: const [
+                                  DataColumn(label: Text('Nama Ruangan')),
+                                  DataColumn(label: Text('Linen Masuk')),
+                                  DataColumn(label: Text('Linen Keluar')),
+                                  DataColumn(label: Text('Selisih')),
+                                ],
+                                rows: _inOutRows
+                                    .map(
+                                      (r) => DataRow(
+                                        cells: [
+                                          DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
+                                          DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
+                                          DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
+                                          DataCell(Text(r['selisih']?.toString() ?? '0')),
+                                        ],
                                       ),
-                                      headingTextStyle: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      dataTextStyle: const TextStyle(
-                                        color: Color(0xff465564),
-                                        fontSize: 10,
-                                      ),
-                                      columnSpacing: 8,
-                                      horizontalMargin: 6,
-                                      dataRowMinHeight: 32,
-                                      dataRowMaxHeight: 36,
-                                      columns: const [
-                                        DataColumn(label: Text('Nama Ruangan')),
-                                        DataColumn(label: Text('Linen Masuk')),
-                                        DataColumn(label: Text('Linen Keluar')),
-                                        DataColumn(label: Text('Selisih')),
-                                      ],
-                                      rows: _inOutRows.asMap().entries
-                                          .map(
-                                            (entry) {
-                                              final r = entry.value;
-                                              final isEven = entry.key.isEven;
-                                              return DataRow(
-                                                color: WidgetStateProperty.resolveWith<Color?>(
-                                                  (states) => isEven
-                                                      ? const Color(0xfff5f6f8)
-                                                      : Colors.white,
-                                                ),
-                                                cells: [
-                                                  DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
-                                                  DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
-                                                  DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
-                                                  DataCell(Text(r['selisih']?.toString() ?? '0')),
-                                                ],
-                                              );
-                                            },
-                                          )
-                                          .toList(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
+                                    )
+                                    .toList(),
                               ),
+                          ],),
                           ],
                         ),
                       ),
