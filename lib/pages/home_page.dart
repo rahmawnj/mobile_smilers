@@ -293,7 +293,9 @@ class _DashboardPageState extends State<DashboardPage> {
                             else if (_inOutRows.isEmpty)
                               const Padding(
                                 padding: EdgeInsets.all(24),
-                                child: Center(child: Text('Tidak ada data Keluar Masuk.')),
+                                child: Center(
+                                  child: Text('Tidak ada data Keluar Masuk.'),
+                                ),
                               )
                             else
                               TableSurface(
@@ -322,46 +324,19 @@ class _DashboardPageState extends State<DashboardPage> {
                                         DataColumn(label: Text('Linen Keluar')),
                                         DataColumn(label: Text('Selisih')),
                                       ],
-                                      rows: _inOutRows.map((r) => DataRow(
-                                        cells: [
-                                          DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
-                                          DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
-                                          DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
-                                          DataCell(Text(r['selisih']?.toString() ?? '0')),
-                                        ],
-                                      )).toList(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                                          rows: _inOutRows.map((r) => DataRow(
-                                            cells: [
-                                              DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
-                                              DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
-                                              DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
-                                              DataCell(Text(r['selisih']?.toString() ?? '0')),
-                                            ],
-                                          )).toList(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                          ],
-                                            rows: _inOutRows.map((r) => DataRow(
+                                      rows: _inOutRows
+                                          .map(
+                                            (r) => DataRow(
                                               cells: [
                                                 DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
                                                 DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
                                                 DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
                                                 DataCell(Text(r['selisih']?.toString() ?? '0')),
                                               ],
-                                            )).toList(),
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                            ),
+                                          )
+                                          .toList(),
+                                    ),
                                   ),
                                 ),
                               ),
