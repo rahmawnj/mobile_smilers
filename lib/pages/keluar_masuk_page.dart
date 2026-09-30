@@ -189,7 +189,13 @@ class _InOutTable extends StatelessWidget {
                   final index = entry.key;
                   final r = entry.value;
                   final ruanganId = int.tryParse(
-                    (r['ruangan_id'] ?? r['id'])?.toString() ?? '',
+                    (r['ruangan_id'] ??
+                            r['ruangan_id_ruangan'] ??
+                            r['id_ruangan'] ??
+                            r['ruangan'] ??
+                            r['id'])
+                        ?.toString() ??
+                        '',
                   );
                   return DataRow(cells: [
                     DataCell(Text('${index + 1}')),
@@ -200,7 +206,15 @@ class _InOutTable extends StatelessWidget {
                     DataCell(
                       IconButton(
                         tooltip: 'Detail',
-                        onPressed: ruanganId == null ? null : () {
+                        onPressed: () {
+                          if (ruanganId == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('ID ruangan tidak tersedia pada data.'),
+                              ),
+                            );
+                            return;
+                          }
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => InOutDetailPage(
