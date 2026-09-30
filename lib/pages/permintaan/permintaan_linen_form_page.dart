@@ -90,6 +90,12 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pilih ruangan terlebih dahulu.')));
       return;
     }
+    final reason = _reasonController.text.trim();
+    if (reason.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Alasan permintaan wajib diisi.')));
+      return;
+    }
+
     final items = <Map<String, dynamic>>[];
     for (var i = 0; i < _rows.length; i++) {
       final row = _rows[i];
@@ -251,7 +257,7 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                                   controller: _reasonController,
                                   maxLines: 3,
                                   enabled: !_saving,
-                                  decoration: const InputDecoration(labelText: 'Alasan Permintaan', border: OutlineInputBorder()),
+                                  decoration: const InputDecoration(labelText: 'Alasan Permintaan *', border: OutlineInputBorder()),
                                 ),
                                 const SizedBox(height: 20),
                                 Row(
