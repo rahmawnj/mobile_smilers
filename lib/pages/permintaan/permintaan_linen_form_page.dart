@@ -69,61 +69,6 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
     }
   }
 
-  Future<void> _save() async {
-    if (_selectedRoom == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih ruangan terlebih dahulu.')),
-      );
-      return;
-    }
-
-    final items = _quantities.entries
-        .where((entry) => entry.value > 0)
-        .map((entry) => {
-              'linen_id': entry.key,
-              'jumlah': entry.value,
-            })
-        .toList();
-
-    if (items.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Isi jumlah minimal satu item linen.')),
-      );
-      return;
-    }
-
-    setState(() => _saving = true);
-
-    try {
-      final date =
-          '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
-
-      final result = await ApiService.instance.createPermintaanLinen(
-        tanggalPermintaan: date,
-        ruanganId: _selectedRoom!,
-        alasanPermintaan: _reasonController.text.trim(),
-        items: items,
-      );
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            result['message']?.toString() ?? 'Permintaan berhasil dibuat',
-          ),
-        ),
-      );
-      Navigator.of(context).pop(true);
-    } on ApiException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      );
-    } finally {
-      if (mounted) setState(() => _saving = false);
-    }
-  }
-
   void _addRow() => setState(() => _rows.add(_RequestItemRow()));
 
   void _removeRow(int index) {
