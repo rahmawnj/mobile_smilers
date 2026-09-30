@@ -151,8 +151,29 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
           ),
         ),
         child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Positioned(
+                top: 4,
+                right: 8,
+                child: IconButton(
+                  tooltip: 'Konfigurasi Server',
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ApiConfigPage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.settings_outlined,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+              ),
+              Center(
+                child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -354,29 +375,14 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  IconButton(
-                    tooltip: 'Konfigurasi Server',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const ApiConfigPage(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.settings_outlined,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                  ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
-    );
+    ),
+  );
   }
 
   InputDecoration _inputDecoration(
