@@ -330,15 +330,16 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                           fontSize: 10,
                                         ),
                                         columns: const [
-                                          DataColumn(label: Text('No.')),
-                                          DataColumn(label: Text('Tanggal')),
-                                          DataColumn(label: Text('Ruangan')),
+                                          DataColumn(label: Text('No')),
                                           DataColumn(
-                                            label: Text('Kepala Ruangan'),
+                                            label: Text('Tanggal Permintaan'),
                                           ),
-                                          DataColumn(label: Text('Alasan')),
+                                          DataColumn(label: Text('Nama Ruangan')),
+                                          DataColumn(
+                                            label: Text('Nama Kepala Ruangan'),
+                                          ),
                                           DataColumn(label: Text('Status')),
-                                          DataColumn(label: Text('Aksi')),
+                                          DataColumn(label: Text('Action')),
                                         ],
                                         rows: rows.asMap().entries.map((entry) {
                                           final item = entry.value;
@@ -358,9 +359,6 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                               DataCell(Text(item.namaRuangan)),
                                               DataCell(
                                                 Text(item.namaKepalaRuangan),
-                                              ),
-                                              DataCell(
-                                                Text(item.alasanPermintaan),
                                               ),
                                               DataCell(Text(item.status)),
                                               DataCell(
