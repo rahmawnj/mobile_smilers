@@ -176,92 +176,55 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                               24,
                             ),
                             children: [
-                              TableSurface(
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: SizedBox(
-                                        width: constraints.maxWidth,
-                                        child: DataTable(
-                                          headingRowColor:
-                                              WidgetStateProperty.all(
-                                            const Color(0xff1261dc),
-                                          ),
-                                          headingTextStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          dataTextStyle: const TextStyle(
-                                            color: Color(0xff465564),
-                                            fontSize: 10,
-                                          ),
-                                          columnSpacing: 18,
-                                          horizontalMargin: 16,
-                                          columns: const [
-                                            DataColumn(label: Text('No')),
-                                            DataColumn(
-                                              label: Text('Nama Linen'),
-                                            ),
-                                            DataColumn(
-                                              label: Text(
-                                                'Nama Kategori Linen',
-                                              ),
-                                            ),
-                                            DataColumn(label: Text('Ready')),
-                                            DataColumn(label: Text('Action')),
-                                          ],
-                                          rows: rows.asMap().entries.map((entry) {
-                                            final index = entry.key;
-                                            final item = entry.value;
+                              AppDataTable(
+                                columns: const [
+                                  DataColumn(label: Text('No')),
+                                  DataColumn(label: Text('Nama Linen')),
+                                  DataColumn(label: Text('Nama Kategori Linen')),
+                                  DataColumn(label: Text('Ready')),
+                                  DataColumn(label: Text('Action')),
+                                ],
+                                rows: rows.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final item = entry.value;
 
-                                            return DataRow(
-                                              cells: [
-                                                DataCell(
-                                                  Text(((_page - 1) * _perPage +
-                                                          index +
-                                                          1)
-                                                      .toString()),
-                                                ),
-                                                DataCell(
-                                                  Text(
-                                                    item.namaLinen.isEmpty
-                                                        ? '-'
-                                                        : item.namaLinen,
-                                                  ),
-                                                ),
-                                                DataCell(
-                                                  Text(
-                                                    item.namaKategoriLinen.isEmpty
-                                                        ? '-'
-                                                        : item.namaKategoriLinen,
-                                                  ),
-                                                ),
-                                                DataCell(
-                                                  Text(item.ready.toString()),
-                                                ),
-                                                DataCell(
-                                                  IconButton(
-                                                    tooltip: 'Detail',
-                                                    onPressed: () =>
-                                                        _openDetail(item),
-                                                    icon: const Icon(
-                                                      Icons
-                                                          .visibility_outlined,
-                                                      size: 18,
-                                                      color: Color(0xff1261dc),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          }).toList(),
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(
+                                        Text(
+                                          ((_page - 1) * _perPage + index + 1)
+                                              .toString(),
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
+                                      DataCell(
+                                        Text(
+                                          item.namaLinen.isEmpty
+                                              ? '-'
+                                              : item.namaLinen,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Text(
+                                          item.namaKategoriLinen.isEmpty
+                                              ? '-'
+                                              : item.namaKategoriLinen,
+                                        ),
+                                      ),
+                                      DataCell(Text(item.ready.toString())),
+                                      DataCell(
+                                        IconButton(
+                                          tooltip: 'Detail',
+                                          onPressed: () => _openDetail(item),
+                                          icon: const Icon(
+                                            Icons.visibility_outlined,
+                                            size: 18,
+                                            color: Color(0xff1261dc),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
                               ),
                               if (rows.isEmpty)
                                 const Padding(
