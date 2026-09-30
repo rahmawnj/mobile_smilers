@@ -21,7 +21,7 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
   DateTime _selectedDate = DateTime.now();
   final _reasonController = TextEditingController();
   final _itemSearchController = TextEditingController();
-  final Map<int, int> _quantities = {};
+  final List<_RequestItemRow> _rows = [_RequestItemRow()];
 
   @override
   void initState() {
@@ -124,6 +124,133 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
     }
   }
 
+  void _addRow() => setState(() => _rows.add(_RequestItemRow()));
+
+  void _removeRow(int index) {
+    if (_rows.length == 1) {
+      setState(() => _rows[0] = _RequestItemRow());
+      return;
+    }
+    setState(() => _rows.removeAt(index));
+  }
+
+  String _itemLabel(Map<String, dynamic> item) {
+    final category = item['nama_kategori_linen']?.toString() ?? '-';
+    final sub = item['sub_kategori_linen']?.toString().trim() ?? '';
+    return sub.isEmpty ? category : '$category • $sub';
+  }
+
+  Future<void> _save() async {
+    if (_selectedRoom == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pilih ruangan terlebih dahulu.')));
+      return;
+    }
+    final items = <Map<String, dynamic>>[];
+    for (var i = 0; i < _rows.length; i++) {
+      final row = _rows[i];
+      if (row.linenId == null) continue;
+      if (row.quantity <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Jumlah item pada baris ${i + 1} harus lebih dari 0.')));
+        return;
+      }
+      items.add({'linen_id': row.linenId, 'jumlah': row.quantity});
+    }
+    if (items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tambahkan minimal satu item linen.')));
+      return;
+    }
+    if (items.map((e) => e['linen_id']).toSet().length != items.length) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item linen yang sama tidak boleh dipilih dua kali.')));
+      return;
+    }
+
+    setState(() => _saving = true);
+    try {
+      final date = '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
+      final result = await ApiService.instance.createPermintaanLinen(
+        tanggalPermintaan: date,
+        ruanganId: _selectedRoom!,
+        alasanPermintaan: _reasonController.text.trim(),
+        items: items,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message']?.toString() ?? 'Permintaan berhasil dibuat')));
+      Navigator.of(context).pop(true);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Widget _buildItemTable() {
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(10)),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          columnSpacing: 22,
+          headingRowHeight: 46,
+          dataRowMinHeight: 64,
+          dataRowMaxHeight: 72,
+          columns: const [
+            DataColumn(label: Text('No')),
+            DataColumn(label: Text('Pilih Item')),
+            DataColumn(label: Text('Kategori Linen')),
+            DataColumn(label: Text('Jumlah')),
+            DataColumn(label: Text('Aksi')),
+          ],
+          rows: List.generate(_rows.length, (index) {
+            final row = _rows[index];
+            return DataRow(cells: [
+              DataCell(Text('${index + 1}')),
+              DataCell(SizedBox(
+                width: 230,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: row.linenId,
+                    isExpanded: true,
+                    hint: const Text('Pilih item'),
+                    items: _linens.map((item) {
+                      final id = _toInt(item['id'] ?? item['linen_id']);
+                      return DropdownMenuItem<int>(value: id, child: Text(_itemLabel(item), overflow: TextOverflow.ellipsis));
+                    }).toList(),
+                    onChanged: _saving ? null : (value) {
+                      setState(() {
+                        row.linenId = value;
+                        final item = _linens.firstWhere((item) => _toInt(item['id'] ?? item['linen_id']) == value, orElse: () => <String, dynamic>{});
+                        row.category = value == null ? '' : _itemLabel(item);
+                      });
+                    },
+                  ),
+                ),
+              )),
+              DataCell(SizedBox(width: 180, child: Text(row.category.isEmpty ? '-' : row.category, overflow: TextOverflow.ellipsis))),
+              DataCell(SizedBox(
+                width: 90,
+                child: TextFormField(
+                  key: ValueKey('qty-$index-${row.linenId}'),
+                  initialValue: row.quantity > 0 ? row.quantity.toString() : '',
+                  enabled: !_saving,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(hintText: '0', isDense: true, border: OutlineInputBorder()),
+                  onChanged: (value) => row.quantity = _toInt(value),
+                ),
+              )),
+              DataCell(IconButton(
+                tooltip: 'Hapus baris',
+                icon: const Icon(Icons.delete_outline),
+                onPressed: _saving ? null : () => _removeRow(index),
+              )),
+            ]);
+          }),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppShell(
@@ -131,44 +258,29 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
       activeIndex: -1,
       body: Column(
         children: [
-          DetailHeader(
-            title: 'Form Permintaan Linen & Tirai',
-            userName: widget.userName,
-          ),
+          DetailHeader(title: 'Form Permintaan Linen & Tirai', userName: widget.userName),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
+                  constraints: const BoxConstraints(maxWidth: 900),
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: _loading
-                          ? const Padding(
-                              padding: EdgeInsets.all(40),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
+                          ? const Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator()))
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
-                                  title: Text(
-                                    'Tanggal: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                                  ),
+                                  title: Text('Tanggal: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}'),
                                   trailing: IconButton(
                                     icon: const Icon(Icons.calendar_month),
-                                    onPressed: () async {
-                                      final picked = await showDatePicker(
-                                        context: context,
-                                        initialDate: _selectedDate,
-                                        firstDate: DateTime(2020),
-                                        lastDate: DateTime(2100),
-                                      );
-                                      if (picked != null) {
-                                        setState(() => _selectedDate = picked);
-                                      }
+                                    onPressed: _saving ? null : () async {
+                                      final picked = await showDatePicker(context: context, initialDate: _selectedDate, firstDate: DateTime(2020), lastDate: DateTime(2100));
+                                      if (picked != null) setState(() => _selectedDate = picked);
                                     },
                                   ),
                                 ),
@@ -176,112 +288,43 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                                 DropdownButtonFormField<int>(
                                   value: _selectedRoom,
                                   isExpanded: true,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Ruangan',
-                                    border: OutlineInputBorder(),
-                                  ),
+                                  decoration: const InputDecoration(labelText: 'Ruangan', border: OutlineInputBorder()),
                                   items: _rooms.map((room) {
                                     final id = _toInt(room['id']);
                                     return DropdownMenuItem<int>(
                                       value: id,
-                                      child: Text(
-                                        [
-                                          room['nama_ruangan']?.toString() ?? '-',
-                                          if ((room['nama_kepala_ruangan']?.toString() ?? '').trim().isNotEmpty &&
-                                              room['nama_kepala_ruangan']?.toString() != '-')
-                                            'Kepala: ${room['nama_kepala_ruangan']}',
-                                        ].join(' • '),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
+                                      child: Text([
+                                        room['nama_ruangan']?.toString() ?? '-',
+                                        if ((room['nama_kepala_ruangan']?.toString() ?? '').trim().isNotEmpty && room['nama_kepala_ruangan']?.toString() != '-') 'Kepala: ${room['nama_kepala_ruangan']}',
+                                      ].join(' • '), overflow: TextOverflow.ellipsis),
                                     );
                                   }).toList(),
-                                  onChanged: (value) =>
-                                      setState(() => _selectedRoom = value),
+                                  onChanged: _saving ? null : (value) => setState(() => _selectedRoom = value),
                                 ),
                                 const SizedBox(height: 16),
                                 TextField(
                                   controller: _reasonController,
                                   maxLines: 3,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Alasan Permintaan',
-                                    border: OutlineInputBorder(),
-                                  ),
+                                  enabled: !_saving,
+                                  decoration: const InputDecoration(labelText: 'Alasan Permintaan', border: OutlineInputBorder()),
                                 ),
                                 const SizedBox(height: 20),
-                                TextField(
-                                  controller: _itemSearchController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Cari Item Linen',
-                                    hintText: 'Nama kategori atau sub kategori',
-                                    prefixIcon: Icon(Icons.search),
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  onSubmitted: (value) =>
-                                      _loadOptions(search: value.trim().isEmpty ? null : value.trim()),
-                                ),
-                                const SizedBox(height: 14),
-                                const Text(
-                                  'Item Linen',
-                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('Data Item Linen', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                                    ElevatedButton.icon(onPressed: _saving ? null : _addRow, icon: const Icon(Icons.add), label: const Text('Tambah Baris')),
+                                  ],
                                 ),
                                 const SizedBox(height: 10),
-                                if (_linens.isEmpty)
-                                  const Text('Tidak ada item linen.')
-                                else
-                                  ..._linens.map((linen) {
-                                    final id = _toInt(linen['id'] ?? linen['linen_id']);
-                                    final category =
-                                        linen['nama_kategori_linen']?.toString() ?? '-';
-                                    final subCategory =
-                                        linen['sub_kategori_linen']?.toString().trim() ?? '';
-
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 10),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                                subCategory.isEmpty
-                                                    ? category
-                                                    : '$category • $subCategory',
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                          ),
-                                          SizedBox(
-                                            width: 110,
-                                            child: TextFormField(
-                                              initialValue:
-                                                  _quantities[id]?.toString() ?? '',
-                                              keyboardType: TextInputType.number,
-                                              decoration: const InputDecoration(
-                                                labelText: 'Jumlah',
-                                                border: OutlineInputBorder(),
-                                              ),
-                                              onChanged: (value) {
-                                                _quantities[id] = _toInt(value);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                                const SizedBox(height: 16),
+                                _buildItemTable(),
+                                const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    OutlinedButton(
-                                      onPressed: _saving
-                                          ? null
-                                          : () => Navigator.of(context).pop(false),
-                                      child: const Text('Batal'),
-                                    ),
+                                    OutlinedButton(onPressed: _saving ? null : () => Navigator.of(context).pop(false), child: const Text('Batal')),
                                     const SizedBox(width: 10),
-                                    ElevatedButton.icon(
-                                      onPressed: _saving ? null : _save,
-                                      icon: const Icon(Icons.save),
-                                      label: const Text('Simpan Permintaan'),
-                                    ),
+                                    ElevatedButton.icon(onPressed: _saving ? null : _save, icon: const Icon(Icons.save), label: const Text('Simpan Permintaan')),
                                   ],
                                 ),
                               ],
@@ -296,4 +339,10 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
       ),
     );
   }
+}
+
+class _RequestItemRow {
+  int? linenId;
+  String category = '';
+  int quantity = 0;
 }
