@@ -310,7 +310,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                             foregroundColor: Colors.white,
                             disabledBackgroundColor: const Color(0xffA9DED7),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
@@ -334,7 +334,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                             foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
@@ -395,7 +395,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
         borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: Color(0xff118D9A)),
       ),
     );
