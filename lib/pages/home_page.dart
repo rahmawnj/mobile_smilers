@@ -309,10 +309,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                         ),
                                         child: DataTable(
                                       headingRowColor: WidgetStateProperty.all(
-                                        const Color(0xff1261dc),
+                                        Colors.white,
                                       ),
                                       headingTextStyle: const TextStyle(
-                                        color: Colors.white,
+                                        color: Colors.black,
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                       ),
