@@ -55,9 +55,9 @@ class AppDataTable extends StatelessWidget {
               constraints: BoxConstraints(minWidth: constraints.maxWidth),
               child: DataTable(
                 headingRowColor:
-                    WidgetStateProperty.all(Colors.white),
+                    WidgetStateProperty.all(Colors.black),
                 headingTextStyle: const TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                 ),
