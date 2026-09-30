@@ -137,10 +137,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Transform.translate(
-                              offset: const Offset(-16, 0),
-                              child: const SectionTitle(title: 'Data Linen & Tirai'),
-                            ),
+                            const SectionTitle(title: 'Data Linen & Tirai'),
                             const SizedBox(height: 14),
                             Row(
                               children: [
@@ -197,10 +194,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Transform.translate(
-                              offset: const Offset(-16, 0),
-                              child: const SectionTitle(title: 'Transaksi Linen & Tirai'),
-                            ),
+                            const SectionTitle(title: 'Transaksi Linen & Tirai'),
                             const SizedBox(height: 14),
                             Row(
                               children: [
@@ -271,10 +265,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: Transform.translate(
-                                    offset: const Offset(-16, 0),
-                                    child: const SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
-                                  ),
+                                  child: const SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
                                 ),
                                 TextButton(
                                   onPressed: () {
