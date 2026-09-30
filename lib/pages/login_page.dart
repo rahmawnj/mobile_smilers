@@ -216,10 +216,10 @@ class _LoginPageState extends State<LoginPage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xff0D7F83),
-              Color(0xff167FA5),
-              Color(0xff174D83),
-              Color(0xff122F58),
+              Color(0xff7DE2C3),
+              Color(0xffB8F0DD),
+              Color(0xff9DDCF5),
+              Color(0xff6CBFE8),
             ],
             stops: [
               0.0,
