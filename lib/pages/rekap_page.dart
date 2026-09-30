@@ -179,7 +179,7 @@ class _RekapTable extends StatelessWidget {
               DataCell(Text(r.tanggal)),
               DataCell(Text('${r.jumlahLinenKeluar}')),
               DataCell(Text('${r.jumlahLinenMasuk}')),
-              DataCell(Text(r.beratLinenMasuk)),
+              DataCell(Text('${r.beratLinenMasuk}')),
             ]);
           }).toList(),
         ),
