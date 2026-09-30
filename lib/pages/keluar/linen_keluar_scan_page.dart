@@ -35,46 +35,27 @@ class _LinenKeluarScanPageState extends State<LinenKeluarScanPage> {
     }
   }
 
+  final _scanController = TextEditingController();
+  final _scanFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _scanController.dispose();
+    _scanFocusNode.dispose();
+    super.dispose();
+  }
+
   Future<void> _scan() async {
-    final controller = TextEditingController();
-
-    final value = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Scan Linen Keluar'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'RFID / QR Code',
-          ),
-          onSubmitted: (value) {
-            Navigator.of(context).pop(value.trim());
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(controller.text.trim());
-            },
-            child: const Text('Scan'),
-          ),
-        ],
-      ),
-    );
-
-    controller.dispose();
-
-    if (value == null || value.isEmpty) return;
+    final value = _scanController.text.trim();
+    if (value.isEmpty) return;
 
     try {
       final response = await ApiService.instance.scanLinenKeluar(value);
 
       if (!mounted) return;
+      _scanController.clear();
+      _scanFocusNode.requestFocus();
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -86,6 +67,8 @@ class _LinenKeluarScanPageState extends State<LinenKeluarScanPage> {
       await _loadQueue();
     } on ApiException catch (e) {
       if (!mounted) return;
+      _scanController.clear();
+      _scanFocusNode.requestFocus();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message)),
       );
@@ -130,12 +113,77 @@ class _LinenKeluarScanPageState extends State<LinenKeluarScanPage> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
           children: [
-            SizedBox(
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: _scan,
-                icon: const Icon(Icons.qr_code_scanner_rounded),
-                label: const Text('Scan Linen'),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: .05),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(
+                        Icons.qr_code_scanner_rounded,
+                        color: Color(0xff1261dc),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Scan Linen',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _scanController,
+                    focusNode: _scanFocusNode,
+                    autofocus: true,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _scan(),
+                    decoration: InputDecoration(
+                      hintText: 'Scan RFID / QR Code di sini...',
+                      prefixIcon: const Icon(Icons.nfc_rounded),
+                      suffixIcon: IconButton(
+                        onPressed: _scan,
+                        tooltip: 'Proses scan',
+                        icon: const Icon(Icons.arrow_forward_rounded),
+                      ),
+                      filled: true,
+                      fillColor: const Color(0xfff5f8fc),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(
+                          color: Color(0xff1261dc),
+                          width: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Arahkan scanner RFID/QR ke linen. Hasil scan akan langsung masuk ke antrean.',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
