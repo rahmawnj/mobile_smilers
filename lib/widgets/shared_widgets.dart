@@ -1396,7 +1396,11 @@ class BottomNavigation extends StatelessWidget {
                 filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xff116ea5).withValues(alpha: .58),
+                    gradient: const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [Color(0xff4FC3F7), Color(0xff0277BD)],
+                    ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: .10),
@@ -1452,7 +1456,7 @@ class BottomNavigation extends StatelessWidget {
                               height: 34,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: .16),
+                                color: Colors.white.withValues(alpha: .18),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
@@ -1581,12 +1585,12 @@ class _QRNavButton extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: active
                 ? const [
-                    Color(0xffffd54f),
-                    Color(0xffff9800),
+                    Color(0xffFBC02D),
+                    Color(0xffFBC02D),
                   ]
                 : const [
-                    Color(0xffffc107),
-                    Color(0xffff9800),
+                    Color(0xffFBC02D),
+                    Color(0xffFBC02D),
                   ],
           ),
           borderRadius: BorderRadius.circular(20),
@@ -1639,9 +1643,7 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: active
-                  ? Colors.white
-                  : Colors.white.withValues(alpha: .68),
+              color: Colors.white,
               size: 19,
             ),
             const SizedBox(height: 4),
@@ -1651,9 +1653,7 @@ class _NavItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: active
-                    ? Colors.white
-                    : Colors.white.withValues(alpha: .68),
+                color: Colors.white,
                 fontSize: 7,
                 fontWeight: active
                     ? FontWeight.w800
