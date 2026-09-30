@@ -269,23 +269,7 @@ class _ApiLoginPageState extends State<ApiLoginPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: const Text(
-                              'Lupa password?',
-                              style: TextStyle(
-                                color: Color(0xff118D9A),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
+
                         ],
                       ),
                       const SizedBox(height: 14),
