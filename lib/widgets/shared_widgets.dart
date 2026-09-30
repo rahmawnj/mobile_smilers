@@ -447,7 +447,9 @@ class DashboardHeader extends StatelessWidget {
                         builder: (context, snapshot) {
                           final appName = snapshot.data?.appName.trim();
                           return Text(
-                            (appName == null || appName.isEmpty) ? 'Rumah Sakit' : appName,
+                            (appName == null || appName.isEmpty)
+                                ? 'Rumah Sakit'
+                                : appName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -1004,3 +1006,791 @@ class _TransactionItemState extends State<TransactionItem> {
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: .12),
                   shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 25,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color(0xff4c5c68),
+                  fontSize: 8,
+                  fontWeight: FontWeight.w600,
+                  height: 1.15,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ===============================================================
+/// BACK BUTTON
+/// ===============================================================
+
+class AppBackButton extends StatelessWidget {
+  const AppBackButton({
+    super.key,
+    this.onTap,
+  });
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withValues(alpha: .16),
+      borderRadius: BorderRadius.circular(13),
+      child: InkWell(
+        onTap: onTap ?? () => Navigator.of(context).pop(),
+        borderRadius: BorderRadius.circular(13),
+        child: const SizedBox(
+          width: 42,
+          height: 42,
+          child: Icon(
+            Icons.arrow_back_rounded,
+            color: Colors.white,
+            size: 21,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ===============================================================
+/// DETAIL HEADER
+/// ===============================================================
+
+class DetailHeader extends StatelessWidget {
+  const DetailHeader({
+    super.key,
+    required this.title,
+    required this.userName,
+  });
+
+  final String title;
+  final String userName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(
+        8,
+        12,
+        18,
+        18,
+      ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xff5cc9bd),
+            Color(0xff159cf1),
+          ],
+        ),
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(20),
+        ),
+      ),
+      child: Row(
+        children: [
+          const AppBackButton(),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  userName,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: .75),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// ===============================================================
+/// DETAIL TABLE
+/// ===============================================================
+
+class DetailTable extends StatelessWidget {
+  const DetailTable({
+    super.key,
+    required this.columns,    required this.rows,
+  });
+  final List<String> columns;
+  final List<dynamic> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    return TableSurface(child: LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          width: double.infinity,
+          
+          
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: constraints.maxWidth,
+              ),
+              child: DataTable(
+                headingRowHeight: 46,
+                dataRowMinHeight: 46,
+                dataRowMaxHeight: 54,
+                horizontalMargin: 18,
+                columnSpacing: 28,
+                headingRowColor:
+                    WidgetStateProperty.all(
+                  const Color(0xff1261dc),
+                ),
+                headingTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                ),
+                dataTextStyle: const TextStyle(
+                  color: Color(0xff465564),
+                  fontSize: 9,
+                  fontWeight: FontWeight.w500,
+                ),
+                dividerThickness: .4,
+                columns: columns
+                    .map(
+                      (column) => DataColumn(
+                        label: Text(column),
+                      ),
+                    )
+                    .toList(),
+                rows: rows.map((row) {
+                  return DataRow(
+                    cells: (row as List<dynamic>)
+                        .map(
+                          (value) => DataCell(
+                            Text('$value'),
+                          ),
+                        )
+                        .toList(),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        );
+      },
+    ));
+  }
+}
+
+/// ===============================================================
+/// ROOM TABLE
+/// ===============================================================
+
+class RoomTable extends StatelessWidget {
+  const RoomTable({
+    super.key,
+    required this.rooms,
+  });
+
+  final List<dynamic> rooms;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(
+              16,
+              16,
+              16,
+              14,
+            ),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xff1261dc),
+                  Color(0xff159cf1),
+                ],
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: .15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(
+                    Icons.meeting_room_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Text(
+                    'Keluar Masuk Linen & Tirai',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Table(
+            columnWidths: const {
+              0: FlexColumnWidth(1.45),
+              1: FlexColumnWidth(1),
+              2: FlexColumnWidth(1),
+              3: FlexColumnWidth(.9),
+            },
+              children: [
+                _roomRow(
+                  [
+                    'Nama Ruangan',
+                    'Linen Masuk',
+                    'Linen Keluar',
+                    'Selisih',
+                  ],
+                  true,
+                ),
+                ...rooms.asMap().entries.map(
+                  (entry) {
+                    final room =
+                        entry.value as Map<String, dynamic>;
+
+                    return _roomRow(
+                      [
+                        room['name'] as String,
+                        '${room['in']}',
+                        '${room['out']}',
+                        '${room['difference']}',
+                      ],
+                      false,
+                      entry.key.isEven,
+                    );
+                  },
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  TableRow _roomRow(
+    List<String> values,
+    bool header, [
+    bool shaded = false,
+  ]) {
+    return TableRow(
+      decoration: BoxDecoration(
+        color: header
+            ? const Color(0xfff1f6fb)
+            : shaded
+                ? const Color(0xfffafcff)
+                : Colors.white,
+      ),
+      children: values.map(
+        (value) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 13,
+            ),
+            child: Text(
+              value,
+              textAlign: value == values.first
+                  ? TextAlign.left
+                  : TextAlign.center,
+              style: TextStyle(
+                color: header
+                    ? const Color(0xff52616f)
+                    : const Color(0xff5f6f7c),
+                fontSize: 9,
+                fontWeight: header
+                    ? FontWeight.w800
+                    : FontWeight.w500,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+  }
+}
+
+/// ===============================================================
+/// BOTTOM NAVIGATION
+/// ===============================================================
+
+class BottomNavigation extends StatelessWidget {
+  const BottomNavigation({
+    super.key,
+    required this.userName,
+    this.activeIndex = -1,
+  });
+
+  final String userName;
+  final int activeIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 66,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 54,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xff116ea5).withValues(alpha: .58),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: .10),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: .18),
+                        blurRadius: 22,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 4,
+            right: 4,
+            bottom: 0,
+            height: 54,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const qrWidth = 58.0;
+                final itemWidth = (constraints.maxWidth - qrWidth) / 4;
+                final activePosition = switch (activeIndex) {
+                  0 => 0,
+                  1 => 1,
+                  3 => 2,
+                  4 => 3,
+                  _ => -1,
+                };
+
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    if (activePosition >= 0)
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 260),
+                        curve: Curves.easeOutCubic,
+                        left: (activePosition < 2
+                                ? activePosition * itemWidth
+                                : activePosition * itemWidth + qrWidth) +
+                            itemWidth * .11,
+                        top: 0,
+                        bottom: 0,
+                        width: itemWidth * .78,
+                        child: IgnorePointer(
+                          child: Center(
+                            child: Container(
+                              height: 34,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: .16),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _NavItem(
+                            icon: Icons.home_rounded,
+                            label: 'Beranda',
+                            active: activeIndex == 0,
+                            onTap: () {
+                              AppNavigation.goToIndex(
+                                context,
+                                0,
+                                userName,
+                                currentIndex: activeIndex,
+                              );
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: _NavItem(
+                            icon: Icons.swap_horiz_rounded,
+                            label: 'Keluar Masuk',
+                            active: activeIndex == 1,
+                            onTap: () {
+                              AppNavigation.goToIndex(
+                                context,
+                                1,
+                                userName,
+                                currentIndex: activeIndex,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: qrWidth),
+                        Expanded(
+                          child: _NavItem(
+                            icon: Icons.receipt_long_rounded,
+                            label: 'Rekap',
+                            active: activeIndex == 3,
+                            onTap: () {
+                              AppNavigation.goToIndex(
+                                context,
+                                3,
+                                userName,
+                                currentIndex: activeIndex,
+                              );
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: _NavItem(
+                            icon: Icons.assignment_late_rounded,
+                            label: 'Belum Kembali',
+                            active: activeIndex == 4,
+                            onTap: () {
+                              AppNavigation.goToIndex(
+                                context,
+                                4,
+                                userName,
+                                currentIndex: activeIndex,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          Positioned(
+            left: 4 + (((MediaQuery.sizeOf(context).width - 36) - 8 - 58) / 4) * 2,
+            bottom: 7,
+            width: 58,
+            height: 58,
+            child: _QRNavButton(
+              active: activeIndex == 2,
+              onTap: () {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Endpoint QR Check belum tersedia di API yang diberikan.',
+                      ),
+                    ),
+                  );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// ===============================================================
+/// QR NAV BUTTON
+/// ===============================================================
+
+class _QRNavButton extends StatelessWidget {
+  const _QRNavButton({
+    required this.onTap,
+    required this.active,
+  });
+
+  final VoidCallback onTap;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 58,
+        height: 58,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: active
+                ? const [
+                    Color(0xffffd54f),
+                    Color(0xffff9800),
+                  ]
+                : const [
+                    Color(0xffffc107),
+                    Color(0xffff9800),
+                  ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .24),
+              blurRadius: 12,
+              spreadRadius: 1,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.qr_code_scanner_rounded,
+          color: Colors.white,
+          size: 28,
+        ),
+      ),
+    );
+  }
+}
+
+/// ===============================================================
+/// NAV ITEM
+/// ===============================================================
+
+class _NavItem extends StatelessWidget {
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.active = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 2),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: active
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: .68),
+              size: 19,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: active
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: .68),
+                fontSize: 7,
+                fontWeight: active
+                    ? FontWeight.w800
+                    : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// ===============================================================
+/// BLUR DECORATION
+/// ===============================================================
+
+class _BlurCircle extends StatelessWidget {
+  const _BlurCircle({
+    required this.size,
+    required this.color,
+  });
+
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+    );
+  }
+}
+
+/// ===============================================================
+/// APP REFRESH INDICATOR
+/// ===============================================================
+/// Pull-to-refresh yang dipakai seragam di seluruh halaman data.
+class AppRefreshIndicator extends StatelessWidget {
+  const AppRefreshIndicator({
+    super.key,
+    required this.onRefresh,
+    required this.child,
+  });
+
+  final Future<void> Function() onRefresh;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: const Color(0xff1261dc),
+      backgroundColor: Colors.white,
+      strokeWidth: 2.4,
+      displacement: 34,
+      edgeOffset: 0,
+      child: child,
+    );
+  }
+}
+
+/// ===============================================================
+/// APP PAGE LOADING
+/// ===============================================================
+/// Loading state utama saat halaman sedang mengambil data.
+class AppPageLoading extends StatelessWidget {
+  const AppPageLoading({
+    super.key,
+    this.message = 'Memuat data...',
+    this.subtitle = 'Mohon tunggu sebentar',
+  });
+
+  final String message;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 42, horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 58,
+              height: 58,
+              decoration: BoxDecoration(
+                color: const Color(0xffeaf2ff),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xff1261dc).withValues(alpha: .10),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(15),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.8,
+                  color: Color(0xff1261dc),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xff334454),
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xff8b99a5),
+                fontSize: 9,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
