@@ -224,7 +224,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: SizedBox(
-                width: constraints.maxWidth,
+                width: 1000,
                 child: DataTable(
                   headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
                   headingTextStyle: const TextStyle(
