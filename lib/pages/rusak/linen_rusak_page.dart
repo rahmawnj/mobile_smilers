@@ -319,7 +319,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
     );
   }
 
-  Widget _buildTable(List<LinenRusakItem> rows, LinenMeta meta) {
+  Widget _buildTable(List<LinenRusakItem> rows, LinenMeta? meta) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
