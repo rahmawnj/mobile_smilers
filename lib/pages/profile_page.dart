@@ -151,11 +151,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             const SizedBox(height: 6),
                             _InfoRow(
-                              icon: Icons.badge_outlined,
-                              label: 'ID',
-                              value: user.id.toString(),
-                            ),
-                            _InfoRow(
                               icon: Icons.person_outline_rounded,
                               label: 'Nama',
                               value: user.name,
