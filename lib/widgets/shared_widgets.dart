@@ -859,9 +859,11 @@ class SectionTitle extends StatelessWidget {
   const SectionTitle({
     super.key,
     required this.title,
+    this.alignment = MainAxisAlignment.center,
   });
 
   final String title;
+  final MainAxisAlignment alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -984,7 +986,7 @@ class _CategoryItemState extends State<CategoryItem> {
                 label,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
                 style: const TextStyle(
                   color: Color(0xff4c5c68),
                   fontSize: 8,
