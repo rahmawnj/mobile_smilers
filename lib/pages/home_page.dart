@@ -176,7 +176,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                   ),
                                                                 ),
                                                                 const SizedBox(width: 12),
-                                                                Expanded(
+                                                                SizedBox(
+                                                                  width: 150,
                                                                   child: _DashboardDataMenu(
                                                                     icon: Icons.report_problem_rounded,
                                                                     title: 'Linen & Tirai Hilang',
@@ -223,7 +224,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                   ),
                                                                 ),
                                                                 const SizedBox(width: 12),
-                                                                Expanded(
+                                                                SizedBox(
+                                                                  width: 150,
                                                                   child: _DashboardDataMenu(
                                                                     icon: Icons.input_rounded,
                                                                     title: 'Data Linen & Tirai Masuk',
@@ -240,7 +242,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                   ),
                                                                 ),
                                                                 const SizedBox(width: 12),
-                                                                Expanded(
+                                                                SizedBox(
+                                                                  width: 150,
                                                                   child: _DashboardDataMenu(
                                                                     icon: Icons.assignment_rounded,
                                                                     title: 'Permintaan Ruangan',
@@ -323,7 +326,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
                                                 ],
                           ),
                         ),
