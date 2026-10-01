@@ -120,35 +120,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   Column(
                     children: [
-                                    Opacity(
-                                      opacity: 0,
-                                      child: IgnorePointer(
-                                        child: MetricCard(
-                                          metrics: [
-                                          {
-                                            'value': _loading ? '...' : _readyCount.toString(),
-                                            'unit': 'Linen',
-                                            'title': 'Linen & Tirai Ready',
-                                            'action': 'Lihat Data',
-                                          },
-                                          {
-                                            'value': _loading ? '...' : _laundryCount.toString(),
-                                            'unit': 'Linen',
-                                            'title': 'Linen & Tirai di Laundry',
-                                            'action': 'Lihat Data',
-                                          },
-                                          {
-                                            'value': _loading ? '...' : _roomCount.toString(),
-                                            'unit': 'Linen',
-                                            'title': 'Linen & Tirai di Ruangan',
-                                            'action': 'Lihat Data',
-                                          },
-                                        ],
-                                          userName: widget.userName,
-                                        ),
-                                      ),
-                                    ),
-                      Transform.translate(
+                                    Transform.translate(
                         offset: const Offset(0, -85),
                         child: Container(
                           width: double.infinity,
