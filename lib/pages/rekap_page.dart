@@ -183,8 +183,37 @@ class _RekapSummary extends StatelessWidget {
 class _RekapCard extends StatelessWidget {
   const _RekapCard({required this.title,required this.value,required this.icon});
   final String title,value; final IconData icon;
+
   @override
-  Widget build(BuildContext context)=>Container(padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),child:Column(children:[Icon(icon,size:20,color:const Color(0xff1261dc)),const SizedBox(height:6),Text(value,style:const TextStyle(fontSize:18,fontWeight:FontWeight.w800)),const SizedBox(height:2),Text(title,textAlign:TextAlign.center,style:const TextStyle(fontSize:8,color:Color(0xff6f7f8d))) ]));
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      children: [
+        Icon(icon, size: 18, color: const Color(0xff1261dc)),
+        const SizedBox(width: 9),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 8, color: Color(0xff6f7f8d)),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }
 class _RekapTable extends StatelessWidget {
   const _RekapTable({required this.rows});
