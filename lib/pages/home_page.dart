@@ -104,7 +104,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 clipBehavior: Clip.none,
                 children: [
                   Positioned.fill(
-                    top: 78,
+                    top: -25,
                     child: Container(
                       decoration: const BoxDecoration(
                         color: Colors.white,
@@ -118,7 +118,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   Column(
                     children: [
                                     Transform.translate(
-                                      offset: const Offset(0, -50),
+                                      offset: const Offset(0, -100),
                                       child: MetricCard(
                                         metrics: [
                                           {
