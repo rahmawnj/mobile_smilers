@@ -125,47 +125,33 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                     if (items.isEmpty)
                       const Text('Tidak ada data barang.')
                     else
-                      TableSurface(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DataTable(
-                            headingRowColor: WidgetStateProperty.all(
-                              const Color(0xff1261dc),
-                            ),
-                            headingTextStyle: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            dataTextStyle: const TextStyle(fontSize: 10),
-                            columns: const [
-                              DataColumn(label: Text('No')),
-                              DataColumn(label: Text('Nama Linen')),
-                              DataColumn(label: Text('Kategori Linen')),
-                              DataColumn(label: Text('Jumlah')),
+                      AppDataTable(
+                        columns: const [
+                          DataColumn(label: Text('No')),
+                          DataColumn(label: Text('Nama Linen')),
+                          DataColumn(label: Text('Kategori Linen')),
+                          DataColumn(label: Text('Jumlah')),
+                        ],
+                        rows: items.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final item = entry.value;
+                          return DataRow(
+                            cells: [
+                              DataCell(Text('${index + 1}')),
+                              DataCell(
+                                Text(item['nama_linen']?.toString() ?? '-'),
+                              ),
+                              DataCell(
+                                Text(
+                                  item['kategori_linen']?.toString() ?? '-',
+                                ),
+                              ),
+                              DataCell(
+                                Text(item['jumlah']?.toString() ?? '0'),
+                              ),
                             ],
-                            rows: items.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final item = entry.value;
-                              return DataRow(
-                                cells: [
-                                  DataCell(Text('${index + 1}')),
-                                  DataCell(
-                                    Text(item['nama_linen']?.toString() ?? '-'),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      item['kategori_linen']?.toString() ?? '-',
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(item['jumlah']?.toString() ?? '0'),
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
+                          );
+                        }).toList(),
                       ),
                   ],
                 ),
@@ -394,7 +380,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                         ),
                                       ]);
                                     }).toList(),
-                                  )
+                                  ),
                                   const SizedBox(height: 10),
                                   if (meta != null)
                                     AppPagination(
