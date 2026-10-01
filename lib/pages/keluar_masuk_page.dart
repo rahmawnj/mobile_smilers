@@ -23,6 +23,7 @@ class _InOutPageState extends State<InOutPage> {
   int? _roomId;
   DateTimeRange? _range;
   int _page = 1;
+  int _perPage = 10;
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _InOutPageState extends State<InOutPage> {
     setState(() { _loading = true; _error = null; });
     try {
       final r = await ApiService.instance.getInOut(
-        perPage: 10,
+        perPage: _perPage,
         page: _page,
         search: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
         ruangan: _roomId,
@@ -252,8 +253,11 @@ class _InOutPageState extends State<InOutPage> {
                                 child: Center(child: Text('Tidak ada data Keluar Masuk Linen & Tirai.')),
                               )
                             : Column(children: [
-                                _InOutTable(rows: rows, userName: widget.userName),
-                                if (_response != null) AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                                _InOutTable(rows: rows, userName: widget.userName, page: _page, perPage: _perPage),
+                                if (_response != null) ...[
+                                  AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
+                                  AppPerPageDropdown(value: _perPage, onChanged: (value) { setState(() { _perPage = value; _page = 1; }); _load(); }),
+                                ],
                               ]),
               ),
             ),
@@ -265,9 +269,11 @@ class _InOutPageState extends State<InOutPage> {
 }
 
 class _InOutTable extends StatelessWidget {
-  const _InOutTable({required this.rows, required this.userName});
+  const _InOutTable({required this.rows, required this.userName, required this.page, required this.perPage});
   final List<Map<String,dynamic>> rows;
   final String userName;
+  final int page;
+  final int perPage;
 
   @override
   Widget build(BuildContext context) {
@@ -283,12 +289,13 @@ class _InOutTable extends StatelessWidget {
       rows: rows.asMap().entries.map((entry) {
         final index = entry.key;
         final r = entry.value;
+        final no = (page - 1) * perPage + index + 1;
         final ruanganId = int.tryParse(
           (r['ruangan_id'] ?? r['ruangan_id_ruangan'] ?? r['id_ruangan'] ??
                   r['ruangan'] ?? r['id'])?.toString() ?? '',
         );
         return DataRow(cells: [
-          DataCell(Text('${index + 1}')),
+          DataCell(Text('$no')),
           DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
           DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
           DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
