@@ -396,7 +396,11 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                               IconButton(
                                                 tooltip: 'Detail',
                                                 onPressed: () => _showDetail(item.id),
-                                                icon: const Icon(Icons.visibility),
+                                                icon: const Icon(
+                                                  Icons.visibility_outlined,
+                                                  size: 18,
+                                                  color: Color(0xff1261dc),
+                                                ),
                                               ),
                                               IconButton(
                                                 tooltip: isSent ? 'Sudah terkirim' : 'Kirim permintaan',
