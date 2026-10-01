@@ -140,7 +140,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             );
                           },
                         ),
-                        const SizedBox(height: 10),
+                        const _SettingDivider(),
                         _SettingMenu(
                           icon: Icons.menu_book_outlined,
                           title: 'Manual Book',
@@ -150,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             'Panduan penggunaan aplikasi akan tersedia di sini.',
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        const _SettingDivider(),
                         _SettingMenu(
                           icon: Icons.info_outline_rounded,
                           title: 'Tentang SmileRS',
@@ -467,6 +467,22 @@ class _AvatarFallback extends StatelessWidget {
           fontSize: 25,
           fontWeight: FontWeight.w800,
         ),
+      ),
+    );
+  }
+}
+
+class _SettingDivider extends StatelessWidget {
+  const _SettingDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.only(left: 60),
+      child: Divider(
+        height: 1,
+        thickness: .6,
+        color: Color(0xffe6ebf0),
       ),
     );
   }
