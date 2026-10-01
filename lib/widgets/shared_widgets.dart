@@ -711,8 +711,8 @@ class _MetricTileState extends State<MetricTile> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: Container(
-          margin: const EdgeInsets.only(bottom: 6),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          margin: const EdgeInsets.only(bottom: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
             color: _hovered ? const Color(0xfff3f8fc) : Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -815,8 +815,8 @@ class _MetricIcon extends StatelessWidget {
     final i = index % icons.length;
 
     return Container(
-      width: 36,
-      height: 36,
+      width: 30,
+      height: 30,
       decoration: BoxDecoration(
         color: colors[i].withValues(alpha: .10),
         borderRadius: BorderRadius.circular(20),
@@ -824,7 +824,7 @@ class _MetricIcon extends StatelessWidget {
       child: Icon(
         icons[i],
         color: colors[i],
-        size: 22,
+        size: 18,
       ),
     );
   }
