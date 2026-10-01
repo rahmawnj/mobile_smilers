@@ -156,6 +156,15 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    Text(
+                                      'Total ${_meta!.total} ruangan',
+                                      style: const TextStyle(
+                                        color: Color(0xff7d8c99),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 14),
                                     const Text('Jumlah', style: TextStyle(fontSize: 10)),
                                     const SizedBox(width: 8),
                                     AppPerPageDropdown(
