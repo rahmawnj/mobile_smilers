@@ -815,8 +815,8 @@ class _MetricIcon extends StatelessWidget {
     final i = index % icons.length;
 
     return Container(
-      width: 30,
-      height: 30,
+      width: 24,
+      height: 24,
       decoration: BoxDecoration(
         color: colors[i].withValues(alpha: .10),
         borderRadius: BorderRadius.circular(20),
@@ -824,7 +824,7 @@ class _MetricIcon extends StatelessWidget {
       child: Icon(
         icons[i],
         color: colors[i],
-        size: 18,
+        size: 14,
       ),
     );
   }
