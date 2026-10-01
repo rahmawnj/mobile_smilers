@@ -644,17 +644,13 @@ class MetricCard extends StatelessWidget {
                 index: entry.key,
                 onTap: () {
                   if (entry.key == 0) {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => LinenReadyPage(userName: userName),
-                      ),
-                    );
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => LinenReadyPage(userName: userName),
+                    ));
                   } else if (entry.key == 1) {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => LinenLaundryPage(userName: userName),
-                      ),
-                    );
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => LinenLaundryPage(userName: userName),
+                    ));
                   } else if (entry.key == 2) {
                     Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
