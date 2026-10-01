@@ -144,7 +144,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       ),
                                     ),
                       Transform.translate(
-                        offset: const Offset(0, -20),
+                        offset: const Offset(0, -85),
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
