@@ -160,46 +160,33 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         const SizedBox(height:12),
         if (_loading) const AppPageLoading()
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
-        else TableSurface(
-          child: LayoutBuilder(builder: (context, constraints) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: 1000,
-                child: DataTable(
-                  headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-                  headingTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10, fontWeight: FontWeight.w700),
-                  dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 10),
-                  columnSpacing: 16,
-                  columns: const [
-                    DataColumn(label: Text('No')),
-                    DataColumn(label: Text('Nama Linen')),
-                    DataColumn(label: Text('QR Code')),
-                    DataColumn(label: Text('Tag RFID')),
-                    DataColumn(label: Text('Ke Ruangan')),
-                    DataColumn(label: Text('Jam')),
-                    DataColumn(label: Text('Tanggal')),
-                    DataColumn(label: Text('User')),
-                  ],
-                  rows: rows.asMap().entries.map((e) {
-                    final n = ((meta?.currentPage ?? _page) - 1) * (meta?.perPage ?? _perPage) + e.key + 1;
-                    return DataRow(cells: [
-                      DataCell(Text(n.toString())),
-                      DataCell(Text(e.value.namaLinen.isEmpty ? '-' : e.value.namaLinen)),
-                      DataCell(Text(e.value.qrCode.isEmpty ? '-' : e.value.qrCode)),
-                      DataCell(Text(e.value.tagRfid.isEmpty ? '-' : e.value.tagRfid)),
-                      DataCell(Text(e.value.keRuangan.isEmpty ? '-' : e.value.keRuangan)),
-                      DataCell(Text(e.value.jam.isEmpty ? '-' : e.value.jam)),
-                      DataCell(Text(e.value.tanggal.isEmpty ? '-' : e.value.tanggal)),
-                      DataCell(Text(e.value.user.isEmpty ? '-' : e.value.user)),
-                    ]);
-                  }).toList(),
-                ),
-              ),
-            );
-          }),
+        else AppDataTable(
+          columns: const [
+            DataColumn(label: Text('No')),
+            DataColumn(label: Text('Nama Linen')),
+            DataColumn(label: Text('QR Code')),
+            DataColumn(label: Text('Tag RFID')),
+            DataColumn(label: Text('Ke Ruangan')),
+            DataColumn(label: Text('Jam')),
+            DataColumn(label: Text('Tanggal')),
+            DataColumn(label: Text('User')),
+          ],
+          rows: rows.asMap().entries.map((e) {
+            final n = ((meta?.currentPage ?? _page) - 1) *
+                    (meta?.perPage ?? _perPage) +
+                e.key +
+                1;
+            return DataRow(cells: [
+              DataCell(Text(n.toString())),
+              DataCell(Text(e.value.namaLinen.isEmpty ? '-' : e.value.namaLinen)),
+              DataCell(Text(e.value.qrCode.isEmpty ? '-' : e.value.qrCode)),
+              DataCell(Text(e.value.tagRfid.isEmpty ? '-' : e.value.tagRfid)),
+              DataCell(Text(e.value.keRuangan.isEmpty ? '-' : e.value.keRuangan)),
+              DataCell(Text(e.value.jam.isEmpty ? '-' : e.value.jam)),
+              DataCell(Text(e.value.tanggal.isEmpty ? '-' : e.value.tanggal)),
+              DataCell(Text(e.value.user.isEmpty ? '-' : e.value.user)),
+            ]);
+          }).toList(),
         ),
         if(!_loading&&_error==null&&rows.isEmpty)const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data Linen & Tirai Keluar.'))),
         if(meta!=null) ...[
