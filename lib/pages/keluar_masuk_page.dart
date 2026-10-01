@@ -19,13 +19,16 @@ class _InOutPageState extends State<InOutPage> {
   String? _error;
   InOutResponse? _response;
   final _searchController = TextEditingController();
-  DateTime? _selectedDate;
+  List<LinenRoomOption> _rooms = const [];
+  int? _roomId;
+  DateTimeRange? _range;
   int _page = 1;
 
   @override
   void initState() {
     super.initState();
     _load();
+    _loadRooms();
   }
 
   @override
@@ -34,8 +37,20 @@ class _InOutPageState extends State<InOutPage> {
     super.dispose();
   }
 
-  String _dateParam(DateTime d) =>
-      '${d.month}/${d.day}/${d.year} - ${d.month}/${d.day}/${d.year}';
+  String _date(DateTime d) => '${d.month}/${d.day}/${d.year}';
+
+  String? get _daterange {
+    if (_range == null) return null;
+    return '${_date(_range!.start)} - ${_date(_range!.end)}';
+  }
+
+  Future<void> _loadRooms() async {
+    try {
+      final rooms = await ApiService.instance.getRekapanTransaksiRuangan();
+      if (!mounted) return;
+      setState(() => _rooms = rooms);
+    } catch (_) {}
+  }
 
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
@@ -44,7 +59,8 @@ class _InOutPageState extends State<InOutPage> {
         perPage: 10,
         page: _page,
         search: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
-        daterange: _selectedDate == null ? null : _dateParam(_selectedDate!),
+        ruangan: _roomId,
+        daterange: _daterange,
       );
       if (!mounted) return;
       setState(() { _response = r; _loading = false; });
@@ -57,18 +73,36 @@ class _InOutPageState extends State<InOutPage> {
     }
   }
 
-  Future<void> _pickDate() async {
-    final d = await showDatePicker(
+  Future<void> _pickRange() async {
+    final range = await showDateRangePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
+      initialDateRange: _range,
     );
-    if (d != null) {
-      setState(() => _selectedDate = d);
+    if (range != null) {
+      setState(() {
+        _range = range;
+        _page = 1;
+      });
       _load();
     }
   }
+
+  void _resetFilters() {
+    _searchController.clear();
+    setState(() {
+      _roomId = null;
+      _range = null;
+      _page = 1;
+    });
+    _load();
+  }
+
+  bool get _hasFilters =>
+      _searchController.text.trim().isNotEmpty ||
+      _roomId != null ||
+      _range != null;
 
   @override
   Widget build(BuildContext context) {
@@ -83,49 +117,122 @@ class _InOutPageState extends State<InOutPage> {
 
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    onSubmitted: (_) => _load(),
-                    decoration: InputDecoration(
-                      hintText: 'Cari ruangan...',
-                      prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        onSubmitted: (_) {
+                          setState(() => _page = 1);
+                          _load();
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Cari ruangan...',
+                          prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                          suffixIcon: _searchController.text.isEmpty
+                              ? null
+                              : IconButton(
+                                  tooltip: 'Hapus pencarian',
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() => _page = 1);
+                                    _load();
+                                  },
+                                  icon: const Icon(Icons.close_rounded, size: 18),
+                                ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        onChanged: (_) => setState(() {}),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: _pickRange,
+                      tooltip: 'Pilih rentang tanggal',
+                      style: IconButton.styleFrom(
+                        backgroundColor: const Color(0xff1261dc),
+                        foregroundColor: Colors.white,
+                      ),
+                      icon: const Icon(Icons.date_range_rounded, size: 20),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  onPressed: _pickDate,
-                  tooltip: 'Pilih tanggal',
-                  style: IconButton.styleFrom(
-                    backgroundColor: const Color(0xff1261dc),
-                    foregroundColor: Colors.white,
-                  ),
-                  icon: const Icon(Icons.calendar_month_rounded, size: 20),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<int?>(
+                        value: _roomId,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          hintText: 'Semua Ruangan',
+                          prefixIcon: const Icon(Icons.meeting_room_rounded, size: 19),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        items: [
+                          const DropdownMenuItem<int?>(
+                            value: null,
+                            child: Text('Semua Ruangan'),
+                          ),
+                          ..._rooms.map(
+                            (room) => DropdownMenuItem<int?>(
+                              value: room.id,
+                              child: Text(room.nama),
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _roomId = value;
+                            _page = 1;
+                          });
+                          _load();
+                        },
+                      ),
+                    ),
+                    if (_hasFilters) ...[
+                      const SizedBox(width: 8),
+                      TextButton.icon(
+                        onPressed: _resetFilters,
+                        icon: const Icon(Icons.refresh_rounded, size: 17),
+                        label: const Text('Reset'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xff1261dc),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
           ),
-          if (_selectedDate != null)
+          if (_range != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
               child: Row(
                 children: [
-                  Text(
-                    'Tanggal: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                    style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
+                  const Icon(Icons.date_range_rounded, size: 15, color: Color(0xff6f7f8d)),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      'Periode: ${_date(_range!.start)} - ${_date(_range!.end)}',
+                      style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
+                    ),
                   ),
-                  const Spacer(),
-                  TextButton(onPressed: () { setState(() => _selectedDate = null); _load(); }, child: const Text('Reset')),
                 ],
               ),
             ),
