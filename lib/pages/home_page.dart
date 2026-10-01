@@ -142,7 +142,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         ],
                                         userName: widget.userName,
                                       ),
-                                    )
+                                    ),
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
