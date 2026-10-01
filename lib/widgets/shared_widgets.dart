@@ -650,9 +650,17 @@ class MetricCard extends StatelessWidget {
                       ),
                     );
                   } else if (entry.key == 1) {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => LinenLaundryPage(userName: userName)));
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => LinenLaundryPage(userName: userName),
+                      ),
+                    );
                   } else if (entry.key == 2) {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => LinenRuanganPage(userName: userName)));
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => LinenRuanganPage(userName: userName),
+                      ),
+                    );
                   } else {
                     ScaffoldMessenger.of(context)
                       ..hideCurrentSnackBar()
@@ -706,17 +714,20 @@ class _MetricTileState extends State<MetricTile> {
       onExit: (_) => setState(() => _hovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: widget.onTap,
-        child: SizedBox(
-          width: double.infinity,
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
-            color: _hovered ? const Color(0xfff3f8fc) : Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: SizedBox(
+            width: double.infinity,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: _hovered ? const Color(0xfff3f8fc) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
             children: [
               _MetricIcon(index: widget.index),
               const SizedBox(width: 12),
@@ -776,7 +787,8 @@ class _MetricTileState extends State<MetricTile> {
                   ),
                 ],
               ),
-            ],
+                ],
+              ),
             ),
           ),
         ),
