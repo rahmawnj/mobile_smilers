@@ -271,77 +271,51 @@ class _InOutTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TableSurface(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: constraints.maxWidth),
-              child: DataTable(
-                headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-                headingTextStyle: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
-                dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 9),
-                columnSpacing: 12,
-                horizontalMargin: 8,
-                columns: const [
-                  DataColumn(label: Text('No.')),
-                  DataColumn(label: Text('Nama Ruangan')),
-                  DataColumn(label: Text('Linen Masuk')),
-                  DataColumn(label: Text('Linen Keluar')),
-                  DataColumn(label: Text('Selisih')),
-                  DataColumn(label: Text('Action')),
-                ],
-                rows: rows.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final r = entry.value;
-                  final ruanganId = int.tryParse(
-                    (r['ruangan_id'] ??
-                            r['ruangan_id_ruangan'] ??
-                            r['id_ruangan'] ??
-                            r['ruangan'] ??
-                            r['id'])
-                        ?.toString() ??
-                        '',
+    return AppDataTable(
+      columns: const [
+        DataColumn(label: Text('No.')),
+        DataColumn(label: Text('Nama Ruangan')),
+        DataColumn(label: Text('Linen Masuk')),
+        DataColumn(label: Text('Linen Keluar')),
+        DataColumn(label: Text('Selisih')),
+        DataColumn(label: Text('Action')),
+      ],
+      rows: rows.asMap().entries.map((entry) {
+        final index = entry.key;
+        final r = entry.value;
+        final ruanganId = int.tryParse(
+          (r['ruangan_id'] ?? r['ruangan_id_ruangan'] ?? r['id_ruangan'] ??
+                  r['ruangan'] ?? r['id'])?.toString() ?? '',
+        );
+        return DataRow(cells: [
+          DataCell(Text('${index + 1}')),
+          DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
+          DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
+          DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
+          DataCell(Text(r['selisih']?.toString() ?? '0')),
+          DataCell(
+            IconButton(
+              tooltip: 'Detail',
+              onPressed: () {
+                if (ruanganId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('ID ruangan tidak tersedia pada data.')),
                   );
-                  return DataRow(cells: [
-                    DataCell(Text('${index + 1}')),
-                    DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
-                    DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
-                    DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
-                    DataCell(Text(r['selisih']?.toString() ?? '0')),
-                    DataCell(
-                      IconButton(
-                        tooltip: 'Detail',
-                        onPressed: () {
-                          if (ruanganId == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('ID ruangan tidak tersedia pada data.'),
-                              ),
-                            );
-                            return;
-                          }
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => InOutDetailPage(
-                                userName: userName,
-                                ruanganId: ruanganId,
-                                namaRuangan: r['nama_ruangan']?.toString() ?? '-',
-                              ),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.visibility_rounded, size: 18),
-                      ),
-                    ),
-                  ]);
-                }).toList(),
-              ),
+                  return;
+                }
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => InOutDetailPage(
+                    userName: userName,
+                    ruanganId: ruanganId,
+                    namaRuangan: r['nama_ruangan']?.toString() ?? '-',
+                  ),
+                ));
+              },
+              icon: const Icon(Icons.visibility_rounded, size: 18),
             ),
-          );
-        },
-      ),
+          ),
+        ]);
+      }).toList(),
     );
   }
 }
