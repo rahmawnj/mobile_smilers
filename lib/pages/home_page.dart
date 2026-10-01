@@ -159,7 +159,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
                                                             const SectionTitle(title: 'Data Linen & Tirai'),
-                                                            const SizedBox(height: 14),
+                                                            const SizedBox(height: 6),
                                                             Row(
                                                               children: [
                                                                 Expanded(
@@ -202,7 +202,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 10),
+                                                  const SizedBox(height: 18),
                                                   Center(
                                                     child: ConstrainedBox(
                                                       constraints: const BoxConstraints(maxWidth: 900),
@@ -211,7 +211,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
                                                             const SectionTitle(title: 'Transaksi Linen & Tirai'),
-                                                            const SizedBox(height: 14),
+                                                            const SizedBox(height: 6),
                                                             Row(
                                                               children: [
                                                                 Expanded(
@@ -271,7 +271,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 10),
+                                                  const SizedBox(height: 18),
                                                   Center(
                                                     child: ConstrainedBox(
                                                       constraints: const BoxConstraints(maxWidth: double.infinity),
@@ -283,7 +283,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                               crossAxisAlignment: CrossAxisAlignment.stretch,
                                                               children: [
                                                                 const SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
-                                                                const SizedBox(height: 6),
+                                                                const SizedBox(height: 2),
                                                                 Align(
                                                                   alignment: Alignment.centerRight,
                                                                   child: TextButton(
@@ -301,7 +301,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                 ),
                                                               ],
                                                             ),
-                                                            const SizedBox(height: 12),
+                                                            const SizedBox(height: 6),
                                                             if (_loading)
                                                               const AppPageLoading()
                                                             else if (_inOutRows.isEmpty)
