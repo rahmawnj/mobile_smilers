@@ -679,6 +679,20 @@ class ApiService {
     return AuthResponse(token: token, user: user);
   }
 
+  Future<String> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String newPasswordConfirmation,
+  }) async {
+    final data = await _post('/change-password', {
+      'current_password': currentPassword,
+      'new_password': newPassword,
+      'new_password_confirmation': newPasswordConfirmation,
+    });
+
+    return data['message']?.toString() ?? 'Kata sandi berhasil diperbaharui.';
+  }
+
   Future<AuthUser> me() async {
     final token = await getToken();
 
