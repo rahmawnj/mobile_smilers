@@ -96,7 +96,8 @@ class _DashboardPageState extends State<DashboardPage> {
         onRefresh: _loadLinen,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 14),
+          // Beri ruang di bawah agar tabel terakhir tidak tertutup bottom navigation.
+          padding: const EdgeInsets.only(bottom: 120),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
