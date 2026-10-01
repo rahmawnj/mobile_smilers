@@ -279,6 +279,7 @@ class _Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fallback = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    final photoUrl = foto?.trim() ?? '';
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(22),
@@ -286,9 +287,9 @@ class _Avatar extends StatelessWidget {
         width: 92,
         height: 92,
         color: const Color(0xffeaf5fc),
-        child: foto.trim().isNotEmpty
+        child: photoUrl.isNotEmpty
             ? Image.network(
-                foto,
+                photoUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => _AvatarFallback(text: fallback),
               )
