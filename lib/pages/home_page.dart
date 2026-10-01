@@ -369,13 +369,13 @@ class _DashboardDataMenu extends StatelessWidget {
             onTap: onTap,
             customBorder: const CircleBorder(),
             child: SizedBox(
-              width: 20,
-              height: 20,
+              width: 80,
+              height: 80,
               child: Center(
                 child: Icon(
                   icon,
                   color: const Color(0xff159cf1),
-                  size: 12,
+                  size: 26,
                 ),
               ),
             ),
