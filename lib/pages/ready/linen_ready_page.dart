@@ -333,13 +333,14 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
       rows: rows.asMap().entries.map((entry) {
         final index = entry.key;
         final category = entry.value;
+        final rowNumber = ((_page - 1) * _perPage) + index + 1;
         final sub = category.subKategoriLinen.trim().isEmpty
             ? '-'
             : category.subKategoriLinen;
 
         return DataRow(
           cells: [
-            DataCell(Text((index + 1).toString())),
+            DataCell(Text(rowNumber.toString())),
             DataCell(Text(category.namaKategoriLinen)),
             DataCell(Text(sub)),
             DataCell(Text(category.jumlahStok.toString())),
