@@ -120,32 +120,6 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   Column(
                     children: [
-                                    Transform.translate(
-                                      offset: const Offset(0, -100),
-                                      child: MetricCard(
-                                        metrics: [
-                                          {
-                                            'value': _loading ? '...' : _readyCount.toString(),
-                                            'unit': 'Linen',
-                                            'title': 'Linen & Tirai Ready',
-                                            'action': 'Lihat Data',
-                                          },
-                                          {
-                                            'value': _loading ? '...' : _laundryCount.toString(),
-                                            'unit': 'Linen',
-                                            'title': 'Linen & Tirai di Laundry',
-                                            'action': 'Lihat Data',
-                                          },
-                                          {
-                                            'value': _loading ? '...' : _roomCount.toString(),
-                                            'unit': 'Linen',
-                                            'title': 'Linen & Tirai di Ruangan',
-                                            'action': 'Lihat Data',
-                                          },
-                                        ],
-                                        userName: widget.userName,
-                                      ),
-                                    ),
                       Transform.translate(
                         offset: const Offset(0, -85),
                         child: Container(
