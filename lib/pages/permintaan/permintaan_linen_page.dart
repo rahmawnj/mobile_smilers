@@ -415,6 +415,21 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                   ),
                                   const SizedBox(height: 10),
                                   if (meta != null)
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text('Total ${meta.total} permintaan', style: const TextStyle(color: Color(0xff7d8c99), fontSize: 10, fontWeight: FontWeight.w600)),
+                                        const SizedBox(width: 14),
+                                        AppPerPageDropdown(
+                                          value: _perPage,
+                                          onChanged: (value) {
+                                            setState(() { _perPage = value; _page = 1; });
+                                            _load();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  if (meta != null)
                                     AppPagination(
                                       meta: meta,
                                       onPage: (page) {
@@ -424,17 +439,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                         _load();
                                       },
                                     ),
-                                  const SizedBox(height: 8),
-                                  AppPerPageDropdown(
-                                    value: _perPage,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _perPage = value;
-                                        _page = 1;
-                                      });
-                                      _load();
-                                    },
-                                  ),
+
                                 ],
                               ),
               ); }),
