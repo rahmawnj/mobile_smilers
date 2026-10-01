@@ -25,7 +25,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
   List<Map<String, dynamic>> _categories = const [];
 
   int _page = 1;
-  int _perPage = 10;
+  int _perPage = 5;
   int? _filterRoom;
   int? _filterCategory;
   DateTimeRange? _dateRange;
@@ -386,7 +386,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
   ) {
     return AppDataTable(
       columns: const [
-        DataColumn(label: Text('ID')),
+        DataColumn(label: Text('No')),
         DataColumn(label: Text('Ruangan')),
         DataColumn(label: Text('Kategori')),
         DataColumn(label: Text('Jenis Linen')),
@@ -395,10 +395,15 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
         DataColumn(label: Text('Terakhir Transaksi')),
         DataColumn(label: Text('Tanggal Hilang')),
       ],
-      rows: rows.map((item) {
+      rows: rows.asMap().entries.map((entry) {
+        final index = entry.key;
+        final item = entry.value;
+        final number = meta == null
+            ? index + 1
+            : (meta.currentPage - 1) * meta.perPage + index + 1;
         return DataRow(
           cells: [
-            DataCell(Text(item.id.toString())),
+            DataCell(Text(number.toString())),
             DataCell(Text(item.namaRuangan.isEmpty ? '-' : item.namaRuangan)),
             DataCell(Text(item.kategoriLinen.isEmpty ? '-' : item.kategoriLinen)),
             DataCell(Text(item.jenisLinen.isEmpty ? '-' : item.jenisLinen)),
