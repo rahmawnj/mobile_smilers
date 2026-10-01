@@ -382,7 +382,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                   else if (rows.isEmpty)
                     _buildEmpty()
                   else
-                    _buildTable(rows),
+                    _buildTable(rows, meta),
                   if (!_loading && _error == null && meta != null) ...[
                     const SizedBox(height: 10),
                     Row(
@@ -417,7 +417,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     );
   }
 
-  Widget _buildTable(List<LinenMasukItem> rows) {
+  Widget _buildTable(List<LinenMasukItem> rows, LinenMeta? meta) {
     return AppDataTable(
       columns: const [
         DataColumn(label: Text('No')),
