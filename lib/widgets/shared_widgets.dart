@@ -707,8 +707,10 @@ class _MetricTileState extends State<MetricTile> {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 2),
+        child: SizedBox(
+          width: double.infinity,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 2),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
             color: _hovered ? const Color(0xfff3f8fc) : Colors.white,
@@ -775,6 +777,7 @@ class _MetricTileState extends State<MetricTile> {
                 ],
               ),
             ],
+            ),
           ),
         ),
       ),
