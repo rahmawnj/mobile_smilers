@@ -243,6 +243,15 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
+                                        Text(
+                                          'Total ${_response!.meta.total} linen',
+                                          style: const TextStyle(
+                                            color: Color(0xff7d8c99),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 14),
                                         const Text(
                                           'Jumlah',
                                           style: TextStyle(fontSize: 10),
