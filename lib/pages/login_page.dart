@@ -258,7 +258,10 @@ class _LoginPageState extends State<LoginPage>
                           // =========================
                           FadeTransition(
                             opacity: _fadeAnimation,
-                            child: const _TopBrand(),
+                            child: _TopBrand(
+                              appInfo: _appInfo,
+                              logoUrl: _appLogoUrl,
+                            ),
                           ),
 
                           const SizedBox(height: 28),
@@ -294,6 +297,7 @@ class _LoginPageState extends State<LoginPage>
                                     });
                                   },
                                   onLogin: _login,
+                                  appName: _appInfo?.appName ?? '',
                                   onStreamLinen: () {
                                     _showFeedback(
                                       'Fitur Stream Linen akan segera tersedia.',
@@ -314,7 +318,7 @@ class _LoginPageState extends State<LoginPage>
                           // =========================
                           // FOOTER
                           // =========================
-                          const _Footer(),
+                          _Footer(appName: _appInfo?.appName ?? ''),
                         ],
                       ),
                     ),
@@ -390,7 +394,10 @@ class _BackgroundDecoration extends StatelessWidget {
    ============================================================ */
 
 class _TopBrand extends StatelessWidget {
-  const _TopBrand();
+  const _TopBrand({required this.appInfo, required this.logoUrl});
+
+  final AppInfo? appInfo;
+  final String logoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -409,14 +416,14 @@ class _TopBrand extends StatelessWidget {
             ),
           ),
           child: CustomPaint(
-            child: _HospitalLogo(logoUrl: _appLogoUrl),
+            child: _HospitalLogo(logoUrl: logoUrl),
           ),
         ),
 
         const SizedBox(height: 14),
 
         Text(
-          _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : 'APLIKASI',
+          appInfo?.appName.isNotEmpty == true ? appInfo!.appName : 'APLIKASI',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -456,6 +463,7 @@ class _LoginCard extends StatelessWidget {
     required this.onObscureChanged,
     required this.onLogin,
     required this.onStreamLinen,
+    required this.appName,
   });
 
   final double width;
@@ -471,6 +479,7 @@ class _LoginCard extends StatelessWidget {
   final VoidCallback onObscureChanged;
   final VoidCallback onLogin;
   final VoidCallback onStreamLinen;
+  final String appName;
 
   @override
   Widget build(BuildContext context) {
@@ -635,11 +644,11 @@ class _LoginCard extends StatelessWidget {
                 ),
               ),
 
-              const Padding(
+              Padding(
                 padding:
-                    EdgeInsets.symmetric(horizontal: 10),
+                    const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  _appInfo?.appName.isNotEmpty == true ? _appInfo!.appName : '',
+                  appName,
                   style: TextStyle(
                     color: Color(0xffA0ADB6),
                     fontSize: 7,
@@ -873,14 +882,16 @@ class _ActionButton extends StatelessWidget {
    ============================================================ */
 
 class _Footer extends StatelessWidget {
-  const _Footer();
+  const _Footer({required this.appName});
+
+  final String appName;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(
-          _appInfo?.appName.isNotEmpty == true ? '© ${_appInfo!.appName} 2026' : '',
+          appName.isNotEmpty ? '© $appName 2026' : '',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white
@@ -924,38 +935,12 @@ class _HospitalLogo extends StatelessWidget {
         width: 120,
         height: 120,
         fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) => const Icon(
+        errorBuilder: (_, _, _) => const Icon(
           Icons.local_hospital_rounded,
           color: Colors.white,
           size: 42,
         ),
       ),
     );
-  }
-}
-ierTo(
-        c.dx - 3,
-        c.dy - 1,
-        c.dx - 33,
-        c.dy - 1,
-      )
-      ..close();
-
-    canvas.drawPath(
-      greenPath,
-      green,
-    );
-
-    canvas.drawPath(
-      bluePath,
-      blue,
-    );
-  }
-
-  @override
-  bool shouldRepaint(
-    CustomPainter oldDelegate,
-  ) {
-    return false;
   }
 }
