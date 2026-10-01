@@ -542,8 +542,6 @@ class _LinenCategoryCard extends StatelessWidget {
               ),
             ],
           ),
-            ),
-          ),
         ),
       ),
     );
