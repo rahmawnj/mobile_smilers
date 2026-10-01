@@ -292,68 +292,84 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                         if (_roomsLoading)
                           const LinearProgressIndicator(minHeight: 2),
                         const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: DropdownButtonFormField<int?>(
-                                value: _filterRoom,
-                                decoration: const InputDecoration(
-                                  labelText: 'Ruangan',
-                                  filled: true,
-                                  fillColor: Color(0xfff5f8fc),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                items: [
-                                  const DropdownMenuItem<int?>(
-                                    value: null,
-                                    child: Text('Semua Ruangan'),
-                                  ),
-                                  ..._rooms.map(
-                                    (room) => DropdownMenuItem<int?>(
-                                      value: room.id,
-                                      child: Text(room.nama),
-                                    ),
-                                  ),
-                                ],
-                                onChanged: (value) {
-                                  setState(() {
-                                    _filterRoom = value;
-                                    _page = 1;
-                                  });
-                                  _load();
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: _pickRange,
-                                icon: const Icon(
-                                  Icons.date_range_rounded,
-                                  size: 18,
-                                ),
-                                label: Text(
-                                  _selectedDateRange == null
-                                      ? 'Tanggal'
-                                      : _isSingleDate(_selectedDateRange!)
-                                          ? _date(
-                                              _selectedDateRange!.start,
-                                            )
-                                          : _range(_selectedDateRange!),
-                                  overflow: TextOverflow.ellipsis,
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final compact = constraints.maxWidth < 650;
+                            final roomField = DropdownButtonFormField<int?>(
+                              value: _filterRoom,
+                              decoration: const InputDecoration(
+                                labelText: 'Ruangan',
+                                filled: true,
+                                fillColor: Color(0xfff5f8fc),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
                                 ),
                               ),
-                            ),
-                            IconButton(
+                              items: [
+                                const DropdownMenuItem<int?>(
+                                  value: null,
+                                  child: Text('Semua Ruangan'),
+                                ),
+                                ..._rooms.map(
+                                  (room) => DropdownMenuItem<int?>(
+                                    value: room.id,
+                                    child: Text(room.nama),
+                                  ),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  _filterRoom = value;
+                                  _page = 1;
+                                });
+                                _load();
+                              },
+                            );
+                            final dateButton = OutlinedButton.icon(
+                              onPressed: _pickRange,
+                              icon: const Icon(
+                                Icons.date_range_rounded,
+                                size: 18,
+                              ),
+                              label: Text(
+                                _selectedDateRange == null
+                                    ? 'Tanggal'
+                                    : _isSingleDate(_selectedDateRange!)
+                                        ? _date(_selectedDateRange!.start)
+                                        : _range(_selectedDateRange!),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                            final resetButton = IconButton(
                               onPressed: _resetFilters,
                               tooltip: 'Reset filter',
-                              icon: const Icon(
-                                Icons.filter_alt_off_rounded,
-                              ),
-                            ),
-                          ],
+                              icon: const Icon(Icons.filter_alt_off_rounded),
+                            );
+
+                            if (compact) {
+                              return Column(
+                                children: [
+                                  roomField,
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Expanded(child: dateButton),
+                                      resetButton,
+                                    ],
+                                  ),
+                                ],
+                              );
+                            }
+
+                            return Row(
+                              children: [
+                                Expanded(child: roomField),
+                                const SizedBox(width: 8),
+                                Expanded(child: dateButton),
+                                resetButton,
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -430,6 +446,8 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         ]);
       }).toList(),
     );
+  }
+
   Widget _buildError() {
     return Padding(
       padding: const EdgeInsets.all(24),
