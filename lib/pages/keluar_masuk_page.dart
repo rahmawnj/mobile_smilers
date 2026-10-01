@@ -255,6 +255,15 @@ class _InOutPageState extends State<InOutPage> {
                             : Column(children: [
                                 _InOutTable(rows: rows, userName: widget.userName, page: _page, perPage: _perPage),
                                 if (_response != null) ...[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text('Total ${_response!.meta.total} data', style: const TextStyle(color: Color(0xff7d8c99), fontSize: 10, fontWeight: FontWeight.w600)),
+                                      const SizedBox(width: 14),
+                                      AppPerPageDropdown(value: _perPage, onChanged: (value) { setState(() { _perPage = value; _page = 1; }); _load(); }),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 6),
                                   AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
                                   AppPerPageDropdown(value: _perPage, onChanged: (value) { setState(() { _perPage = value; _page = 1; }); _load(); }),
                                 ],
