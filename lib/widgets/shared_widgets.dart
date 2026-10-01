@@ -13,6 +13,7 @@ import '../pages/detail_pages.dart';
 import '../pages/ready/linen_ready_page.dart';
 import '../pages/ruangan/linen_ruangan_page.dart';
 import '../pages/laundry/linen_laundry_page.dart';
+import '../pages/qr_code_check_page.dart';
 import '../app_navigation.dart';
 
 class AppDataTable extends StatelessWidget {
@@ -1609,15 +1610,13 @@ class BottomNavigation extends StatelessWidget {
             child: _QRNavButton(
               active: activeIndex == 2,
               onTap: () {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Endpoint QR Check belum tersedia di API yang diberikan.',
-                      ),
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => QrCodeCheckPage(
+                      userName: userName,
                     ),
-                  );
+                  ),
+                );
               },
             ),
           ),
