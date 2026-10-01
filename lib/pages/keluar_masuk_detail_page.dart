@@ -107,7 +107,7 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
 
     return AppShell(
       userName: widget.userName,
-      activeIndex: 1,
+      activeIndex: -1,
       showBottomNavigation: false,
       body: AppRefreshIndicator(
         onRefresh: _load,
