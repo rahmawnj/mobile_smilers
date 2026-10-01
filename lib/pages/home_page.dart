@@ -277,14 +277,27 @@ class _DashboardPageState extends State<DashboardPage> {
                                                         child: Column(
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
-                                                            Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                              children: [
-                                                                const SectionTitle(title: 'Keluar Masuk Linen & Tirai', alignment: MainAxisAlignment.start),
-                                                                const SizedBox(height: 2),
-                                                                Align(
-                                                                  alignment: Alignment.centerRight,
-                                                                  child: TextButton(
+                                                            InkWell(
+                                                              borderRadius: BorderRadius.circular(14),
+                                                              onTap: () {
+                                                                Navigator.of(context).push(
+                                                                  MaterialPageRoute(
+                                                                    builder: (_) => InOutPage(
+                                                                      userName: widget.userName,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child: Row(
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                children: [
+                                                                  const Expanded(
+                                                                    child: SectionTitle(
+                                                                      title: 'Keluar Masuk Linen & Tirai',
+                                                                      alignment: MainAxisAlignment.start,
+                                                                    ),
+                                                                  ),
+                                                                  TextButton(
                                                                     onPressed: () {
                                                                       Navigator.of(context).push(
                                                                         MaterialPageRoute(
@@ -296,8 +309,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                     },
                                                                     child: const Text('Lihat Semua'),
                                                                   ),
-                                                                ),
-                                                              ],
+                                                                ],
+                                                              ),
                                                             ),
                                                             const SizedBox(height: 3),
                                                             if (_loading)
