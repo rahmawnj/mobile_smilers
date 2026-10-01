@@ -4,6 +4,7 @@ import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
 import 'api_login_page.dart';
 import 'change_password_page.dart';
+import 'profile_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -100,11 +101,24 @@ class _SettingsPageState extends State<SettingsPage> {
                   offset: const Offset(0, -42),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: _ProfileCard(
-                      name: name,
-                      username: username,
-                      role: role,
-                      foto: foto,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const ProfilePage(),
+                            ),
+                          );
+                        },
+                        child: _ProfileCard(
+                          name: name,
+                          username: username,
+                          role: role,
+                          foto: foto,
+                        ),
+                      ),
                     ),
                   ),
                 ),
