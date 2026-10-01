@@ -209,10 +209,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                                           children: [
                                                             const SectionTitle(title: 'Transaksi Linen & Tirai', alignment: MainAxisAlignment.start),
                                                             const SizedBox(height: 3),
-                                                            Row(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                SizedBox(width: 110, child: _DashboardDataMenu(
+                                                            SingleChildScrollView(
+                                                              scrollDirection: Axis.horizontal,
+                                                              physics: const BouncingScrollPhysics(),
+                                                              child: Row(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: [
+                                                                  SizedBox(width: 110, child: _DashboardDataMenu(
                                                                     icon: Icons.output_rounded,
                                                                     title: 'Data Linen & Tirai Keluar',
                                                                     subtitle: 'Data linen dan tirai yang keluar',
@@ -262,8 +265,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                       );
                                                                     },
                                                                   ),
-                                                                ),
-                                                              ],
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
