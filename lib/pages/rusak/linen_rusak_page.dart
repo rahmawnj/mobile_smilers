@@ -20,7 +20,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
   bool _scanning = false;
   String? _error;
   int _page = 1;
-  int _perPage = 10;
+  int _perPage = 5;
 
   @override
   void initState() {
