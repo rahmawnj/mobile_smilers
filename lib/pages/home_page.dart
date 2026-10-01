@@ -127,7 +127,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               Transform.translate(
-                offset: const Offset(0, -28),
+                offset: const Offset(0, -38),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Center(
@@ -185,7 +185,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               Transform.translate(
-                offset: const Offset(0, -18),
+                offset: const Offset(0, -26),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Center(
@@ -254,7 +254,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               Transform.translate(
-                offset: const Offset(0, -8),
+                offset: const Offset(0, -14),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Center(
