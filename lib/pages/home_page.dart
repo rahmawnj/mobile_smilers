@@ -157,10 +157,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                                           children: [
                                                             const SectionTitle(title: 'Data Linen & Tirai', alignment: MainAxisAlignment.start),
                                                             const SizedBox(height: 3),
-                                                            Row(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                SizedBox(width: 150, child: _DashboardDataMenu(
+                                                            SingleChildScrollView(
+                                                              scrollDirection: Axis.horizontal,
+                                                              physics: const BouncingScrollPhysics(),
+                                                              child: Row(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: [
+                                                                SizedBox(width: 110, child: _DashboardDataMenu(
                                                                     icon: Icons.broken_image_rounded,
                                                                     title: 'Linen & Tirai Rusak',
                                                                     subtitle: 'Data linen dan tirai yang rusak',
@@ -175,9 +178,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                     },
                                                                   ),
                                                                 ),
-                                                                const SizedBox(width: 12),
+                                                                const SizedBox(width: 6),
                                                                 SizedBox(
-                                                                  width: 150,
+                                                                  width: 110,
                                                                   child: _DashboardDataMenu(
                                                                     icon: Icons.report_problem_rounded,
                                                                     title: 'Linen & Tirai Hilang',
@@ -193,7 +196,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                     },
                                                                   ),
                                                                 ),
-                                                              ],
+                                                                ],
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
@@ -208,7 +212,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             Row(
                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                SizedBox(width: 150, child: _DashboardDataMenu(
+                                                                SizedBox(width: 110, child: _DashboardDataMenu(
                                                                     icon: Icons.output_rounded,
                                                                     title: 'Data Linen & Tirai Keluar',
                                                                     subtitle: 'Data linen dan tirai yang keluar',
@@ -223,9 +227,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                     },
                                                                   ),
                                                                 ),
-                                                                const SizedBox(width: 12),
+                                                                const SizedBox(width: 6),
                                                                 SizedBox(
-                                                                  width: 150,
+                                                                  width: 110,
                                                                   child: _DashboardDataMenu(
                                                                     icon: Icons.input_rounded,
                                                                     title: 'Data Linen & Tirai Masuk',
@@ -241,9 +245,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                     },
                                                                   ),
                                                                 ),
-                                                                const SizedBox(width: 12),
+                                                                const SizedBox(width: 6),
                                                                 SizedBox(
-                                                                  width: 150,
+                                                                  width: 110,
                                                                   child: _DashboardDataMenu(
                                                                     icon: Icons.assignment_rounded,
                                                                     title: 'Permintaan Ruangan',
@@ -441,7 +445,7 @@ class _LinenCategoryCard extends StatelessWidget {
                   size: 22,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 6),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
