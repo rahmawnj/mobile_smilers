@@ -97,12 +97,9 @@ class _DashboardPageState extends State<DashboardPage> {
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 14),
-          child: Stack(
-            clipBehavior: Clip.none,
+          child: Column(
             children: [
-              Column(
-                children: [
-                  DashboardHeader(userName: widget.userName),
+              DashboardHeader(userName: widget.userName),
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -120,7 +117,36 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   Column(
                     children: [
-                                    Transform.translate(
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 100),
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -100),
+                                        child: MetricCard(
+                                        metrics: [
+                                          {
+                                            'value': _loading ? '...' : _readyCount.toString(),
+                                            'unit': 'Linen',
+                                            'title': 'Linen & Tirai Ready',
+                                            'action': 'Lihat Data',
+                                          },
+                                          {
+                                            'value': _loading ? '...' : _laundryCount.toString(),
+                                            'unit': 'Linen',
+                                            'title': 'Linen & Tirai di Laundry',
+                                            'action': 'Lihat Data',
+                                          },
+                                          {
+                                            'value': _loading ? '...' : _roomCount.toString(),
+                                            'unit': 'Linen',
+                                            'title': 'Linen & Tirai di Ruangan',
+                                            'action': 'Lihat Data',
+                                          },
+                                        ],
+                                        userName: widget.userName,
+                                        ),
+                                      ),
+                                    ),
+                      Transform.translate(
                         offset: const Offset(0, -85),
                         child: Container(
                           width: double.infinity,
@@ -330,34 +356,6 @@ class _DashboardPageState extends State<DashboardPage> {
                     ],
                   ),
                 ],
-              ),
-              Positioned(
-                top: 140,
-                left: 0,
-                right: 0,
-                child: MetricCard(
-                  metrics: [
-                    {
-                      'value': _loading ? '...' : _readyCount.toString(),
-                      'unit': 'Linen',
-                      'title': 'Linen & Tirai Ready',
-                      'action': 'Lihat Data',
-                    },
-                    {
-                      'value': _loading ? '...' : _laundryCount.toString(),
-                      'unit': 'Linen',
-                      'title': 'Linen & Tirai di Laundry',
-                      'action': 'Lihat Data',
-                    },
-                    {
-                      'value': _loading ? '...' : _roomCount.toString(),
-                      'unit': 'Linen',
-                      'title': 'Linen & Tirai di Ruangan',
-                      'action': 'Lihat Data',
-                    },
-                  ],
-                  userName: widget.userName,
-                ),
               ),
             ],
           ),
