@@ -176,6 +176,33 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   }
 
   Future<void> _updateStatus(int id) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Pengiriman'),
+          content: const Text(
+            'Apakah permintaan linen ini sudah siap dikirim? '
+            'Setelah dikirim, status akan berubah menjadi Terkirim dan '
+            'tombol kirim tidak dapat digunakan lagi.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              icon: const Icon(Icons.send_rounded),
+              label: const Text('Ya, Kirim'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) return;
+
     try {
       final result = await ApiService.instance.updatePermintaanLinenStatus(id);
       if (!mounted) return;
@@ -350,6 +377,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                     ],
                                     rows: rows.asMap().entries.map((entry) {
                                       final item = entry.value;
+                                      final isSent = item.status.trim().toLowerCase() == 'terkirim';
                                       final number = meta == null
                                           ? entry.key + 1
                                           : (meta.currentPage - 1) * meta.perPage +
@@ -371,9 +399,9 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                                 icon: const Icon(Icons.visibility),
                                               ),
                                               IconButton(
-                                                tooltip: 'Ubah status',
-                                                onPressed: () => _updateStatus(item.id),
-                                                icon: const Icon(Icons.local_shipping),
+                                                tooltip: isSent ? 'Sudah terkirim' : 'Kirim permintaan',
+                                                onPressed: isSent ? null : () => _updateStatus(item.id),
+                                                icon: const Icon(Icons.send_rounded),
                                               ),
                                             ],
                                           ),
