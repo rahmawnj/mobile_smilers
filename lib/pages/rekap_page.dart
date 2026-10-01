@@ -188,41 +188,27 @@ class _RekapCard extends StatelessWidget {
 }
 class _RekapTable extends StatelessWidget {
   const _RekapTable({required this.rows});
-
   final List<RekapanTransaksiItem> rows;
 
   @override
-  Widget build(BuildContext context) => TableSurface(child: LayoutBuilder(
-    builder: (context, constraints) => SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: constraints.maxWidth),
-        child: DataTable(
-          headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-          headingTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10, fontWeight: FontWeight.w700),
-          dataTextStyle: const TextStyle(color: Color(0xff465564), fontSize: 10),
-          columns: const [
-            DataColumn(label: Text('No')),
-            DataColumn(label: Text('Tanggal')),
-            DataColumn(label: Text('Jumlah Linen Keluar')),
-            DataColumn(label: Text('Jumlah Linen Masuk')),
-            DataColumn(label: Text('Berat Linen Masuk')),
-          ],
-          rows: rows.asMap().entries.map((entry) {
-            final index = entry.key;
-            final r = entry.value;
-            return DataRow(cells: [
-              DataCell(Text('${index + 1}')),
-              DataCell(Text(r.tanggal)),
-              DataCell(Text('${r.jumlahLinenKeluar}')),
-              DataCell(Text('${r.jumlahLinenMasuk}')),
-              DataCell(Text('${r.beratLinenMasuk}')),
-            ]);
-          }).toList(),
-        ),
-      ),
-    ),
-  ));
+  Widget build(BuildContext context) => AppDataTable(
+    columns: const [
+      DataColumn(label: Text('No')),
+      DataColumn(label: Text('Tanggal')),
+      DataColumn(label: Text('Jumlah Linen Keluar')),
+      DataColumn(label: Text('Jumlah Linen Masuk')),
+      DataColumn(label: Text('Berat Linen Masuk')),
+    ],
+    rows: rows.asMap().entries.map((entry) {
+      final index = entry.key;
+      final r = entry.value;
+      return DataRow(cells: [
+        DataCell(Text('${index + 1}')),
+        DataCell(Text(r.tanggal)),
+        DataCell(Text('${r.jumlahLinenKeluar}')),
+        DataCell(Text('${r.jumlahLinenMasuk}')),
+        DataCell(Text('${r.beratLinenMasuk}')),
+      ]);
+    }).toList(),
+  );
 }
