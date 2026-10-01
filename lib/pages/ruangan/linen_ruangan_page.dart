@@ -141,7 +141,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                             tooltip: 'Lihat detail',
                                             onPressed: () => _openDetail(item),
                                             icon: const Icon(
-                                              Icons.visibility_rounded,
+                                              Icons.visibility_outlined,
                                               size: 18,
                                               color: Color(0xff1261dc),
                                             ),
