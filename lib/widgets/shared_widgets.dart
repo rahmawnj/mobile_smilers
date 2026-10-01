@@ -423,9 +423,6 @@ class DashboardHeader extends StatelessWidget {
             Color(0xff159cf1),
           ],
         ),
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(20),
-        ),
       ),
       child: Stack(
         children: [
