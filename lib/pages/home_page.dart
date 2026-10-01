@@ -104,233 +104,252 @@ class _DashboardPageState extends State<DashboardPage> {
                 children: [
                   DashboardHeader(userName: widget.userName),
                   Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(
-                    top: -25,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(34),
-                          topRight: Radius.circular(34),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Column(
+                    clipBehavior: Clip.none,
                     children: [
-                      Transform.translate(
-                        offset: const Offset(0, -85),
+                      Positioned.fill(
+                        top: -25,
                         child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
-                          child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  DashboardCard(
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            const SectionTitle(title: 'Data Linen & Tirai', alignment: MainAxisAlignment.start),
-                                                            const SizedBox(height: 3),
-                                                            SingleChildScrollView(
-                                                              scrollDirection: Axis.horizontal,
-                                                              physics: const BouncingScrollPhysics(),
-                                                              child: Row(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                SizedBox(width: 110, child: _DashboardDataMenu(
-                                                                    icon: Icons.broken_image_rounded,
-                                                                    title: 'Linen & Tirai Rusak',
-                                                                    subtitle: 'Data linen dan tirai yang rusak',
-                                                                    onTap: () {
-                                                                      Navigator.of(context).push(
-                                                                        MaterialPageRoute(
-                                                                          builder: (_) => LinenRusakPage(
-                                                                            userName: widget.userName,
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(width: 6),
-                                                                SizedBox(
-                                                                  width: 110,
-                                                                  child: _DashboardDataMenu(
-                                                                    icon: Icons.report_problem_rounded,
-                                                                    title: 'Linen & Tirai Hilang',
-                                                                    subtitle: 'Data linen dan tirai yang hilang',
-                                                                    onTap: () {
-                                                                      Navigator.of(context).push(
-                                                                        MaterialPageRoute(
-                                                                          builder: (_) => LinenHilangPage(
-                                                                            userName: widget.userName,
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                    ),
-                                                  const SizedBox(height: 18),
-                                                  DashboardCard(
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            const SectionTitle(title: 'Transaksi Linen & Tirai', alignment: MainAxisAlignment.start),
-                                                            const SizedBox(height: 3),
-                                                            SingleChildScrollView(
-                                                              scrollDirection: Axis.horizontal,
-                                                              physics: const BouncingScrollPhysics(),
-                                                              child: Row(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  SizedBox(width: 110, child: _DashboardDataMenu(
-                                                                    icon: Icons.output_rounded,
-                                                                    title: 'Data Linen & Tirai Keluar',
-                                                                    subtitle: 'Data linen dan tirai yang keluar',
-                                                                    onTap: () {
-                                                                      Navigator.of(context).push(
-                                                                        MaterialPageRoute(
-                                                                          builder: (_) => LinenKeluarPage(
-                                                                            userName: widget.userName,
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(width: 6),
-                                                                SizedBox(
-                                                                  width: 110,
-                                                                  child: _DashboardDataMenu(
-                                                                    icon: Icons.input_rounded,
-                                                                    title: 'Data Linen & Tirai Masuk',
-                                                                    subtitle: 'Data linen dan tirai yang masuk',
-                                                                    onTap: () {
-                                                                      Navigator.of(context).push(
-                                                                        MaterialPageRoute(
-                                                                          builder: (_) => LinenMasukPage(
-                                                                            userName: widget.userName,
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(width: 6),
-                                                                SizedBox(
-                                                                  width: 110,
-                                                                  child: _DashboardDataMenu(
-                                                                    icon: Icons.assignment_rounded,
-                                                                    title: 'Permintaan Ruangan',
-                                                                    subtitle: 'Permintaan linen dari ruangan',
-                                                                    onTap: () {
-                                                                      Navigator.of(context).push(
-                                                                        MaterialPageRoute(
-                                                                          builder: (_) => PermintaanLinenPage(
-                                                                            userName: widget.userName,
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                    ),
-                                                  const SizedBox(height: 18),
-                                                  DashboardCard(
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            InkWell(
-                                                              borderRadius: BorderRadius.circular(14),
-                                                              onTap: () {
-                                                                Navigator.of(context).push(
-                                                                  MaterialPageRoute(
-                                                                    builder: (_) => InOutPage(
-                                                                      userName: widget.userName,
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                              child: Row(
-                                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                                children: [
-                                                                  const Expanded(
-                                                                    child: SectionTitle(
-                                                                      title: 'Keluar Masuk Linen & Tirai',
-                                                                      alignment: MainAxisAlignment.start,
-                                                                    ),
-                                                                  ),
-                                                                  TextButton(
-                                                                    onPressed: () {
-                                                                      Navigator.of(context).push(
-                                                                        MaterialPageRoute(
-                                                                          builder: (_) => InOutPage(
-                                                                            userName: widget.userName,
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                    child: const Text('Lihat Semua'),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            const SizedBox(height: 3),
-                                                            if (_loading)
-                                                              const AppPageLoading()
-                                                            else if (_inOutRows.isEmpty)
-                                                              const Padding(
-                                                                padding: EdgeInsets.all(24),
-                                                                child: Center(
-                                                                  child: Text('Tidak ada data Keluar Masuk.'),
-                                                                ),
-                                                              )
-                                                            else
-                                                              AppDataTable(
-                                                                columns: const [
-                                                                  DataColumn(label: Text('Nama Ruangan')),
-                                                                  DataColumn(label: Text('Linen Masuk')),
-                                                                  DataColumn(label: Text('Linen Keluar')),
-                                                                  DataColumn(label: Text('Selisih')),
-                                                                ],
-                                                                rows: _inOutRows
-                                                                    .map(
-                                                                      (r) => DataRow(
-                                                                        cells: [
-                                                                          DataCell(Text(r['nama_ruangan']?.toString() ?? '-')),
-                                                                          DataCell(Text(r['linen_masuk']?.toString() ?? '0')),
-                                                                          DataCell(Text(r['linen_keluar']?.toString() ?? '0')),
-                                                                          DataCell(Text(r['selisih']?.toString() ?? '0')),
-                                                                        ],
-                                                                      ),
-                                                                    )
-                                                                    .toList(),
-                                                              ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                ],
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(34),
+                              topRight: Radius.circular(34),
+                            ),
                           ),
                         ),
                       ),
+                      Column(
+                        children: [
+                          Transform.translate(
+                            offset: const Offset(0, -85),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DashboardCard(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SectionTitle(
+                                          title: 'Data Linen & Tirai',
+                                          alignment: MainAxisAlignment.start,
+                                        ),
+                                        const SizedBox(height: 3),
+                                        SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          physics: const BouncingScrollPhysics(),
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: 110,
+                                                child: _DashboardDataMenu(
+                                                  icon: Icons.broken_image_rounded,
+                                                  title: 'Linen & Tirai Rusak',
+                                                  subtitle: 'Data linen dan tirai yang rusak',
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (_) => LinenRusakPage(
+                                                          userName: widget.userName,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              SizedBox(
+                                                width: 110,
+                                                child: _DashboardDataMenu(
+                                                  icon: Icons.report_problem_rounded,
+                                                  title: 'Linen & Tirai Hilang',
+                                                  subtitle: 'Data linen dan tirai yang hilang',
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (_) => LinenHilangPage(
+                                                          userName: widget.userName,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 18),
+                                  DashboardCard(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SectionTitle(
+                                          title: 'Transaksi Linen & Tirai',
+                                          alignment: MainAxisAlignment.start,
+                                        ),
+                                        const SizedBox(height: 3),
+                                        SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          physics: const BouncingScrollPhysics(),
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: 110,
+                                                child: _DashboardDataMenu(
+                                                  icon: Icons.output_rounded,
+                                                  title: 'Data Linen & Tirai Keluar',
+                                                  subtitle: 'Data linen dan tirai yang keluar',
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (_) => LinenKeluarPage(
+                                                          userName: widget.userName,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              SizedBox(
+                                                width: 110,
+                                                child: _DashboardDataMenu(
+                                                  icon: Icons.input_rounded,
+                                                  title: 'Data Linen & Tirai Masuk',
+                                                  subtitle: 'Data linen dan tirai yang masuk',
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (_) => LinenMasukPage(
+                                                          userName: widget.userName,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              SizedBox(
+                                                width: 110,
+                                                child: _DashboardDataMenu(
+                                                  icon: Icons.assignment_rounded,
+                                                  title: 'Permintaan Ruangan',
+                                                  subtitle: 'Permintaan linen dari ruangan',
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (_) => PermintaanLinenPage(
+                                                          userName: widget.userName,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 18),
+                                  DashboardCard(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        InkWell(
+                                          borderRadius: BorderRadius.circular(14),
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => InOutPage(
+                                                  userName: widget.userName,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              const Expanded(
+                                                child: SectionTitle(
+                                                  title: 'Keluar Masuk Linen & Tirai',
+                                                  alignment: MainAxisAlignment.start,
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (_) => InOutPage(
+                                                        userName: widget.userName,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: const Text('Lihat Semua'),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        if (_loading)
+                                          const AppPageLoading()
+                                        else if (_inOutRows.isEmpty)
+                                          const Padding(
+                                            padding: EdgeInsets.all(24),
+                                            child: Center(
+                                              child: Text('Tidak ada data Keluar Masuk.'),
+                                            ),
+                                          )
+                                        else
+                                          AppDataTable(
+                                            columns: const [
+                                              DataColumn(label: Text('Nama Ruangan')),
+                                              DataColumn(label: Text('Linen Masuk')),
+                                              DataColumn(label: Text('Linen Keluar')),
+                                              DataColumn(label: Text('Selisih')),
+                                            ],
+                                            rows: _inOutRows
+                                                .map(
+                                                  (r) => DataRow(
+                                                    cells: [
+                                                      DataCell(
+                                                        Text(r['nama_ruangan']?.toString() ?? '-'),
+                                                      ),
+                                                      DataCell(
+                                                        Text(r['linen_masuk']?.toString() ?? '0'),
+                                                      ),
+                                                      DataCell(
+                                                        Text(r['linen_keluar']?.toString() ?? '0'),
+                                                      ),
+                                                      DataCell(
+                                                        Text(r['selisih']?.toString() ?? '0'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                                .toList(),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                  ],
-                ),
+                ],
               ),
               Positioned(
                 top: 185,
@@ -365,7 +384,6 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
     );
-  }
 }
 
 class _DashboardDataMenu extends StatelessWidget {
