@@ -190,18 +190,23 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         ),
         if(!_loading&&_error==null&&rows.isEmpty)const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data Linen & Tirai Keluar.'))),
         if(meta!=null) ...[
-          AppPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
-          const SizedBox(height:6),
-          AppPerPageDropdown(
-            value: _perPage,
-            onChanged: (n) {
-              setState(() {
-                _perPage = n;
-                _page = 1;
-              });
-              _load();
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text('Total ${meta.total} linen keluar',style: const TextStyle(color: Color(0xff7d8c99),fontSize: 10,fontWeight: FontWeight.w600)),
+              const SizedBox(width: 14),
+              AppPerPageDropdown(
+                value: _perPage,
+                onChanged: (n) {
+                  setState(() { _perPage = n; _page = 1; });
+                  _load();
+                },
+              ),
+            ],
           ),
+          const SizedBox(height: 6),
+          AppPagination(meta:meta,onPage:(p){setState(()=>_page=p);_load();}),
+
         ],
       ]))),
     ]));
