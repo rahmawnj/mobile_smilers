@@ -369,8 +369,8 @@ class _DashboardDataMenu extends StatelessWidget {
             onTap: onTap,
             customBorder: const CircleBorder(),
             child: SizedBox(
-              width: 80,
-              height: 80,
+              width: 60,
+              height: 60,
               child: Center(
                 child: Icon(
                   icon,
