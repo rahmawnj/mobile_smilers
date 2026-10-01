@@ -320,71 +320,34 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
   }
 
   Widget _buildTable(List<LinenRusakItem> rows, LinenMeta? meta) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .05),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
-            headingTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-              fontWeight: FontWeight.w700,
-            ),
-            dataTextStyle: const TextStyle(
-              color: Color(0xff465564),
-              fontSize: 10,
-            ),
-            columnSpacing: 26,
-            horizontalMargin: 14,
-            columns: const [
-              DataColumn(label: Text('ID')),
-              DataColumn(label: Text('Nama Linen')),
-              DataColumn(label: Text('RFID')),
-              DataColumn(label: Text('QR Code')),
-              DataColumn(label: Text('Jam')),
-              DataColumn(label: Text('Tanggal')),
-              DataColumn(label: Text('Tahun Pembuatan')),
-            ],
-            rows: rows.asMap().entries.map((entry) {
-              final index = entry.key;
-              final item = entry.value;
-              final number = meta == null
-                  ? index + 1
-                  : (meta.currentPage - 1) * meta.perPage + index + 1;
-              return DataRow(
-                cells: [
-                  DataCell(Text(number.toString())),
-                  DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
-                  DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
-                  DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
-                  DataCell(Text(item.jam.isEmpty ? '-' : item.jam)),
-                  DataCell(Text(item.tanggal.isEmpty ? '-' : item.tanggal)),
-                  DataCell(
-                    Text(
-                      item.tahunPembuatan.isEmpty
-                          ? '-'
-                          : item.tahunPembuatan,
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
-      ),
+    return AppDataTable(
+      columns: const [
+        DataColumn(label: Text('ID')),
+        DataColumn(label: Text('Nama Linen')),
+        DataColumn(label: Text('RFID')),
+        DataColumn(label: Text('QR Code')),
+        DataColumn(label: Text('Jam')),
+        DataColumn(label: Text('Tanggal')),
+        DataColumn(label: Text('Tahun Pembuatan')),
+      ],
+      rows: rows.asMap().entries.map((entry) {
+        final index = entry.key;
+        final item = entry.value;
+        final number = meta == null
+            ? index + 1
+            : (meta.currentPage - 1) * meta.perPage + index + 1;
+        return DataRow(
+          cells: [
+            DataCell(Text(number.toString())),
+            DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+            DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
+            DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
+            DataCell(Text(item.jam.isEmpty ? '-' : item.jam)),
+            DataCell(Text(item.tanggal.isEmpty ? '-' : item.tanggal)),
+            DataCell(Text(item.tahunPembuatan.isEmpty ? '-' : item.tahunPembuatan)),
+          ],
+        );
+      }).toList(),
     );
   }
 
