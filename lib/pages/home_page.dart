@@ -384,6 +384,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
     );
+  }
 }
 
 class _DashboardDataMenu extends StatelessWidget {
