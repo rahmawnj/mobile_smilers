@@ -1,5 +1,3 @@
-import 'dart:ui' show PointerDeviceKind;
-
 import 'package:flutter/material.dart';
 
 import '../../api/api_service.dart';
@@ -386,90 +384,31 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
     List<LinenHilangItem> rows,
     LinenMeta? meta,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .05),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
-        child: ScrollConfiguration(
-          behavior: const MaterialScrollBehavior().copyWith(
-            dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-            },
-          ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingRowColor: WidgetStateProperty.all(
-                const Color(0xff1261dc),
-              ),
-              headingTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                fontWeight: FontWeight.w700,
-              ),
-              dataTextStyle: const TextStyle(
-                color: Color(0xff465564),
-                fontSize: 10,
-              ),
-              columnSpacing: 26,
-              horizontalMargin: 14,
-              columns: const [
-                DataColumn(label: Text('ID')),
-                DataColumn(label: Text('Ruangan')),
-                DataColumn(label: Text('Kategori')),
-                DataColumn(label: Text('Jenis Linen')),
-                DataColumn(label: Text('QR Code')),
-                DataColumn(label: Text('RFID')),
-                DataColumn(label: Text('Terakhir Transaksi')),
-                DataColumn(label: Text('Tanggal Hilang')),
-              ],
-              rows: rows.map((item) {
-                return DataRow(
-                  cells: [
-                    DataCell(Text(item.id.toString())),
-                    DataCell(
-                      Text(item.namaRuangan.isEmpty ? '-' : item.namaRuangan),
-                    ),
-                    DataCell(
-                      Text(
-                        item.kategoriLinen.isEmpty ? '-' : item.kategoriLinen,
-                      ),
-                    ),
-                    DataCell(
-                      Text(item.jenisLinen.isEmpty ? '-' : item.jenisLinen),
-                    ),
-                    DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
-                    DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
-                    DataCell(
-                      Text(
-                        item.tanggalTerakhirTransaksi.isEmpty
-                            ? '-'
-                            : item.tanggalTerakhirTransaksi,
-                      ),
-                    ),
-                    DataCell(
-                      Text(
-                        item.tanggalHilang.isEmpty ? '-' : item.tanggalHilang,
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-      ),
+    return AppDataTable(
+      columns: const [
+        DataColumn(label: Text('ID')),
+        DataColumn(label: Text('Ruangan')),
+        DataColumn(label: Text('Kategori')),
+        DataColumn(label: Text('Jenis Linen')),
+        DataColumn(label: Text('QR Code')),
+        DataColumn(label: Text('RFID')),
+        DataColumn(label: Text('Terakhir Transaksi')),
+        DataColumn(label: Text('Tanggal Hilang')),
+      ],
+      rows: rows.map((item) {
+        return DataRow(
+          cells: [
+            DataCell(Text(item.id.toString())),
+            DataCell(Text(item.namaRuangan.isEmpty ? '-' : item.namaRuangan)),
+            DataCell(Text(item.kategoriLinen.isEmpty ? '-' : item.kategoriLinen)),
+            DataCell(Text(item.jenisLinen.isEmpty ? '-' : item.jenisLinen)),
+            DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
+            DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
+            DataCell(Text(item.tanggalTerakhirTransaksi.isEmpty ? '-' : item.tanggalTerakhirTransaksi)),
+            DataCell(Text(item.tanggalHilang.isEmpty ? '-' : item.tanggalHilang)),
+          ],
+        );
+      }).toList(),
     );
   }
 
