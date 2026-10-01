@@ -353,86 +353,48 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                               )
                             : Column(
                                 children: [
-                                  TableSurface(
-                                    
-                                    
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: DataTable(
-                                        headingRowColor:
-                                            WidgetStateProperty.all(
-                                          const Color(0xff1261dc),
-                                        ),
-                                        headingTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        dataTextStyle: const TextStyle(
-                                          fontSize: 10,
-                                        ),
-                                        columns: const [
-                                          DataColumn(label: Text('No')),
-                                          DataColumn(
-                                            label: Text('Tanggal Permintaan'),
-                                          ),
-                                          DataColumn(label: Text('Nama Ruangan')),
-                                          DataColumn(
-                                            label: Text('Nama Kepala Ruangan'),
-                                          ),
-                                          DataColumn(label: Text('Status')),
-                                          DataColumn(label: Text('Action')),
-                                        ],
-                                        rows: rows.asMap().entries.map((entry) {
-                                          final item = entry.value;
-                                          final number = meta == null
-                                              ? entry.key + 1
-                                              : (meta.currentPage - 1) *
-                                                      meta.perPage +
-                                                  entry.key +
-                                                  1;
-
-                                          return DataRow(
-                                            cells: [
-                                              DataCell(Text('$number')),
-                                              DataCell(
-                                                Text(item.tanggalPermintaan),
+                                  AppDataTable(
+                                    columns: const [
+                                      DataColumn(label: Text('No')),
+                                      DataColumn(label: Text('Tanggal Permintaan')),
+                                      DataColumn(label: Text('Nama Ruangan')),
+                                      DataColumn(label: Text('Nama Kepala Ruangan')),
+                                      DataColumn(label: Text('Status')),
+                                      DataColumn(label: Text('Action')),
+                                    ],
+                                    rows: rows.asMap().entries.map((entry) {
+                                      final item = entry.value;
+                                      final number = meta == null
+                                          ? entry.key + 1
+                                          : (meta.currentPage - 1) * meta.perPage +
+                                              entry.key +
+                                              1;
+                                      return DataRow(cells: [
+                                        DataCell(Text('$number')),
+                                        DataCell(Text(item.tanggalPermintaan)),
+                                        DataCell(Text(item.namaRuangan)),
+                                        DataCell(Text(item.namaKepalaRuangan)),
+                                        DataCell(Text(item.status)),
+                                        DataCell(
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                tooltip: 'Detail',
+                                                onPressed: () => _showDetail(item.id),
+                                                icon: const Icon(Icons.visibility),
                                               ),
-                                              DataCell(Text(item.namaRuangan)),
-                                              DataCell(
-                                                Text(item.namaKepalaRuangan),
-                                              ),
-                                              DataCell(Text(item.status)),
-                                              DataCell(
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    IconButton(
-                                                      tooltip: 'Detail',
-                                                      onPressed: () =>
-                                                          _showDetail(item.id),
-                                                      icon: const Icon(
-                                                        Icons.visibility,
-                                                      ),
-                                                    ),
-                                                    IconButton(
-                                                      tooltip: 'Ubah status',
-                                                      onPressed: () =>
-                                                          _updateStatus(item.id),
-                                                      icon: const Icon(
-                                                        Icons.local_shipping,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                              IconButton(
+                                                tooltip: 'Ubah status',
+                                                onPressed: () => _updateStatus(item.id),
+                                                icon: const Icon(Icons.local_shipping),
                                               ),
                                             ],
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ),
+                                          ),
+                                        ),
+                                      ]);
+                                    }).toList(),
+                                  )
                                   const SizedBox(height: 10),
                                   if (meta != null)
                                     AppPagination(
