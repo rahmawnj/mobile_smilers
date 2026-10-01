@@ -151,19 +151,16 @@ class _DashboardPageState extends State<DashboardPage> {
                           child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Center(
-                                                    child: ConstrainedBox(
-                                                      constraints: const BoxConstraints(maxWidth: 620),
-                                                      child: DashboardCard(
+                                                  DashboardCard(
                                                         child: Column(
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
-                                                            const SectionTitle(title: 'Data Linen & Tirai'),
+                                                            const SectionTitle(title: 'Data Linen & Tirai', alignment: MainAxisAlignment.start),
                                                             const SizedBox(height: 3),
                                                             Row(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                Expanded(
-                                                                  child: _DashboardDataMenu(
+                                                                SizedBox(width: 150, child: _DashboardDataMenu(
                                                                     icon: Icons.broken_image_rounded,
                                                                     title: 'Linen & Tirai Rusak',
                                                                     subtitle: 'Data linen dan tirai yang rusak',
@@ -199,23 +196,18 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
                                                     ),
-                                                  ),
                                                   const SizedBox(height: 18),
-                                                  Center(
-                                                    child: ConstrainedBox(
-                                                      constraints: const BoxConstraints(maxWidth: 900),
-                                                      child: DashboardCard(
+                                                  DashboardCard(
                                                         child: Column(
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
-                                                            const SectionTitle(title: 'Transaksi Linen & Tirai'),
+                                                            const SectionTitle(title: 'Transaksi Linen & Tirai', alignment: MainAxisAlignment.start),
                                                             const SizedBox(height: 3),
                                                             Row(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                Expanded(
-                                                                  child: _DashboardDataMenu(
+                                                                SizedBox(width: 150, child: _DashboardDataMenu(
                                                                     icon: Icons.output_rounded,
                                                                     title: 'Data Linen & Tirai Keluar',
                                                                     subtitle: 'Data linen dan tirai yang keluar',
@@ -268,21 +260,16 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
                                                     ),
-                                                  ),
                                                   const SizedBox(height: 18),
-                                                  Center(
-                                                    child: ConstrainedBox(
-                                                      constraints: const BoxConstraints(maxWidth: double.infinity),
-                                                      child: DashboardCard(
+                                                  DashboardCard(
                                                         child: Column(
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
                                                             Column(
                                                               crossAxisAlignment: CrossAxisAlignment.stretch,
                                                               children: [
-                                                                const SectionTitle(title: 'Keluar Masuk Linen & Tirai'),
+                                                                const SectionTitle(title: 'Keluar Masuk Linen & Tirai', alignment: MainAxisAlignment.start),
                                                                 const SizedBox(height: 2),
                                                                 Align(
                                                                   alignment: Alignment.centerRight,
