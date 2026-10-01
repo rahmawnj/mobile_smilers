@@ -99,7 +99,7 @@ class _DashboardPageState extends State<DashboardPage> {
           padding: EdgeInsets.zero,
           child: Container(
             color: Colors.white,
-            padding: const EdgeInsets.only(bottom: 88),
+            padding: const EdgeInsets.only(bottom: 200),
             child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -110,13 +110,13 @@ class _DashboardPageState extends State<DashboardPage> {
                     clipBehavior: Clip.none,
                     children: [
                       Positioned.fill(
-                        top: -25,
+                        top: -30,
                         child: Container(
                           decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(34),
-                              topRight: Radius.circular(34),
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
                             ),
                           ),
                         ),
@@ -124,7 +124,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Column(
                         children: [
                           Transform.translate(
-                            offset: const Offset(0, -55),
+                            offset: const Offset(0, 90),
                             child: Container(
                               width: double.infinity,
                               padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
@@ -355,7 +355,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
               Positioned(
-                top: 185,
+                top: 130,
                 left: 0,
                 right: 0,
                 child: MetricCard(
