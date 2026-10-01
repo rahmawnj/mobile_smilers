@@ -143,10 +143,12 @@ class _DashboardPageState extends State<DashboardPage> {
                                         userName: widget.userName,
                                       ),
                                     ),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
-                        child: Column(
+                      Transform.translate(
+                        offset: const Offset(0, -20),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
+                          child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Center(
@@ -336,6 +338,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                     ),
                                                   ),
                                                 ],
+                          ),
                         ),
                       ),
                     ],
