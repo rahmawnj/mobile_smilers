@@ -18,9 +18,16 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
   List<LinenRoomOption> _rooms = const [];
   int? _roomId;
   DateTimeRange? _range;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() { super.initState(); _load(); _loadRooms(); }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   String _date(DateTime d) => '${d.month}/${d.day}/${d.year}';
   String? get _daterange => _range == null ? null : '${_date(_range!.start)} - ${_date(_range!.end)}';
@@ -35,7 +42,7 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final r = await ApiService.instance.getRekapanTransaksi(daterange: _daterange, ruangan: _roomId);
+      final r = await ApiService.instance.getRekapanTransaksi(search: _searchController.text.trim(), daterange: _daterange, ruangan: _roomId);
       if (!mounted) return;
       setState(() { _response = r; _loading = false; });
     } on ApiException catch (e) {
@@ -69,9 +76,39 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
 
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-            child: Row(children: [
-              Expanded(
-                child: DropdownButtonFormField<int?>(
+            child: Column(
+              children: [
+                TextField(
+                  controller: _searchController,
+                  onSubmitted: (_) => _load(),
+                  decoration: InputDecoration(
+                    hintText: 'Cari data transaksi...',
+                    prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                    suffixIcon: _searchController.text.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: 'Hapus pencarian',
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {});
+                              _load();
+                            },
+                            icon: const Icon(Icons.close_rounded, size: 18),
+                          ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+                const SizedBox(height: 8),
+                Row(children: [
+                  Expanded(
+                    child: DropdownButtonFormField<int?>(
                   value: _roomId,
                   isExpanded: true,
                   decoration: InputDecoration(
@@ -88,13 +125,15 @@ class _RekapanTransaksiPageState extends State<RekapanTransaksiPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              IconButton(
-                onPressed: _pickRange,
-                tooltip: 'Pilih rentang tanggal',
-                style: IconButton.styleFrom(backgroundColor: const Color(0xff1261dc), foregroundColor: Colors.white),
-                icon: const Icon(Icons.date_range_rounded, size: 20),
-              ),
-            ]),
+                  IconButton(
+                    onPressed: _pickRange,
+                    tooltip: 'Pilih rentang tanggal',
+                    style: IconButton.styleFrom(backgroundColor: const Color(0xff1261dc), foregroundColor: Colors.white),
+                    icon: const Icon(Icons.date_range_rounded, size: 20),
+                  ),
+                ]),
+              ],
+            ),
           ),
           if (_range != null)
             Padding(
