@@ -97,10 +97,13 @@ class _DashboardPageState extends State<DashboardPage> {
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 14),
-          child: Column(
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              DashboardHeader(userName: widget.userName),
-              Stack(
+              Column(
+                children: [
+                  DashboardHeader(userName: widget.userName),
+                  Stack(
                 clipBehavior: Clip.none,
                 children: [
                   Positioned.fill(
@@ -117,11 +120,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   Column(
                     children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 100),
-                                      child: Transform.translate(
-                                        offset: const Offset(0, -100),
-                                        child: MetricCard(
+                                    Transform.translate(
+                                      offset: const Offset(0, -100),
+                                      child: MetricCard(
                                         metrics: [
                                           {
                                             'value': _loading ? '...' : _readyCount.toString(),
@@ -143,7 +144,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                           },
                                         ],
                                         userName: widget.userName,
-                                        ),
                                       ),
                                     ),
                       Transform.translate(
@@ -355,7 +355,36 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ],
                   ),
-                ],
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 140,
+                left: 0,
+                right: 0,
+                child: MetricCard(
+                  metrics: [
+                    {
+                      'value': _loading ? '...' : _readyCount.toString(),
+                      'unit': 'Linen',
+                      'title': 'Linen & Tirai Ready',
+                      'action': 'Lihat Data',
+                    },
+                    {
+                      'value': _loading ? '...' : _laundryCount.toString(),
+                      'unit': 'Linen',
+                      'title': 'Linen & Tirai di Laundry',
+                      'action': 'Lihat Data',
+                    },
+                    {
+                      'value': _loading ? '...' : _roomCount.toString(),
+                      'unit': 'Linen',
+                      'title': 'Linen & Tirai di Ruangan',
+                      'action': 'Lihat Data',
+                    },
+                  ],
+                  userName: widget.userName,
+                ),
               ),
             ],
           ),
@@ -363,7 +392,6 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
     );
   }
-}
 
 class _DashboardDataMenu extends StatelessWidget {
   const _DashboardDataMenu({
