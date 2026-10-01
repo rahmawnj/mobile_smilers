@@ -25,7 +25,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   bool _scanning = false;
   String? _error;
   int _page = 1;
-  int _perPage = 10;
+  int _perPage = 5;
   int? _filterRoom;
   DateTimeRange? _selectedDateRange;
 
@@ -432,7 +432,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       ],
       rows: rows.asMap().entries.map((entry) {
         final item = entry.value;
-        final no = entry.key + 1;
+        final no = (meta == null ? 0 : (meta.currentPage - 1) * meta.perPage) + entry.key + 1;
         return DataRow(cells: [
           DataCell(Text(no.toString())),
           DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
