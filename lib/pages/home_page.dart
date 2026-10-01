@@ -127,7 +127,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               Transform.translate(
-                offset: const Offset(0, -38),
+                offset: const Offset(0, -52),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0),
                   child: Container(
