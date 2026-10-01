@@ -544,6 +544,7 @@ class _LinenCategoryCard extends StatelessWidget {
   }
 }
 
+// Error and empty-state helpers retained for compatibility.
 class _ErrorCard extends StatelessWidget {
   const _ErrorCard({required this.message, required this.onRetry});
 
