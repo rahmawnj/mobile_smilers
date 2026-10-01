@@ -97,9 +97,12 @@ class _DashboardPageState extends State<DashboardPage> {
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 14),
-          child: Column(
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              DashboardHeader(userName: widget.userName),
+              Column(
+                children: [
+                  DashboardHeader(userName: widget.userName),
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -117,10 +120,11 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   Column(
                     children: [
-                                    Transform.translate(
-                                      offset: const Offset(0, -100),
-                                      child: MetricCard(
-                                        metrics: [
+                                    Opacity(
+                                      opacity: 0,
+                                      child: IgnorePointer(
+                                        child: MetricCard(
+                                          metrics: [
                                           {
                                             'value': _loading ? '...' : _readyCount.toString(),
                                             'unit': 'Linen',
@@ -140,7 +144,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                             'action': 'Lihat Data',
                                           },
                                         ],
-                                        userName: widget.userName,
+                                          userName: widget.userName,
+                                        ),
                                       ),
                                     ),
                       Transform.translate(
@@ -353,6 +358,34 @@ class _DashboardPageState extends State<DashboardPage> {
                     ],
                   ),
                 ],
+              ),
+              Positioned(
+                top: 140,
+                left: 0,
+                right: 0,
+                child: MetricCard(
+                  metrics: [
+                    {
+                      'value': _loading ? '...' : _readyCount.toString(),
+                      'unit': 'Linen',
+                      'title': 'Linen & Tirai Ready',
+                      'action': 'Lihat Data',
+                    },
+                    {
+                      'value': _loading ? '...' : _laundryCount.toString(),
+                      'unit': 'Linen',
+                      'title': 'Linen & Tirai di Laundry',
+                      'action': 'Lihat Data',
+                    },
+                    {
+                      'value': _loading ? '...' : _roomCount.toString(),
+                      'unit': 'Linen',
+                      'title': 'Linen & Tirai di Ruangan',
+                      'action': 'Lihat Data',
+                    },
+                  ],
+                  userName: widget.userName,
+                ),
               ),
             ],
           ),
