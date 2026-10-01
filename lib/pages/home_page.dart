@@ -96,9 +96,11 @@ class _DashboardPageState extends State<DashboardPage> {
         onRefresh: _loadLinen,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          // Potong konten tepat setelah tabel terakhir, tanpa area abu-abu kosong di bawahnya.
           padding: EdgeInsets.zero,
-          child: Stack(
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.only(bottom: 88),
+            child: Stack(
             clipBehavior: Clip.none,
             children: [
               Column(
@@ -539,6 +541,8 @@ class _LinenCategoryCard extends StatelessWidget {
                 color: Color(0xff9aa8b5),
               ),
             ],
+          ),
+            ),
           ),
         ),
       ),
