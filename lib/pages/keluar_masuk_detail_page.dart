@@ -251,6 +251,16 @@ class _InfoRow extends StatelessWidget {
 class _TransactionTable extends StatelessWidget {
   const _TransactionTable({required this.rows});
 
+  static String _label(String key) {
+    return key
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((part) => part.isEmpty
+            ? part
+            : '${part[0].toUpperCase()}${part.substring(1)}')
+        .join(' ');
+  }
+
   final List<Map<String, dynamic>> rows;
 
   @override
