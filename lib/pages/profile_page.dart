@@ -235,7 +235,7 @@ class _ProfileHeader extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AppBackButton(onPressed: onBack),
+                AppBackButton(onTap: onBack),
                 const SizedBox(width: 14),
                 const Expanded(
                   child: Column(
@@ -273,7 +273,7 @@ class _ProfileHeader extends StatelessWidget {
 class _Avatar extends StatelessWidget {
   const _Avatar({required this.foto, required this.name});
 
-  final String foto;
+  final String? foto;
   final String name;
 
   @override
