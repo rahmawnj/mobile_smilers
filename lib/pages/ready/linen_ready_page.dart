@@ -204,15 +204,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text(
-                                'Menampilkan ${rows.length} dari ${meta.total} kategori',
-                                style: const TextStyle(
-                                  color: Color(0xff8b99a5),
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(width: 18),
                               const Text(
                                 'Jumlah',
                                 style: TextStyle(
