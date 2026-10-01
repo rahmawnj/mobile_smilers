@@ -937,7 +937,7 @@ class ApiService {
     return _roomOptions(await _get('/linen-belum-kembali/ruangan'));
   }
 
-  Future<RekapanTransaksiResponse> getRekapanTransaksi({String? daterange,int? ruangan,int? page}) async=>RekapanTransaksiResponse.fromJson(await _get('/rekapan-transaksi',query:_query({'daterange':daterange,'ruangan':ruangan,'page':page})));
+  Future<RekapanTransaksiResponse> getRekapanTransaksi({String? search,String? daterange,int? ruangan,int? page}) async=>RekapanTransaksiResponse.fromJson(await _get('/rekapan-transaksi',query:_query({'search':search,'daterange':daterange,'ruangan':ruangan,'page':page})));
   Future<List<LinenRoomOption>> getRekapanTransaksiRuangan() async=>_roomOptions(await _get('/rekapan-transaksi/ruangan'));
 
   Map<String,String>? _query(Map<String,dynamic> v){final q=<String,String>{};v.forEach((k,x){if(x!=null&&x.toString().trim().isNotEmpty)q[k]=x.toString();});return q.isEmpty?null:q;}
