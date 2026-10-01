@@ -311,7 +311,11 @@ class _InOutTable extends StatelessWidget {
                   ),
                 ));
               },
-              icon: const Icon(Icons.visibility_rounded, size: 18),
+              icon: const Icon(
+                Icons.visibility_outlined,
+                size: 18,
+                color: Color(0xff1261dc),
+              ),
             ),
           ),
         ]);
