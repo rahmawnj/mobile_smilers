@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
 import 'api_login_page.dart';
+import 'change_password_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -117,10 +118,13 @@ class _SettingsPageState extends State<SettingsPage> {
                           icon: Icons.lock_outline_rounded,
                           title: 'Ganti Sandi',
                           subtitle: 'Ubah kata sandi akun Anda',
-                          onTap: () => _showInfo(
-                            'Ganti Sandi',
-                            'Halaman ganti sandi akan tersedia di sini.',
-                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ChangePasswordPage(),
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 10),
                         _SettingMenu(
