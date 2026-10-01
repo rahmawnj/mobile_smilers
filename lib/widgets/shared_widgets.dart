@@ -874,7 +874,7 @@ class SectionTitle extends StatelessWidget {
         bottom: 10,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: alignment,
         children: [
           Container(
             width: 4,
