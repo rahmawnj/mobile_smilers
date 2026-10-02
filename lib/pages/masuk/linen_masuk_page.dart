@@ -25,7 +25,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   bool _scanning = false;
   String? _error;
   int _page = 1;
-  int _perPage = 5;
+  int _perPage = 10;
   int? _filterRoom;
   DateTimeRange? _selectedDateRange;
 
