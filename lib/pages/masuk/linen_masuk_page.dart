@@ -401,9 +401,9 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                   else
                     _buildTable(rows, meta),
                   if (!_loading && _error == null && meta != null) ...[
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    const SizedBox(height: 10),                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           'Total ${meta.total} linen masuk',
@@ -413,16 +413,23 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(width: 14),
-                        AppPerPageDropdown(
-                          value: _perPage,
-                          onChanged: _changePerPage,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('Jumlah', style: TextStyle(fontSize: 10)),
+                            const SizedBox(width: 8),
+                            AppPerPageDropdown(
+                              value: _perPage,
+                              onChanged: _changePerPage,
+                            ),
+                          ],
                         ),
                       ],
                     ),
                     AppPagination(
                       meta: meta,
                       onPage: _changePage,
+                      alignment: MainAxisAlignment.center,
                     ),
                   ],
                 ],
