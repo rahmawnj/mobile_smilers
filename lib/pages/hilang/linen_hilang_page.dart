@@ -295,14 +295,14 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                       ),
                     ),
                     const SizedBox(width: 14),
-                    OutlinedButton.icon(
+                    IconButton(
                       onPressed: _pickRange,
-                      icon: const Icon(Icons.date_range_rounded, size: 18),
-                      label: Text(
-                        _dateRange == null
-                            ? 'Rentang Tanggal'
-                            : _daterange!,
+                      tooltip: 'Pilih rentang tanggal',
+                      style: IconButton.styleFrom(
+                        backgroundColor: const Color(0xff1261dc),
+                        foregroundColor: Colors.white,
                       ),
+                      icon: const Icon(Icons.date_range_rounded, size: 20),
                     ),
                     const SizedBox(width: 4),
                     IconButton(
@@ -314,6 +314,22 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                 ),
               ),
             ),
+            if (_dateRange != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Row(
+                  children: [
+                    const Icon(Icons.date_range_rounded, size: 15, color: Color(0xff6f7f8d)),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text(
+                        'Periode: $_daterange',
+                        style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Expanded(
               child: AppRefreshIndicator(
                 onRefresh: _load,
