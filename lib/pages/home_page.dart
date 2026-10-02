@@ -155,7 +155,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   onTap: () {
                                                     Navigator.of(context).push(
                                                       smoothPageRoute<void>(
-                                                        ( (_) => LinenRusakPage(
+                                                        (_) => LinenRusakPage(
                                                           userName: widget.userName,
                                                         ),
                                                       ),
@@ -173,7 +173,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   onTap: () {
                                                     Navigator.of(context).push(
                                                       smoothPageRoute<void>(
-                                                        ( (_) => LinenHilangPage(
+                                                        (_) => LinenHilangPage(
                                                           userName: widget.userName,
                                                         ),
                                                       ),
@@ -212,7 +212,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   onTap: () {
                                                     Navigator.of(context).push(
                                                       smoothPageRoute<void>(
-                                                        ( (_) => LinenKeluarPage(
+                                                        (_) => LinenKeluarPage(
                                                           userName: widget.userName,
                                                         ),
                                                       ),
@@ -230,7 +230,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   onTap: () {
                                                     Navigator.of(context).push(
                                                       smoothPageRoute<void>(
-                                                        ( (_) => LinenMasukPage(
+                                                        (_) => LinenMasukPage(
                                                           userName: widget.userName,
                                                         ),
                                                       ),
@@ -248,7 +248,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   onTap: () {
                                                     Navigator.of(context).push(
                                                       smoothPageRoute<void>(
-                                                        ( (_) => PermintaanLinenPage(
+                                                        (_) => PermintaanLinenPage(
                                                           userName: widget.userName,
                                                         ),
                                                       ),
