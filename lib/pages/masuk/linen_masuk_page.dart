@@ -401,28 +401,49 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                   else
                     _buildTable(rows, meta),
                   if (!_loading && _error == null && meta != null) ...[
-                    const SizedBox(height: 10),                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    const SizedBox(height: 10),
+                    Column(
                       children: [
-                        Text(
-                          'Total ${meta.total} linen masuk',
-                          style: const TextStyle(
-                            color: Color(0xff7d8c99),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
                         Row(
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text('Jumlah', style: TextStyle(fontSize: 10)),
-                            const SizedBox(width: 8),
-                            AppPerPageDropdown(
-                              value: _perPage,
-                              onChanged: _changePerPage,
+                            Text(
+                              'Total ${meta.total} linen masuk',
+                              style: const TextStyle(
+                                color: Color(0xff7d8c99),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'Jumlah',
+                                  style: TextStyle(
+                                    color: Color(0xff8b99a5),
+                                    fontSize: 10,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                AppPerPageDropdown(
+                                  value: _perPage,
+                                  onChanged: _changePerPage,
+                                ),
+                              ],
                             ),
                           ],
+                        ),
+                        if (meta.lastPage > 1)
+                          AppPagination(
+                            meta: meta,
+                            onPage: _changePage,
+                            alignment: MainAxisAlignment.center,
+                          ),
+                      ],
+                    ),
+                  ],
                         ),
                       ],
                     ),
