@@ -318,6 +318,7 @@ class AppShellState extends State<AppShell> {
                             _ => '',
                           },
                           userName: widget.userName,
+                          onHome: () => switchTo(0),
                         ),
                       Expanded(
                         child: _positionForIndex(_currentIndex) < 0
