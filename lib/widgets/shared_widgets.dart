@@ -1757,29 +1757,50 @@ class _NavItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 2),
+      child: SizedBox(
+        height: 54,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 19,
+            AnimatedSlide(
+              offset: active ? const Offset(0, -.12) : Offset.zero,
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOutCubic,
+              child: AnimatedScale(
+                scale: active ? 1.08 : 1,
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 19,
+                ),
+              ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 7,
-                fontWeight: active
-                    ? FontWeight.w800
-                    : FontWeight.w500,
+            const SizedBox(height: 3),
+            AnimatedOpacity(
+              opacity: active ? 1 : .78,
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                child: active
+                    ? Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      )
+                    : const SizedBox(
+                        height: 9,
+                        width: 1,
+                      ),
               ),
             ),
           ],
