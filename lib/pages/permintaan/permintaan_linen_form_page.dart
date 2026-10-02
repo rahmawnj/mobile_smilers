@@ -202,7 +202,6 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                   hintText: '0',
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                  style: const TextStyle(fontSize: 10),
                   border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(7),
             borderSide: const BorderSide(color: Color(0xffd9e0e7)),
