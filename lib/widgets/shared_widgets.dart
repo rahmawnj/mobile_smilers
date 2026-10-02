@@ -1181,7 +1181,7 @@ class AppBackButton extends StatelessWidget {
           width: 42,
           height: 42,
           child: Icon(
-            Icons.arrow_back_rounded,
+            Icons.home_rounded,
             color: Colors.white,
             size: 21,
           ),
@@ -1200,10 +1200,12 @@ class DetailHeader extends StatelessWidget {
     super.key,
     required this.title,
     required this.userName,
+    this.onHome,
   });
 
   final String title;
   final String userName;
+  final VoidCallback? onHome;
 
   @override
   Widget build(BuildContext context) {
@@ -1230,7 +1232,9 @@ class DetailHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const AppBackButton(),
+          AppBackButton(
+            onTap: onHome,
+          ),
 
           const SizedBox(width: 12),
 
