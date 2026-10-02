@@ -112,7 +112,7 @@ class TableSurface extends StatelessWidget {
   }
 }
 
-Route<T> _smoothPageRoute<T>(WidgetBuilder builder) {
+Route<T> smoothPageRoute<T>(WidgetBuilder builder) {
   return PageRouteBuilder<T>(
     pageBuilder: (context, animation, secondaryAnimation) => builder(context),
     transitionDuration: const Duration(milliseconds: 230),
@@ -670,19 +670,19 @@ class MetricCard extends StatelessWidget {
                 onTap: () {
                   if (entry.key == 0) {
                     Navigator.of(context, rootNavigator: true).push(
-                      _smoothPageRoute<void>(
+                      smoothPageRoute<void>(
                         (context) => LinenReadyPage(userName: userName),
                       ),
                     );
                   } else if (entry.key == 1) {
                     Navigator.of(context).push(
-                      _smoothPageRoute<void>(
+                      smoothPageRoute<void>(
                         (context) => LinenLaundryPage(userName: userName),
                       ),
                     );
                   } else if (entry.key == 2) {
                     Navigator.of(context, rootNavigator: true).push(
-                      _smoothPageRoute<void>(
+                      smoothPageRoute<void>(
                         (context) => LinenRuanganPage(userName: userName),
                       ),
                     );
