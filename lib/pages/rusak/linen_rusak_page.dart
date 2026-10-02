@@ -144,9 +144,9 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                     else
                       _buildTable(rows, meta),
                     if (!_loading && _error == null && meta != null) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      const SizedBox(height: 8),                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             'Total ' + meta.total.toString() + ' linen rusak',
@@ -156,14 +156,17 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 14),
                           AppPerPageDropdown(
                             value: _perPage,
                             onChanged: _changePerPage,
                           ),
                         ],
                       ),
-                      AppPagination(meta: meta, onPage: _changePage),
+                      AppPagination(
+                        meta: meta,
+                        onPage: _changePage,
+                        alignment: MainAxisAlignment.center,
+                      ),
                     ],
                   ],
                 ),
