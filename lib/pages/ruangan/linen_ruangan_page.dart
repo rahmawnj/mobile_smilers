@@ -183,9 +183,9 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                   }).toList(),
                                 ),
                               if (_meta != null) ...[
-                                const SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                const SizedBox(height: 8),                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
                                       'Total ${_meta!.total} ruangan',
@@ -195,21 +195,26 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    const SizedBox(width: 14),
-                                    const Text('Jumlah', style: TextStyle(fontSize: 10)),
-                                    const SizedBox(width: 8),
-                                    AppPerPageDropdown(
-                                      value: _perPage,
-                                      onChanged: (v) {
-                                        setState(() { _perPage = v; _page = 1; });
-                                        _load();
-                                      },
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Text('Jumlah', style: TextStyle(fontSize: 10)),
+                                        const SizedBox(width: 8),
+                                        AppPerPageDropdown(
+                                          value: _perPage,
+                                          onChanged: (v) {
+                                            setState(() { _perPage = v; _page = 1; });
+                                            _load();
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                                 AppPagination(
                                   meta: _meta!,
                                   onPage: (page) { setState(() => _page = page); _load(); },
+                                  alignment: MainAxisAlignment.center,
                                 ),
                               ],
                             ],
