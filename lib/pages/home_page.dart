@@ -154,7 +154,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   subtitle: 'Data linen dan tirai yang rusak',
                                                   onTap: () {
                                                     Navigator.of(context).push(
-                                                      MaterialPageRoute(
+                                                      smoothPageRoute<void>(
                                                         builder: (_) => LinenRusakPage(
                                                           userName: widget.userName,
                                                         ),
@@ -172,7 +172,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   subtitle: 'Data linen dan tirai yang hilang',
                                                   onTap: () {
                                                     Navigator.of(context).push(
-                                                      MaterialPageRoute(
+                                                      smoothPageRoute<void>(
                                                         builder: (_) => LinenHilangPage(
                                                           userName: widget.userName,
                                                         ),
@@ -211,7 +211,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   subtitle: 'Data linen dan tirai yang keluar',
                                                   onTap: () {
                                                     Navigator.of(context).push(
-                                                      MaterialPageRoute(
+                                                      smoothPageRoute<void>(
                                                         builder: (_) => LinenKeluarPage(
                                                           userName: widget.userName,
                                                         ),
@@ -229,7 +229,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   subtitle: 'Data linen dan tirai yang masuk',
                                                   onTap: () {
                                                     Navigator.of(context).push(
-                                                      MaterialPageRoute(
+                                                      smoothPageRoute<void>(
                                                         builder: (_) => LinenMasukPage(
                                                           userName: widget.userName,
                                                         ),
@@ -247,7 +247,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   subtitle: 'Permintaan linen dari ruangan',
                                                   onTap: () {
                                                     Navigator.of(context).push(
-                                                      MaterialPageRoute(
+                                                      smoothPageRoute<void>(
                                                         builder: (_) => PermintaanLinenPage(
                                                           userName: widget.userName,
                                                         ),
