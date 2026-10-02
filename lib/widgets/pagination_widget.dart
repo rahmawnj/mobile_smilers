@@ -7,10 +7,12 @@ class AppPagination extends StatelessWidget {
     super.key,
     required this.meta,
     required this.onPage,
+    this.alignment = MainAxisAlignment.end,
   });
 
   final LinenMeta meta;
   final ValueChanged<int> onPage;
+  final MainAxisAlignment alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class AppPagination extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 12, bottom: 100),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: alignment,
         children: [
           _PaginationButton(
             icon: Icons.chevron_left_rounded,
