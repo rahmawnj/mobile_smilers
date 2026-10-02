@@ -436,6 +436,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
 
   Widget _buildTable(List<LinenMasukItem> rows, LinenMeta? meta) {
     return AppDataTable(
+      headingColor: const Color(0xffe29c02),
       columns: const [
         DataColumn(label: Text('No')),
         DataColumn(label: Text('Nama Linen')),
