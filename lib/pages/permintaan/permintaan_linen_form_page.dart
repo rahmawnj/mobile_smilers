@@ -136,68 +136,124 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
   }
 
   Widget _buildItemTable() {
-    return Container(
-      decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(10)),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columnSpacing: 22,
-          headingRowHeight: 46,
-          dataRowMinHeight: 64,
-          dataRowMaxHeight: 72,
-          columns: const [
-            DataColumn(label: Text('No')),
-            DataColumn(label: Text('Pilih Item')),
-            DataColumn(label: Text('Kategori Linen')),
-            DataColumn(label: Text('Jumlah')),
-            DataColumn(label: Text('Aksi')),
-          ],
-          rows: List.generate(_rows.length, (index) {
-            final row = _rows[index];
-            return DataRow(cells: [
-              DataCell(Text('${index + 1}')),
-              DataCell(SizedBox(
-                width: 230,
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: row.linenId,
-                    isExpanded: true,
-                    hint: const Text('Pilih item'),
-                    items: _linens.map((item) {
-                      final id = _toInt(item['id'] ?? item['linen_id']);
-                      return DropdownMenuItem<int>(value: id, child: Text(_itemLabel(item), overflow: TextOverflow.ellipsis));
-                    }).toList(),
-                    onChanged: _saving ? null : (value) {
-                      setState(() {
-                        row.linenId = value;
-                        final item = _linens.firstWhere((item) => _toInt(item['id'] ?? item['linen_id']) == value, orElse: () => <String, dynamic>{});
-                        row.category = value == null ? '' : _itemLabel(item);
-                      });
-                    },
-                  ),
-                ),
-              )),
-              DataCell(SizedBox(width: 180, child: Text(row.category.isEmpty ? '-' : row.category, overflow: TextOverflow.ellipsis))),
-              DataCell(SizedBox(
-                width: 90,
-                child: TextFormField(
-                  key: ValueKey('qty-$index-${row.linenId}'),
-                  initialValue: row.quantity > 0 ? row.quantity.toString() : '',
-                  enabled: !_saving,
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  decoration: const InputDecoration(hintText: '0', isDense: true, border: OutlineInputBorder()),
-                  onChanged: (value) => row.quantity = _toInt(value),
-                ),
-              )),
-              DataCell(IconButton(
-                tooltip: 'Hapus baris',
-                icon: const Icon(Icons.delete_outline),
-                onPressed: _saving ? null : () => _removeRow(index),
-              )),
-            ]);
-          }),
+    final rows = List.generate(_rows.length, (index) {
+      final row = _rows[index];
+      return DataRow(
+        color: WidgetStateProperty.resolveWith<Color?>(
+          (states) => index.isEven ? const Color(0xfff5f6f8) : Colors.white,
         ),
+        cells: [
+          DataCell(Text('${index + 1}')),
+          DataCell(SizedBox(
+            width: 230,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: row.linenId,
+                isExpanded: true,
+                hint: const Text('Pilih item'),
+                items: _linens.map((item) {
+                  final id = _toInt(item['id'] ?? item['linen_id']);
+                  return DropdownMenuItem<int>(
+                    value: id,
+                    child: Text(
+                      _itemLabel(item),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                }).toList(),
+                onChanged: _saving
+                    ? null
+                    : (value) {
+                        setState(() {
+                          row.linenId = value;
+                          final item = _linens.firstWhere(
+                            (item) =>
+                                _toInt(item['id'] ?? item['linen_id']) == value,
+                            orElse: () => <String, dynamic>{},
+                          );
+                          row.category =
+                              value == null ? '' : _itemLabel(item);
+                        });
+                      },
+              ),
+            ),
+          )),
+          DataCell(
+            SizedBox(
+              width: 180,
+              child: Text(
+                row.category.isEmpty ? '-' : row.category,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          DataCell(
+            SizedBox(
+              width: 90,
+              child: TextFormField(
+                key: ValueKey('qty-$index-${row.linenId}'),
+                initialValue:
+                    row.quantity > 0 ? row.quantity.toString() : '',
+                enabled: !_saving,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  hintText: '0',
+                  isDense: true,
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => row.quantity = _toInt(value),
+              ),
+            ),
+          ),
+          DataCell(
+            IconButton(
+              tooltip: 'Hapus baris',
+              icon: const Icon(Icons.delete_outline),
+              onPressed: _saving ? null : () => _removeRow(index),
+            ),
+          ),
+        ],
+      );
+    });
+
+    return TableSurface(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: DataTable(
+                headingRowColor:
+                    WidgetStateProperty.all(Colors.black),
+                headingTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                ),
+                dataTextStyle: const TextStyle(
+                  color: Color(0xff465564),
+                  fontSize: 10,
+                ),
+                headingRowHeight: 36,
+                dataRowMinHeight: 64,
+                dataRowMaxHeight: 72,
+                columnSpacing: 8,
+                horizontalMargin: 6,
+                dividerThickness: .4,
+                columns: const [
+                  DataColumn(label: Text('No')),
+                  DataColumn(label: Text('Pilih Item')),
+                  DataColumn(label: Text('Kategori Linen')),
+                  DataColumn(label: Text('Jumlah')),
+                  DataColumn(label: Text('Aksi')),
+                ],
+                rows: rows,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
