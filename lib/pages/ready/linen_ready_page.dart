@@ -199,10 +199,10 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                     if (!_loading && _error == null && meta != null) ...[
                       const SizedBox(height: 10),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
                                 'Total ${meta.total} kategori',
@@ -212,18 +212,22 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(width: 14),
-                              const Text(
-                                'Jumlah',
-                                style: TextStyle(
-                                  color: Color(0xff8b99a5),
-                                  fontSize: 10,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              AppPerPageDropdown(
-                                value: _perPage,
-                                onChanged: _changePerPage,
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    'Jumlah',
+                                    style: TextStyle(
+                                      color: Color(0xff8b99a5),
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  AppPerPageDropdown(
+                                    value: _perPage,
+                                    onChanged: _changePerPage,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -231,6 +235,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                             AppPagination(
                               meta: meta,
                               onPage: _changePage,
+                              alignment: MainAxisAlignment.center,
                             ),
                         ],
                       ),
