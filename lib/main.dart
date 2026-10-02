@@ -22,6 +22,41 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Arial',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff18bdd7)),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xfff5f8fc),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
+          labelStyle: const TextStyle(
+            color: Color(0xff465564),
+            fontSize: 12,
+          ),
+          hintStyle: const TextStyle(
+            color: Color(0xff8a98a5),
+            fontSize: 12,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffd9e0e7)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffd9e0e7)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
+              color: Color(0xff1261dc),
+              width: 1.2,
+            ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffe5e9ee)),
+          ),
+        ),
       ),
       home: const AppStartupPage(),
     );
