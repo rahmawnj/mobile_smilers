@@ -21,10 +21,12 @@ class AppDataTable extends StatelessWidget {
     super.key,
     required this.columns,
     required this.rows,
+    this.headingColor = const Color(0xff0e57ed),
   });
 
   final List<DataColumn> columns;
   final List<DataRow> rows;
+  final Color headingColor;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +58,7 @@ class AppDataTable extends StatelessWidget {
               constraints: BoxConstraints(minWidth: constraints.maxWidth),
               child: DataTable(
                 headingRowColor:
-                    WidgetStateProperty.all(const Color(0xff0e57ed)),
+                    WidgetStateProperty.all(headingColor),
                 headingTextStyle: const TextStyle(
                   color: Colors.white,
                   fontSize: 10,
