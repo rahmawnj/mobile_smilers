@@ -268,6 +268,7 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
       children: [
         DropdownButtonFormField<int>(
           value: _roomId,
+          isExpanded: true,
           decoration: InputDecoration(
             labelText: 'Ruangan',
             border: OutlineInputBorder(
@@ -281,6 +282,8 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
                   value: room.id,
                   child: Text(
                     '${room.namaRuangan} • ${room.namaKepalaRuangan}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               )
