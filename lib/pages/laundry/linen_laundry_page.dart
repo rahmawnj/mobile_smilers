@@ -280,9 +280,9 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                 const SizedBox(height: 8),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Text(
                                           'Total ${_response!.meta.total} linen',
@@ -292,21 +292,22 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        const SizedBox(width: 14),
-                                        const Text(
-                                          'Jumlah',
-                                          style: TextStyle(fontSize: 10),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        AppPerPageDropdown(
-                                          value: _perPage,
-                                          onChanged: (v) {
-                                            setState(() {
-                                              _perPage = v;
-                                              _page = 1;
-                                            });
-                                            _load();
-                                          },
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text('Jumlah', style: TextStyle(fontSize: 10)),
+                                            const SizedBox(width: 8),
+                                            AppPerPageDropdown(
+                                              value: _perPage,
+                                              onChanged: (v) {
+                                                setState(() {
+                                                  _perPage = v;
+                                                  _page = 1;
+                                                });
+                                                _load();
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -316,6 +317,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                                         setState(() => _page = page);
                                         _load();
                                       },
+                                      alignment: MainAxisAlignment.center,
                                     ),
                                   ],
                                 ),
