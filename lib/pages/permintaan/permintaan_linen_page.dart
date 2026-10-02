@@ -126,6 +126,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                       const Text('Tidak ada data barang.')
                     else
                       AppDataTable(
+      headingColor: const Color(0xff6e139a),
                         columns: const [
                           DataColumn(label: Text('No')),
                           DataColumn(label: Text('Nama Linen')),
