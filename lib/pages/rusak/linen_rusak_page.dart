@@ -321,6 +321,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
 
   Widget _buildTable(List<LinenRusakItem> rows, LinenMeta? meta) {
     return AppDataTable(
+      headingColor: const Color(0xffff4d94),
       columns: const [
         DataColumn(label: Text('ID')),
         DataColumn(label: Text('Nama Linen')),
