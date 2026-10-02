@@ -401,6 +401,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
     LinenMeta? meta,
   ) {
     return AppDataTable(
+      headingColor: const Color(0xffff4d94),
       columns: const [
         DataColumn(label: Text('No')),
         DataColumn(label: Text('Ruangan')),
