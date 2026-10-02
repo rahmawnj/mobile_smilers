@@ -414,19 +414,25 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                       ]);
                                     }).toList(),
                                   ),
-                                  const SizedBox(height: 10),
-                                  if (meta != null)
+                                  const SizedBox(height: 10),                                  if (meta != null)
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Text('Total ${meta.total} permintaan', style: const TextStyle(color: Color(0xff7d8c99), fontSize: 10, fontWeight: FontWeight.w600)),
-                                        const SizedBox(width: 14),
-                                        AppPerPageDropdown(
-                                          value: _perPage,
-                                          onChanged: (value) {
-                                            setState(() { _perPage = value; _page = 1; });
-                                            _load();
-                                          },
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text('Jumlah', style: TextStyle(fontSize: 10)),
+                                            const SizedBox(width: 8),
+                                            AppPerPageDropdown(
+                                              value: _perPage,
+                                              onChanged: (value) {
+                                                setState(() { _perPage = value; _page = 1; });
+                                                _load();
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -439,6 +445,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                         });
                                         _load();
                                       },
+                                      alignment: MainAxisAlignment.center,
                                     ),
 
                                 ],
