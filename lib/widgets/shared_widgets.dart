@@ -415,14 +415,7 @@ class DashboardHeader extends StatelessWidget {
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xff5cc9bd),
-            Color(0xff159cf1),
-          ],
-        ),
+        color: Color(0xff0055FF),
       ),
       child: Stack(
         children: [
