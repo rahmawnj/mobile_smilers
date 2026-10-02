@@ -336,8 +336,6 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    OutlinedButton(onPressed: _saving ? null : () => Navigator.of(context).pop(false), child: const Text('Batal')),
-                                    const SizedBox(width: 10),
                                     ElevatedButton.icon(onPressed: _saving ? null : _save, icon: const Icon(Icons.save), label: const Text('Simpan Permintaan')),
                                   ],
                                 ),
