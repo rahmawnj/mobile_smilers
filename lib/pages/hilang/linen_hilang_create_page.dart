@@ -270,7 +270,10 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
           value: _roomId,
           decoration: const InputDecoration(
             labelText: 'Ruangan',
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffd9e0e7)),
+          ),
           ),
           items: _rooms
               .map(
