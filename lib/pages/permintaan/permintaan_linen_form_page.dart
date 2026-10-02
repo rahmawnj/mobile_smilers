@@ -197,7 +197,7 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                 enabled: !_saving,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: '0',
                   isDense: true,
                   border: OutlineInputBorder(
