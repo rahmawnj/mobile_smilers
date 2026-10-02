@@ -112,9 +112,33 @@ class TableSurface extends StatelessWidget {
   }
 }
 
-/// ===============================================================
-/// APP SHELL
-/// ===============================================================
+Route<T> _smoothPageRoute<T>(WidgetBuilder builder) {
+  return PageRouteBuilder<T>(
+    pageBuilder: (context, animation, secondaryAnimation) => builder(context),
+    transitionDuration: const Duration(milliseconds: 230),
+    reverseTransitionDuration: const Duration(milliseconds: 190),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      );
+
+      return FadeTransition(
+        opacity: curved,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0.045, 0),
+            end: Offset.zero,
+          ).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
+$anchor
 
 class AppShell extends StatefulWidget {
   const AppShell({
@@ -647,18 +671,20 @@ class MetricCard extends StatelessWidget {
                 onTap: () {
                   if (entry.key == 0) {
                     Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => LinenReadyPage(userName: userName),
+                      _smoothPageRoute<void>(
+                        (context) => LinenReadyPage(userName: userName),
                       ),
                     );
                   } else if (entry.key == 1) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => LinenLaundryPage(userName: userName),
-                    ));
+                    Navigator.of(context).push(
+                      _smoothPageRoute<void>(
+                        (context) => LinenLaundryPage(userName: userName),
+                      ),
+                    );
                   } else if (entry.key == 2) {
                     Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => LinenRuanganPage(userName: userName),
+                      _smoothPageRoute<void>(
+                        (context) => LinenRuanganPage(userName: userName),
                       ),
                     );
                   } else {
@@ -704,6 +730,7 @@ class MetricTile extends StatefulWidget {
 
 class _MetricTileState extends State<MetricTile> {
   bool _hovered = false;
+  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -715,17 +742,31 @@ class _MetricTileState extends State<MetricTile> {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTapUp: (_) => setState(() => _pressed = false),
         onTap: widget.onTap,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
-          child: SizedBox(
-            width: double.infinity,
-            child: Container(
+          child: AnimatedScale(
+            scale: _pressed ? 0.97 : 1.0,
+            duration: const Duration(milliseconds: 120),
+            curve: Curves.easeOutCubic,
+            child: SizedBox(
+              width: double.infinity,
+              child: Container(
               margin: const EdgeInsets.only(bottom: 2),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 color: _hovered ? const Color(0xfff3f8fc) : Colors.white,
                 borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: _pressed ? .035 : .015),
+                    blurRadius: _pressed ? 3 : 5,
+                    offset: Offset(0, _pressed ? 1 : 2),
+                  ),
+                ],
               ),
               child: Row(
             children: [
@@ -788,6 +829,7 @@ class _MetricTileState extends State<MetricTile> {
                 ],
               ),
                 ],
+              ),
               ),
             ),
           ),
