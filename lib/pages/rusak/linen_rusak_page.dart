@@ -156,9 +156,16 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          AppPerPageDropdown(
-                            value: _perPage,
-                            onChanged: _changePerPage,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('Jumlah', style: TextStyle(fontSize: 10)),
+                              const SizedBox(width: 8),
+                              AppPerPageDropdown(
+                                value: _perPage,
+                                onChanged: _changePerPage,
+                              ),
+                            ],
                           ),
                         ],
                       ),
