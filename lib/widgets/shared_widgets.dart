@@ -138,7 +138,6 @@ Route<T> _smoothPageRoute<T>(WidgetBuilder builder) {
   );
 }
 
-$anchor
 
 class AppShell extends StatefulWidget {
   const AppShell({
