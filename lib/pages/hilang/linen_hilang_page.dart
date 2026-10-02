@@ -348,9 +348,9 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                     else
                       _buildTable(rows, meta),
                     if (!_loading && _error == null && meta != null) ...[
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      const SizedBox(height: 10),                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             'Total ${meta.total} linen hilang',
@@ -360,31 +360,39 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 14),
-                          const Text(
-                            'Tampilkan',
-                            style: TextStyle(
-                              color: Color(0xff7d8c99),
-                              fontSize: 10,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          AppPerPageDropdown(
-                            value: _perPage,
-                            onChanged: (value) {
-                              setState(() {
-                                _perPage = value;
-                                _page = 1;
-                              });
-                              _load();
-                            },
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                'Jumlah',
+                                style: TextStyle(
+                                  color: Color(0xff7d8c99),
+                                  fontSize: 10,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              AppPerPageDropdown(
+                                value: _perPage,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _perPage = value;
+                                    _page = 1;
+                                  });
+                                  _load();
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      AppPagination(meta: meta, onPage: (page) {
-                        setState(() => _page = page);
-                        _load();
-                      }),
+                      AppPagination(
+                        meta: meta,
+                        onPage: (page) {
+                          setState(() => _page = page);
+                          _load();
+                        },
+                        alignment: MainAxisAlignment.center,
+                      ),
                     ],
                   ],
                 ),
