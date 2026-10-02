@@ -239,10 +239,10 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                               size: 20,
                             ),
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: const Color(0xfff5f8fc),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Color(0xffd9e0e7)),
                             ),
                           ),
                         ),
