@@ -200,7 +200,10 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                 decoration: const InputDecoration(
                   hintText: '0',
                   isDense: true,
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffd9e0e7)),
+          ),
                 ),
                 onChanged: (value) => row.quantity = _toInt(value),
               ),
@@ -296,7 +299,10 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                                 DropdownButtonFormField<int>(
                                   value: _selectedRoom,
                                   isExpanded: true,
-                                  decoration: const InputDecoration(labelText: 'Ruangan', border: OutlineInputBorder()),
+                                  decoration: InputDecoration(
+            labelText: 'Ruangan',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
                                   items: _rooms.map((room) {
                                     final id = _toInt(room['id']);
                                     return DropdownMenuItem<int>(
