@@ -268,7 +268,7 @@ class _LinenHilangCreatePageState extends State<LinenHilangCreatePage> {
       children: [
         DropdownButtonFormField<int>(
           value: _roomId,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Ruangan',
             border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
