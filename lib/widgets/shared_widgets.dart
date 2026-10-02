@@ -1165,9 +1165,11 @@ class AppBackButton extends StatelessWidget {
   const AppBackButton({
     super.key,
     this.onTap,
+    this.icon = Icons.arrow_back_rounded,
   });
 
   final VoidCallback? onTap;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -1177,11 +1179,11 @@ class AppBackButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap ?? () => Navigator.of(context).pop(),
         borderRadius: BorderRadius.circular(13),
-        child: const SizedBox(
+        child: SizedBox(
           width: 42,
           height: 42,
           child: Icon(
-            Icons.home_rounded,
+            icon,
             color: Colors.white,
             size: 21,
           ),
@@ -1234,6 +1236,7 @@ class DetailHeader extends StatelessWidget {
         children: [
           AppBackButton(
             onTap: onHome,
+            icon: Icons.home_rounded,
           ),
 
           const SizedBox(width: 12),
