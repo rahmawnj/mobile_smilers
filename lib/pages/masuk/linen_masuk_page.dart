@@ -325,21 +325,6 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                                 _load();
                               },
                             );
-                            final dateButton = OutlinedButton.icon(
-                              onPressed: _pickRange,
-                              icon: const Icon(
-                                Icons.date_range_rounded,
-                                size: 18,
-                              ),
-                              label: Text(
-                                _selectedDateRange == null
-                                    ? 'Tanggal'
-                                    : _isSingleDate(_selectedDateRange!)
-                                        ? _date(_selectedDateRange!.start)
-                                        : _range(_selectedDateRange!),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
                             final resetButton = IconButton(
                               onPressed: _resetFilters,
                               tooltip: 'Reset filter',
@@ -353,7 +338,15 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                                   const SizedBox(height: 8),
                                   Row(
                                     children: [
-                                      Expanded(child: dateButton),
+                                      IconButton(
+                                    onPressed: _pickRange,
+                                    tooltip: 'Pilih rentang tanggal',
+                                    style: IconButton.styleFrom(
+                                      backgroundColor: const Color(0xff1261dc),
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    icon: const Icon(Icons.date_range_rounded, size: 20),
+                                  ),
                                       resetButton,
                                     ],
                                   ),
@@ -365,7 +358,15 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                               children: [
                                 Expanded(child: roomField),
                                 const SizedBox(width: 8),
-                                Expanded(child: dateButton),
+                                IconButton(
+                                    onPressed: _pickRange,
+                                    tooltip: 'Pilih rentang tanggal',
+                                    style: IconButton.styleFrom(
+                                      backgroundColor: const Color(0xff1261dc),
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    icon: const Icon(Icons.date_range_rounded, size: 20),
+                                  ),
                                 resetButton,
                               ],
                             );
