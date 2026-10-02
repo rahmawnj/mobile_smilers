@@ -24,11 +24,22 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
   int _perPage = 10;
   final TextEditingController _searchController = TextEditingController();
   Timer? _searchDebounce;
+  List<Map<String, dynamic>> _categories = const [];
+  int? _selectedCategoryId;
 
   @override
   void initState() {
     super.initState();
+    _loadCategories();
     _load();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final categories = await ApiService.instance.getLinenCategoryDropdown();
+      if (!mounted) return;
+      setState(() => _categories = categories);
+    } catch (_) {}
   }
 
   @override
@@ -46,9 +57,9 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
 
     try {
       final response = await ApiService.instance.getLinenLaundry(
-        search: _searchController.text.trim().isEmpty
-            ? null
-            : _searchController.text.trim(),
+        search: _selectedCategoryId == null
+            ? (_searchController.text.trim().isEmpty ? null : _searchController.text.trim())
+            : _categoryName(_selectedCategoryId!),
         perPage: _perPage,
         page: _page,
       );
@@ -73,6 +84,13 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
       });
     }
   }
+
+  String _categoryName(int id) {
+    final item = _categories.firstWhere((e) => _toInt(e['id'] ?? e['kategori_linen']) == id, orElse: () => {});
+    return item['nama_kategori_linen']?.toString() ?? item['nama']?.toString() ?? '';
+  }
+
+  int _toInt(dynamic value) => int.tryParse(value?.toString() ?? '') ?? 0;
 
   void _search() {
     setState(() => _page = 1);
@@ -138,6 +156,29 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                     borderSide: BorderSide.none,
                   ),
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: DropdownButtonFormField<int?>(
+                value: _selectedCategoryId,
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  labelText: 'Kategori',
+                  prefixIcon: Icon(Icons.category_outlined, size: 20),
+                ),
+                items: [
+                  const DropdownMenuItem<int?>(value: null, child: Text('Semua kategori')),
+                  ..._categories.map((item) {
+                    final id = _toInt(item['id'] ?? item['kategori_linen']);
+                    final name = item['nama_kategori_linen']?.toString() ?? item['nama']?.toString() ?? '-';
+                    return DropdownMenuItem<int?>(value: id, child: Text(name));
+                  }),
+                ],
+                onChanged: (value) {
+                  setState(() { _selectedCategoryId = value; _page = 1; });
+                  _load();
+                },
               ),
             ),
             Expanded(
