@@ -145,7 +145,7 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
         cells: [
           DataCell(Text('${index + 1}')),
           DataCell(SizedBox(
-            width: 230,
+            width: 180,
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
                 value: row.linenId,
@@ -157,6 +157,7 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                     value: id,
                     child: Text(
                       _itemLabel(item),
+                      style: const TextStyle(fontSize: 10),
                       overflow: TextOverflow.ellipsis,
                     ),
                   );
@@ -180,7 +181,7 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
           )),
           DataCell(
             SizedBox(
-              width: 180,
+              width: 140,
               child: Text(
                 row.category.isEmpty ? '-' : row.category,
                 overflow: TextOverflow.ellipsis,
@@ -189,7 +190,7 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
           ),
           DataCell(
             SizedBox(
-              width: 90,
+              width: 65,
               child: TextFormField(
                 key: ValueKey('qty-$index-${row.linenId}'),
                 initialValue:
@@ -200,8 +201,10 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                 decoration: InputDecoration(
                   hintText: '0',
                   isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                  style: const TextStyle(fontSize: 10),
                   border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(7),
             borderSide: const BorderSide(color: Color(0xffd9e0e7)),
           ),
                 ),
@@ -240,9 +243,9 @@ class _PermintaanLinenFormPageState extends State<PermintaanLinenFormPage> {
                   fontSize: 10,
                 ),
                 headingRowHeight: 36,
-                dataRowMinHeight: 48,
-                dataRowMaxHeight: 56,
-                columnSpacing: 8,
+                dataRowMinHeight: 40,
+                dataRowMaxHeight: 44,
+                columnSpacing: 6,
                 horizontalMargin: 6,
                 dividerThickness: .4,
                 columns: const [
