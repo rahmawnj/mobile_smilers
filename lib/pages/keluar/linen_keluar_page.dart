@@ -185,6 +185,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         if (_loading) const AppPageLoading()
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
         else AppDataTable(
+      headingColor: const Color(0xff02c0cc),
           columns: const [
             DataColumn(label: Text('No')),
             DataColumn(label: Text('Nama Linen')),
