@@ -372,6 +372,22 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                             );
                           },
                         ),
+                        if (_selectedDateRange != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.date_range_rounded, size: 15, color: Color(0xff6f7f8d)),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    'Periode: ' + (_isSingleDate(_selectedDateRange!) ? _date(_selectedDateRange!.start) : _range(_selectedDateRange!)),
+                                    style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                       ],
                     ),
                   ),
