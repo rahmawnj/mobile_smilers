@@ -1819,7 +1819,7 @@ class _BlurCircle extends StatelessWidget {
 /// APP REFRESH INDICATOR
 /// ===============================================================
 /// Pull-to-refresh yang dipakai seragam di seluruh halaman data.
-class AppRefreshIndicator extends StatelessWidget {
+class AppRefreshIndicator extends StatefulWidget {
   const AppRefreshIndicator({
     super.key,
     required this.onRefresh,
@@ -1830,15 +1830,68 @@ class AppRefreshIndicator extends StatelessWidget {
   final Widget child;
 
   @override
+  State<AppRefreshIndicator> createState() => _AppRefreshIndicatorState();
+}
+
+class _AppRefreshIndicatorState extends State<AppRefreshIndicator>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _fadeController;
+  bool _refreshing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 220),
+      value: 1,
+    );
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleRefresh() async {
+    if (_refreshing) return;
+
+    setState(() => _refreshing = true);
+    await _fadeController.animateTo(
+      .72,
+      duration: const Duration(milliseconds: 160),
+      curve: Curves.easeOut,
+    );
+
+    try {
+      await widget.onRefresh();
+    } finally {
+      if (!mounted) return;
+      setState(() => _refreshing = false);
+
+      _fadeController.value = .72;
+      await _fadeController.animateTo(
+        1,
+        duration: const Duration(milliseconds: 260),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: onRefresh,
+      onRefresh: _handleRefresh,
       color: const Color(0xff1261dc),
       backgroundColor: Colors.white,
       strokeWidth: 2.4,
       displacement: 34,
       edgeOffset: 0,
-      child: child,
+      child: FadeTransition(
+        opacity: _fadeController,
+        child: widget.child,
+      ),
     );
   }
 }
