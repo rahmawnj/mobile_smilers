@@ -151,9 +151,33 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                 onChanged:(v){setState(()=>{_filterRoom=v,_page=1});_load();},
               )),
               const SizedBox(width:8),
-              Expanded(child:OutlinedButton.icon(onPressed:_pickRange,icon:const Icon(Icons.date_range_rounded),label:Text(_selectedDateRange==null?'Rentang Tanggal':(_isSingleDate(_selectedDateRange!)?_date(_selectedDateRange!.start):_range(_selectedDateRange!))))),
+              IconButton(
+                onPressed: _pickRange,
+                tooltip: 'Pilih rentang tanggal',
+                style: IconButton.styleFrom(
+                  backgroundColor: const Color(0xff1261dc),
+                  foregroundColor: Colors.white,
+                ),
+                icon: const Icon(Icons.date_range_rounded, size: 20),
+              ),
               IconButton(onPressed:_reset,tooltip:'Reset filter',icon:const Icon(Icons.filter_alt_off_rounded)),
             ]),
+            if (_selectedDateRange != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(
+                  children: [
+                    const Icon(Icons.date_range_rounded, size: 15, color: Color(0xff6f7f8d)),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text(
+                        'Periode: ' + (_isSingleDate(_selectedDateRange!) ? _date(_selectedDateRange!.start) : _range(_selectedDateRange!)),
+                        style: const TextStyle(fontSize: 9, color: Color(0xff6f7f8d)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ]),
         ),
         const SizedBox(height:12),
