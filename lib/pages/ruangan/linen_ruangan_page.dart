@@ -18,13 +18,23 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
   String? _error;
   List<LinenRuanganItem> _items = const [];
   String? _search;
+  List<LinenRoomOption> _rooms = const [];
+  int? _selectedRoomId;
   LinenMeta? _meta;
   int _page = 1;
   int _perPage = 10;
   final _searchController = TextEditingController();
 
   @override
-  void initState() { super.initState(); _load(); }
+  void initState() { super.initState(); _loadRooms(); _load(); }
+
+  Future<void> _loadRooms() async {
+    try {
+      final rooms = await ApiService.instance.getLinenMasukRuangan();
+      if (!mounted) return;
+      setState(() => _rooms = rooms);
+    } catch (_) {}
+  }
 
   @override
   void dispose() { _searchController.dispose(); super.dispose(); }
@@ -33,7 +43,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
     setState(() { _loading = true; _error = null; });
     try {
       final response = await ApiService.instance.getLinenRuangan(
-        search: _search, perPage: _perPage, page: _page,
+        search: _selectedRoomId == null ? _search : _roomName(_selectedRoomId!), perPage: _perPage, page: _page,
       );
       if (!mounted) return;
       setState(() { _items = response.data; _meta = response.meta; _loading = false; });
@@ -45,6 +55,8 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
       setState(() { _error = 'Tidak dapat mengambil data Linen & Tirai di Ruangan.'; _loading = false; });
     }
   }
+
+  String _roomName(int id) => _rooms.firstWhere((room) => room.id == id, orElse: () => LinenRoomOption(id: id, nama: '')).nama;
 
   void _openDetail(LinenRuanganItem item) {
     Navigator.of(context).push(MaterialPageRoute(
@@ -81,6 +93,25 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
                     borderSide: BorderSide.none,
                   ),
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: DropdownButtonFormField<int?>(
+                value: _selectedRoomId,
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  labelText: 'Ruangan',
+                  prefixIcon: Icon(Icons.meeting_room_outlined, size: 20),
+                ),
+                items: [
+                  const DropdownMenuItem<int?>(value: null, child: Text('Semua ruangan')),
+                  ..._rooms.map((room) => DropdownMenuItem<int?>(value: room.id, child: Text(room.nama))),
+                ],
+                onChanged: (value) {
+                  setState(() { _selectedRoomId = value; _page = 1; });
+                  _load();
+                },
               ),
             ),
             Expanded(
