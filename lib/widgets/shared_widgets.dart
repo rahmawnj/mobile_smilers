@@ -2009,6 +2009,66 @@ class AppPageLoading extends StatelessWidget {
   }
 }
 
+class AppFilterDropdown<T> extends StatelessWidget {
+  const AppFilterDropdown({
+    super.key,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    required this.hint,
+    required this.icon,
+  });
+
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+  final String hint;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xffe5ebf1)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: const Color(0xff7f8c98)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                value: value,
+                isExpanded: true,
+                isDense: true,
+                hint: Text(
+                  hint,
+                  style: const TextStyle(
+                    color: Color(0xff7f8c98),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 18,
+                  color: Color(0xff7f8c98),
+                ),
+                items: items,
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class AppCategoryFilterDropdown<T> extends StatelessWidget {
   const AppCategoryFilterDropdown({
     super.key,
