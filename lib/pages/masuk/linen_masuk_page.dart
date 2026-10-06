@@ -136,29 +136,93 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-          title: const Text('Detail Linen'),
+          title: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: const Color(0xffe29c02).withValues(alpha: .12),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: const Icon(
+                  Icons.qr_code_2_rounded,
+                  color: Color(0xffe29c02),
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Text(
+                  'QR Code Check',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ],
+          ),
           content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _ScanDetailRow(label: 'Nama Linen', value: linen.namaLinen),
-                _ScanDetailRow(label: 'QR Code', value: linen.qrCode),
-                _ScanDetailRow(label: 'Tag RFID', value: linen.tagRfid),
-                _ScanDetailRow(label: 'Kategori', value: linen.kategori),
-                _ScanDetailRow(label: 'Berat', value: linen.berat + ' kg'),
-                _ScanDetailRow(label: 'Status', value: linen.status),
-                _ScanDetailRow(
-                  label: 'Total Pemakaian',
-                  value: linen.totalPemakaian.toString() + ' kali',
-                ),
-                _ScanDetailRow(
-                  label: 'Posisi Terakhir',
-                  value: linen.lastPosition?.isNotEmpty == true
-                      ? linen.lastPosition!
-                      : '-',
-                ),
-              ],
+            child: Container(
+              width: double.maxFinite,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xfff7f9fc),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xffe3e9ef)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          linen.namaLinen.isEmpty ? '-' : linen.namaLinen,
+                          style: const TextStyle(
+                            color: Color(0xff263645),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xff0e57ed).withValues(alpha: .1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          linen.status.isEmpty ? '-' : linen.status,
+                          style: const TextStyle(
+                            color: Color(0xff0e57ed),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  _ScanDetailRow(label: 'QR Code', value: linen.qrCode),
+                  _ScanDetailRow(label: 'Tag RFID', value: linen.tagRfid),
+                  _ScanDetailRow(label: 'Kategori', value: linen.kategori),
+                  _ScanDetailRow(label: 'Berat', value: linen.berat + ' kg'),
+                  _ScanDetailRow(
+                    label: 'Total Pemakaian',
+                    value: linen.totalPemakaian.toString() + ' kali',
+                  ),
+                  _ScanDetailRow(
+                    label: 'Posisi Terakhir',
+                    value: linen.lastPosition?.isNotEmpty == true
+                        ? linen.lastPosition!
+                        : '-',
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
@@ -167,9 +231,21 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
               child: const Text('Batal'),
             ),
             ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xffe29c02),
+                foregroundColor: Colors.white,
+                minimumSize: const Size(0, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              icon: const Icon(Icons.check_rounded),
-              label: const Text('Proses Masuk'),
+              icon: const Icon(Icons.check_rounded, size: 20),
+              label: const Text(
+                'Proses Masuk',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
           ],
         ),
