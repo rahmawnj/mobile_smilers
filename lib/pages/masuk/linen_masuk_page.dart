@@ -382,7 +382,8 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                                 ),
                               )
                             : const Icon(Icons.qr_code_scanner_rounded),
-                        label: const Text('Scan'),
+                        label: const Text('Scan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff1261dc), foregroundColor: Colors.white, minimumSize: const Size(0, 44), padding: const EdgeInsets.symmetric(horizontal: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
                       ),
                     ],
                   ),
