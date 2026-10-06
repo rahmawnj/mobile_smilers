@@ -345,7 +345,8 @@ class _InOutTable extends StatelessWidget {
                     userName: userName,
                     ruanganId: ruanganId,
                     namaRuangan: r['nama_ruangan']?.toString() ?? '-',
-                  ));
+                  )),
+                );
               },
               icon: const Icon(
                 Icons.visibility_outlined,
