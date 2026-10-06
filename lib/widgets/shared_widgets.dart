@@ -1803,25 +1803,16 @@ class _NavItem extends StatelessWidget {
               opacity: active ? 1 : .78,
               duration: const Duration(milliseconds: 180),
               curve: Curves.easeOut,
-              child: AnimatedSize(
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutCubic,
-                child: active
-                    ? Text(
-                        label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 7,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      )
-                    : const SizedBox(
-                        height: 9,
-                        width: 1,
-                      ),
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 7,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
           ],
