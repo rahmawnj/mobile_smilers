@@ -25,46 +25,25 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   bool _loading = true;
   String? _error;
-  List<LinenCategory> _linen = const [];
-  int _readyCount = 0;
-  int _laundryCount = 0;
-  int _roomCount = 0;
-  List<Map<String, dynamic>> _inOutRows = const [];
+  HomeResponse? _home;
 
   @override
   void initState() {
     super.initState();
-    _loadLinen();
+    _loadHome();
   }
 
-  Future<void> _loadLinen() async {
+  Future<void> _loadHome() async {
     setState(() {
       _loading = true;
       _error = null;
     });
 
     try {
-      final results = await Future.wait([
-        ApiService.instance.getLinen(perPage: 10),
-        ApiService.instance.getLinenLaundry(perPage: 1000),
-        ApiService.instance.getLinenRuangan(perPage: 1000),
-        ApiService.instance.getInOut(perPage: 10, page: 1),
-      ]);
+      final response = await ApiService.instance.getHome();
       if (!mounted) return;
-
-      final linenResponse = results[0] as LinenListResponse<LinenCategory>;
-      final laundryResponse =
-          results[1] as LinenListResponse<LinenLaundryItem>;
-      final roomResponse =
-          results[2] as LinenListResponse<LinenRuanganItem>;
-      final inOutResponse = results[3] as InOutResponse;
-
       setState(() {
-        _linen = linenResponse.data;
-        _readyCount = laundryResponse.meta.total;
-        _laundryCount = linenResponse.meta.total;
-        _roomCount = roomResponse.meta.total;
-        _inOutRows = inOutResponse.data.take(10).toList();
+        _home = response;
         _loading = false;
       });
     } on ApiException catch (e) {
@@ -76,7 +55,7 @@ class _DashboardPageState extends State<DashboardPage> {
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _error = 'Tidak dapat mengambil data Linen & Tirai dari server.';
+        _error = 'Tidak dapat mengambil data Home dari server.';
         _loading = false;
       });
     }
@@ -84,16 +63,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final totalStock = _linen.fold<int>(0, (sum, item) => sum + item.jumlahStok);
-    final totalMissing =
-        _linen.fold<int>(0, (sum, item) => sum + item.jumlahHilang);
+    final home = _home;
 
     return AppShell(
       userName: widget.userName,
       activeIndex: 0,
       embedded: widget.embedded,
       body: AppRefreshIndicator(
-        onRefresh: _loadLinen,
+        onRefresh: _loadHome,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
@@ -305,12 +282,17 @@ class _DashboardPageState extends State<DashboardPage> {
                                         const SizedBox(height: 3),
                                         if (_loading)
                                           const AppPageLoading()
-                                        else if (_inOutRows.isEmpty)
+                                        else if ((home?.keluarMasukLinen ?? const <HomeRoomItem>[]).isEmpty && _error == null)
                                           const Padding(
                                             padding: EdgeInsets.all(24),
                                             child: Center(
                                               child: Text('Tidak ada data Keluar Masuk.'),
                                             ),
+                                          )
+                                        else if (_error != null)
+                                          _ErrorCard(
+                                            message: _error!,
+                                            onRetry: _loadHome,
                                           )
                                         else
                                           AppDataTable(
@@ -320,22 +302,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                               DataColumn(label: Text('Linen Keluar')),
                                               DataColumn(label: Text('Selisih')),
                                             ],
-                                            rows: _inOutRows
+                                            rows: (home?.keluarMasukLinen ?? const <HomeRoomItem>[])
                                                 .map(
-                                                  (r) => DataRow(
+                                                  (room) => DataRow(
                                                     cells: [
-                                                      DataCell(
-                                                        Text(r['nama_ruangan']?.toString() ?? '-'),
-                                                      ),
-                                                      DataCell(
-                                                        Text(r['linen_masuk']?.toString() ?? '0'),
-                                                      ),
-                                                      DataCell(
-                                                        Text(r['linen_keluar']?.toString() ?? '0'),
-                                                      ),
-                                                      DataCell(
-                                                        Text(r['selisih']?.toString() ?? '0'),
-                                                      ),
+                                                      DataCell(Text(room.namaRuangan)),
+                                                      DataCell(Text(room.totalLinenMasuk.toString())),
+                                                      DataCell(Text(room.totalLinenKeluar.toString())),
+                                                      DataCell(Text(room.selisih.toString())),
                                                     ],
                                                   ),
                                                 )
@@ -361,19 +335,19 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: MetricCard(
                   metrics: [
                     {
-                      'value': _loading ? '...' : _readyCount.toString(),
+                      'value': _loading ? '...' : (home?.linenReady ?? 0).toString(),
                       'unit': 'Linen',
                       'title': 'Linen & Tirai Ready',
                       'action': 'Lihat Data',
                     },
                     {
-                      'value': _loading ? '...' : _laundryCount.toString(),
+                      'value': _loading ? '...' : (home?.linenLaundry ?? 0).toString(),
                       'unit': 'Linen',
                       'title': 'Linen & Tirai di Laundry',
                       'action': 'Lihat Data',
                     },
                     {
-                      'value': _loading ? '...' : _roomCount.toString(),
+                      'value': _loading ? '...' : (home?.linenRuangan ?? 0).toString(),
                       'unit': 'Linen',
                       'title': 'Linen & Tirai di Ruangan',
                       'action': 'Lihat Data',
