@@ -608,7 +608,9 @@ class ApiService {
 
     final appInfo = AppInfo.fromJson(data);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('app_info', jsonEncode(data));
+    final storedData = Map<String, dynamic>.from(data);
+    storedData['_app_info_version'] = 2;
+    await prefs.setString('app_info', jsonEncode(storedData));
 
     return appInfo;
   }
@@ -622,8 +624,17 @@ class ApiService {
     try {
       final decoded = jsonDecode(raw);
       if (decoded is! Map) return null;
-      return AppInfo.fromJson(Map<String, dynamic>.from(decoded));
+
+      final data = Map<String, dynamic>.from(decoded);
+      // Jangan tampilkan branding/cache lama dari versi sebelum app_address.
+      if (data['_app_info_version'] != 2) {
+        await prefs.remove('app_info');
+        return null;
+      }
+
+      return AppInfo.fromJson(data);
     } catch (_) {
+      await prefs.remove('app_info');
       return null;
     }
   }
