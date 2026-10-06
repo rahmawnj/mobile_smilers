@@ -130,6 +130,53 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
 
     setState(() => _scanning = true);
     try {
+      final linen = await ApiService.instance.checkLinenQr(value);
+
+      if (!mounted) return;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Detail Linen'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ScanDetailRow(label: 'Nama Linen', value: linen.namaLinen),
+                _ScanDetailRow(label: 'QR Code', value: linen.qrCode),
+                _ScanDetailRow(label: 'Tag RFID', value: linen.tagRfid),
+                _ScanDetailRow(label: 'Kategori', value: linen.kategori),
+                _ScanDetailRow(label: 'Berat', value: linen.berat + ' kg'),
+                _ScanDetailRow(label: 'Status', value: linen.status),
+                _ScanDetailRow(
+                  label: 'Total Pemakaian',
+                  value: linen.totalPemakaian.toString() + ' kali',
+                ),
+                _ScanDetailRow(
+                  label: 'Posisi Terakhir',
+                  value: linen.lastPosition?.isNotEmpty == true
+                      ? linen.lastPosition!
+                      : '-',
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              icon: const Icon(Icons.check_rounded),
+              label: const Text('Proses Masuk'),
+            ),
+          ],
+        ),
+      );
+
+      if (!mounted || confirmed != true) return;
+
       final result = await ApiService.instance.scanLinenMasuk(value);
 
       if (!mounted) return;
@@ -508,6 +555,49 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       padding: EdgeInsets.all(40),
       child: Center(
         child: Text('Belum ada data Linen & Tirai Masuk.'),
+      ),
+    );
+  }
+}
+
+class _ScanDetailRow extends StatelessWidget {
+  const _ScanDetailRow({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 9),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 105,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xff7d8c99),
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value.isEmpty ? '-' : value,
+              style: const TextStyle(
+                color: Color(0xff465564),
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
