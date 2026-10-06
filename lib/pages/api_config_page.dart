@@ -206,9 +206,12 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                               : const Icon(Icons.save_outlined),
                           label: Text(_saving ? 'Menyimpan...' : 'Simpan & Lanjut'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff1197A2),
+                            backgroundColor: const Color(0xff6CD4C5),
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            disabledBackgroundColor: const Color(0xffA9DED7),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
                       ),
