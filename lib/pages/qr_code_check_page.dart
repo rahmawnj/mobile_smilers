@@ -72,7 +72,6 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage> {
                             children: [
                               TextField(
                                 controller: _qrController,
-                                readOnly: true,
                                 autofocus: true,
                                 textInputAction: TextInputAction.done,
                                 onSubmitted: (_) => _checkQr(),
