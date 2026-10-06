@@ -245,110 +245,124 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final compact = constraints.maxWidth < 850;
-                return Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  crossAxisAlignment: WrapCrossAlignment.center,
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: compact ? constraints.maxWidth : 320,
-                      child: TextField(
-                        controller: _search,
-                        onSubmitted: (_) {
-                          setState(() {
-                            _page = 1;
-                          });
-                          _load();
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Cari permintaan...',
-                          prefixIcon: const Icon(Icons.search),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: compact ? (constraints.maxWidth - 8) / 2 : 170,
-                      child: AppFilterDropdown<int>(
-                        value: _roomId,
-                        hint: 'Ruangan',
-                        icon: Icons.meeting_room_outlined,
-                        items: [
-                          const DropdownMenuItem<int>(
-                            value: null,
-                            child: Text('Semua Ruangan'),
-                          ),
-                          ..._rooms.map(
-                            (room) => DropdownMenuItem<int>(
-                              value: _toInt(room['id']),
-                              child: Text(
-                                room['nama_ruangan']?.toString() ?? '-',
-                                overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _search,
+                            onSubmitted: (_) {
+                              setState(() {
+                                _page = 1;
+                              });
+                              _load();
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Cari permintaan...',
+                              prefixIcon: const Icon(Icons.search),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
                               ),
                             ),
                           ),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _roomId = value;
-                            _page = 1;
-                          });
-                          _load();
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: compact ? (constraints.maxWidth - 8) / 2 : 170,
-                      child: AppFilterDropdown<String>(
-                        value: _status,
-                        hint: 'Status',
-                        icon: Icons.assignment_outlined,
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: null,
-                            child: Text('Semua Status'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'belum',
-                            child: Text('Belum'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'terkirim',
-                            child: Text('Terkirim'),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _status = value;
-                            _page = 1;
-                          });
-                          _load();
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        final created =
-                            await Navigator.of(context).push<bool>(
-                          MaterialPageRoute(
-                            builder: (_) => PermintaanLinenFormPage(
-                              userName: widget.userName,
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final created =
+                                await Navigator.of(context).push<bool>(
+                              MaterialPageRoute(
+                                builder: (_) => PermintaanLinenFormPage(
+                                  userName: widget.userName,
+                                ),
+                              ),
+                            );
+                            if (created == true && mounted) {
+                              _page = 1;
+                              _load();
+                            }
+                          },
+                          icon: const Icon(Icons.add),
+                          label: const Text('Buat Permintaan'),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(0, 46),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                        );
-                        if (created == true && mounted) {
-                          _page = 1;
-                          _load();
-                        }
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Buat Permintaan'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        SizedBox(
+                          width: compact ? (constraints.maxWidth - 8) / 2 : 170,
+                          child: AppFilterDropdown<int>(
+                            value: _roomId,
+                            hint: 'Ruangan',
+                            icon: Icons.meeting_room_outlined,
+                            items: [
+                              const DropdownMenuItem<int>(
+                                value: null,
+                                child: Text('Semua Ruangan'),
+                              ),
+                              ..._rooms.map(
+                                (room) => DropdownMenuItem<int>(
+                                  value: _toInt(room['id']),
+                                  child: Text(
+                                    room['nama_ruangan']?.toString() ?? '-',
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                _roomId = value;
+                                _page = 1;
+                              });
+                              _load();
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: compact ? (constraints.maxWidth - 8) / 2 : 170,
+                          child: AppFilterDropdown<String>(
+                            value: _status,
+                            hint: 'Status',
+                            icon: Icons.assignment_outlined,
+                            items: const [
+                              DropdownMenuItem<String>(
+                                value: null,
+                                child: Text('Semua Status'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'belum',
+                                child: Text('Belum'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'terkirim',
+                                child: Text('Terkirim'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                _status = value;
+                                _page = 1;
+                              });
+                              _load();
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 );
