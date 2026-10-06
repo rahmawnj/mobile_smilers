@@ -123,16 +123,26 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
     final selisih = _value(_ringkasan, ['selisih'], fallback: '0');
     final transaksi = _transaksi;
 
-    return AppShell(
-      userName: widget.userName,
-      activeIndex: -1,
-      showBottomNavigation: false,
-      body: AppRefreshIndicator(
-        onRefresh: _load,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 30),
-          child: _loading
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      body: SafeArea(
+        bottom: false,
+        child: AppRefreshIndicator(
+          onRefresh: _load,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                _DetailHeader(
+                  namaRuangan: namaRuangan,
+                  onBack: () => Navigator.of(context).pop(),
+                ),
+                Transform.translate(
+                  offset: const Offset(0, -30),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
+                    child: _loading
               ? const AppPageLoading()
               : _error != null
                   ? Column(
@@ -272,6 +282,104 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                       ],
                     ),
         ),
+      ),
+    );
+  }
+}
+
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DetailHeader extends StatelessWidget {
+  const _DetailHeader({required this.namaRuangan, required this.onBack});
+  final String namaRuangan;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 170,
+      width: double.infinity,
+      clipBehavior: Clip.antiAlias,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xff5cc9bd), Color(0xff159cf1)],
+        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(26)),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -55,
+            top: -70,
+            child: Container(
+              width: 170,
+              height: 170,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: .10),
+              ),
+            ),
+          ),
+          Positioned(
+            left: -75,
+            bottom: -105,
+            child: Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: .08),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(22, 22, 22, 26),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppBackButton(onTap: onBack),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'DETAIL KELUAR MASUK',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        namaRuangan,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
