@@ -25,7 +25,7 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
   List<Map<String, dynamic>> _categories = const [];
 
   int _page = 1;
-  int _perPage = 5;
+  int _perPage = 10;
   int? _filterRoom;
   int? _filterCategory;
   DateTimeRange? _dateRange;
