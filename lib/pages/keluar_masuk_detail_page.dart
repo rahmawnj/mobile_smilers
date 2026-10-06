@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
+import '../widgets/pagination_widget.dart';
 import '../widgets/shared_widgets.dart';
 
 class InOutDetailPage extends StatefulWidget {
