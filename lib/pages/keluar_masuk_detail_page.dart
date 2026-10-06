@@ -39,7 +39,7 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
     });
 
     try {
-      final results = await Future.wait([
+      final results = await Future.wait<dynamic>([
         ApiService.instance.getInOutDetail(widget.ruanganId),
         ApiService.instance.getLinenKeluar(ruangan: widget.ruanganId, perPage: 100, page: 1),
         ApiService.instance.getLinenMasuk(ruangan: widget.ruanganId, perPage: 100, page: 1),
@@ -494,7 +494,22 @@ class _LinenMasukDetailTable extends StatelessWidget {
   }
 }
 
-Widget _emptyTable(String message) => TableSurface(child: Padding(padding: const EdgeInsets.all(24), child: Center(child: Text(message, style: const TextStyle(fontSize: 10, color: Color(0xff8b99a5)))));
+Widget _emptyTable(String message) {
+  return TableSurface(
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Text(
+          message,
+          style: const TextStyle(
+            fontSize: 10,
+            color: Color(0xff8b99a5),
+          ),
+        ),
+      ),
+    ),
+  );
+}
 class _TransactionTable extends StatelessWidget {
   const _TransactionTable({required this.rows});
 
