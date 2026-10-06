@@ -533,40 +533,53 @@ class DashboardHeader extends StatelessWidget {
                       FutureBuilder<AppInfo?>(
                         future: ApiService.instance.getStoredAppInfo(),
                         builder: (context, snapshot) {
-                          final appName = snapshot.data?.appName.trim();
-                          return Text(
-                            (appName == null || appName.isEmpty)
-                                ? 'Rumah Sakit'
-                                : appName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          final appInfo = snapshot.data;
+                          final appName = appInfo?.appName.trim();
+                          final appAddress = appInfo?.appAddress.trim();
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                (appName == null || appName.isEmpty)
+                                    ? 'Rumah Sakit'
+                                    : appName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.location_on_rounded,
+                                    color: Colors.white.withValues(alpha: .75),
+                                    size: 12,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      (appAddress == null || appAddress.isEmpty)
+                                          ? 'Alamat rumah sakit'
+                                          : appAddress,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white.withValues(alpha: .78),
+                                        fontSize: 9,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           );
                         },
-                      ),
-
-                      const SizedBox(height: 3),
-
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            color: Colors.white.withValues(alpha: .75),
-                            size: 12,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Jl. Surabaya • Indonesia',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: .78),
-                              fontSize: 9,
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   ),
