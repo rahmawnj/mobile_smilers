@@ -368,6 +368,49 @@ class LinenKeluarOptions {
       users:(d['users'] as List? ?? const []).whereType<Map>().map((e)=>LinenKeluarUserOption.fromJson(Map<String,dynamic>.from(e))).toList());
   }
 }
+class LinenQrCheckResult {
+  const LinenQrCheckResult({
+    required this.id,
+    required this.namaLinen,
+    required this.tagRfid,
+    required this.qrCode,
+    required this.berat,
+    required this.status,
+    required this.tglInput,
+    required this.kategori,
+    required this.kategoriId,
+    required this.totalPemakaian,
+    required this.lastPosition,
+  });
+
+  final int id;
+  final String namaLinen;
+  final String tagRfid;
+  final String qrCode;
+  final String berat;
+  final String status;
+  final String tglInput;
+  final String kategori;
+  final int kategoriId;
+  final int totalPemakaian;
+  final String? lastPosition;
+
+  factory LinenQrCheckResult.fromJson(Map<String, dynamic> j) =>
+      LinenQrCheckResult(
+        id: _toInt(j['id']),
+        namaLinen: j['nama_linen']?.toString() ?? '',
+        tagRfid: j['tag_rfid']?.toString() ?? '',
+        qrCode: j['qr_code']?.toString() ?? '',
+        berat: j['berat']?.toString() ?? '',
+        status: j['status']?.toString() ?? '',
+        tglInput: j['tgl_input']?.toString() ?? '',
+        kategori: j['kategori']?.toString() ?? '',
+        kategoriId: _toInt(j['kategori_id']),
+        totalPemakaian: _toInt(j['total_pemakaian']),
+        lastPosition: j['last_position']?.toString(),
+      );
+}
+
 class LinenScanQueueItem {
   const LinenScanQueueItem({required this.linenKeluarId,required this.linenId,required this.namaKategoriLinen,required this.qrCode,required this.tagRfid,required this.waktuScan});
   final int linenKeluarId,linenId; final String namaKategoriLinen,qrCode,tagRfid,waktuScan;
@@ -956,6 +999,19 @@ class ApiService {
     return _listResponse(d,(e)=>LinenMasukItem.fromJson(e));
   }
   Future<List<LinenRoomOption>> getLinenMasukRuangan() async=>_roomOptions(await _get('/linen-masuk/ruangan'));
+  Future<LinenQrCheckResult> checkLinenQr(String qrCode) async {
+    final data = await _post('/linen/check-qr', {'qr_code': qrCode});
+    final item = data['data'];
+
+    if (item is! Map) {
+      throw const ApiException('Response check QR linen tidak valid.');
+    }
+
+    return LinenQrCheckResult.fromJson(
+      Map<String, dynamic>.from(item),
+    );
+  }
+
   Future<Map<String,dynamic>> scanLinenMasuk(String rfid)=>_post('/linen-masuk/scan',{'rfid':rfid});
 
   Future<LinenListResponse<PermintaanLinenItem>> getPermintaanLinen({String? search,int? perPage,int? ruangan,String? status,int? page}) async {
