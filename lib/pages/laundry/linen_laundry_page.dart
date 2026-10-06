@@ -160,23 +160,32 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: DropdownButtonFormField<int?>(
+              child: AppCategoryFilterDropdown<int>(
                 value: _selectedCategoryId,
-                isExpanded: true,
-                decoration: const InputDecoration(
-                  labelText: 'Kategori',
-                  prefixIcon: Icon(Icons.category_outlined, size: 20),
-                ),
                 items: [
-                  const DropdownMenuItem<int?>(value: null, child: Text('Semua kategori')),
+                  const DropdownMenuItem<int?>(
+                    value: null,
+                    child: Text('Semua kategori'),
+                  ),
                   ..._categories.map((item) {
                     final id = _toInt(item['id'] ?? item['kategori_linen']);
-                    final name = item['nama_kategori_linen']?.toString() ?? item['nama']?.toString() ?? '-';
-                    return DropdownMenuItem<int?>(value: id, child: Text(name));
+                    final name = item['nama_kategori_linen']?.toString() ??
+                        item['nama']?.toString() ??
+                        '-';
+                    return DropdownMenuItem<int?>(
+                      value: id,
+                      child: Text(
+                        name,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
                   }),
                 ],
                 onChanged: (value) {
-                  setState(() { _selectedCategoryId = value; _page = 1; });
+                  setState(() {
+                    _selectedCategoryId = value;
+                    _page = 1;
+                  });
                   _load();
                 },
               ),
