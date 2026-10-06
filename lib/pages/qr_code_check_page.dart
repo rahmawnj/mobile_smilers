@@ -72,9 +72,8 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage> {
                             children: [
                               TextField(
                                 controller: _qrController,
-                                autofocus: true,
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (_) => _checkQr(),
+                                readOnly: true,
+                                enabled: false,
                                 decoration: InputDecoration(
                                   hintText: 'Masukkan QR Code',
                                   prefixIcon: const Icon(Icons.qr_code_scanner_rounded, color: Color(0xffe29c02)),
@@ -86,24 +85,7 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage> {
                                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xffe29c02), width: 1.5)),
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 46,
-                                child: ElevatedButton.icon(
-                                  onPressed: _loading ? null : _checkQr,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xffe29c02),
-                                    foregroundColor: Colors.white,
-                                    disabledBackgroundColor: const Color(0xffead7a5),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                  ),
-                                  icon: _loading
-                                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                                      : const Icon(Icons.search_rounded),
-                                  label: Text(_loading ? 'Memeriksa...' : 'Cek QR Code', style: const TextStyle(fontWeight: FontWeight.w700)),
-                                ),
-                              ),
+                              const SizedBox(height: 4),
                             ],
                           ),
                         ),
@@ -173,7 +155,7 @@ class _QrResultCard extends StatelessWidget {
             _ResultRow(label: 'Kategori', value: result.kategori),
             _ResultRow(label: 'Berat', value: result.berat + ' kg'),
             _ResultRow(label: 'Total Pemakaian', value: result.totalPemakaian.toString() + ' kali'),
-            _ResultRow(label: 'Posisi Terakhir', value: result.lastPosition?.isNotEmpty == true ? result.lastPosition! : '-'),
+            _ResultRow(label: 'Posisi Terakhir', value: _formatLastPosition(result.lastPosition)),
             _ResultRow(label: 'Tanggal Input', value: result.tglInput),
           ],
         ),
@@ -186,6 +168,39 @@ class _ResultRow extends StatelessWidget {
   const _ResultRow({required this.label, required this.value});
   final String label;
   final String value;
+
+  String _formatLastPosition(String? value) {
+    if (value == null || value.trim().isEmpty) return '-';
+
+    final raw = value.trim();
+    if (!raw.startsWith('{') || !raw.endsWith('}')) return raw;
+
+    final normalized = raw
+        .replaceAll('{', '')
+        .replaceAll('}', '')
+        .split(',')
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .map((part) {
+          final separator = part.indexOf(':');
+          if (separator == -1) return part;
+          final key = part.substring(0, separator).trim();
+          final val = part.substring(separator + 1).trim();
+          switch (key) {
+            case 'nama ruangan':
+              return val;
+            case 'tanggal_keluar':
+              return 'Keluar: $val';
+            case 'tanggal_masuk':
+              return 'Masuk: $val';
+            default:
+              return '$key: $val';
+          }
+        })
+        .join(' • ');
+
+    return normalized.isEmpty ? '-' : normalized;
+  }
 
   @override
   Widget build(BuildContext context) {
