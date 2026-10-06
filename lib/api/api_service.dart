@@ -407,7 +407,51 @@ class LinenQrCheckResult {
         kategori: j['kategori']?.toString() ?? '',
         kategoriId: _toInt(j['kategori_id']),
         totalPemakaian: _toInt(j['total_pemakaian']),
-        lastPosition: j['last_position']?.toString(),
+        lastPosition: _formatQrLastPosition(j['last_position']),
+      );
+
+  static String? _formatQrLastPosition(dynamic value) {
+    if (value == null) return null;
+    if (value is Map) {
+      final room = value['nama_ruangan']?.toString().trim();
+      final keluar = value['tanggal_keluar']?.toString().trim();
+      final masuk = value['tanggal_masuk']?.toString().trim();
+      final parts = <String>[];
+      if (room != null && room.isNotEmpty) parts.add(room);
+      if (keluar != null && keluar.isNotEmpty) parts.add('Keluar: $keluar');
+      if (masuk != null && masuk.isNotEmpty) parts.add('Masuk: $masuk');
+      return parts.isEmpty ? null : parts.join('\\n');
+    }
+    final raw = value.toString().trim();
+    if (raw.isEmpty) return null;
+    if (raw.startsWith('{') && raw.endsWith('}')) {
+      final parts = raw
+          .substring(1, raw.length - 1)
+          .split(',')
+          .map((part) => part.trim())
+          .where((part) => part.isNotEmpty)
+          .map((part) {
+            final separator = part.indexOf(':');
+            if (separator == -1) return part;
+            final key = part.substring(0, separator).trim();
+            final val = part.substring(separator + 1).trim();
+            switch (key) {
+              case 'nama_ruangan':
+              case 'nama ruangan':
+                return val;
+              case 'tanggal_keluar':
+                return 'Keluar: $val';
+              case 'tanggal_masuk':
+                return 'Masuk: $val';
+              default:
+                return '$key: $val';
+            }
+          })
+          .join('\\n');
+      return parts.isEmpty ? null : parts;
+    }
+    return raw;
+  }
       );
 }
 
