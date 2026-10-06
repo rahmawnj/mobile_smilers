@@ -295,8 +295,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     return Row(
       children: [
         Expanded(
-          child: _FilterDropdown<int>(
-            label: 'Kategori',
+          child: AppCategoryFilterDropdown<int>(
             value: _selectedCategoryId,
             items: _categoryOptions.map((item) {
               return DropdownMenuItem<int>(
@@ -321,7 +320,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                     }),
           ),
         ),
-
       ],
     );
   }
@@ -424,78 +422,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
             onPressed: _load,
             child: const Text('Coba Lagi'),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FilterDropdown<T> extends StatelessWidget {
-  const _FilterDropdown({
-    required this.label,
-    required this.value,
-    required this.items,
-    required this.onChanged,
-    required this.onClear,
-  });
-
-  final String label;
-  final T? value;
-  final List<DropdownMenuItem<T>> items;
-  final ValueChanged<T?> onChanged;
-  final VoidCallback? onClear;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 46,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xffe5ebf1)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<T>(
-                value: value,
-                isExpanded: true,
-                isDense: true,
-                hint: Text(
-                  label,
-                  style: const TextStyle(
-                    color: Color(0xff7f8c98),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                icon: const Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  size: 18,
-                  color: Color(0xff7f8c98),
-                ),
-                items: items,
-                onChanged: onChanged,
-              ),
-            ),
-          ),
-          if (onClear != null)
-            IconButton(
-              tooltip: 'Reset $label',
-              onPressed: onClear,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(
-                minWidth: 24,
-                minHeight: 24,
-              ),
-              icon: const Icon(
-                Icons.close_rounded,
-                size: 15,
-                color: Color(0xff9aa8b5),
-              ),
-            ),
         ],
       ),
     );
