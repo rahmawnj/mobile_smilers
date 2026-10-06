@@ -21,7 +21,7 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   List<Map<String, dynamic>> _rooms = [];
   String? _status;
   int _page = 1;
-  int _perPage = 5;
+  int _perPage = 10;
   final TextEditingController _search = TextEditingController();
 
   @override
