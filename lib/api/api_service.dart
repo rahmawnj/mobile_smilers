@@ -420,7 +420,7 @@ class LinenQrCheckResult {
       if (room != null && room.isNotEmpty) parts.add(room);
       if (keluar != null && keluar.isNotEmpty) parts.add('Keluar: $keluar');
       if (masuk != null && masuk.isNotEmpty) parts.add('Masuk: $masuk');
-      return parts.isEmpty ? null : parts.join('\\n');
+      return parts.isEmpty ? null : parts;
     }
     final raw = value.toString().trim();
     if (raw.isEmpty) return null;
