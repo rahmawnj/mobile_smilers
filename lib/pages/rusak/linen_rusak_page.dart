@@ -20,7 +20,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
   bool _scanning = false;
   String? _error;
   int _page = 1;
-  int _perPage = 5;
+  int _perPage = 10;
 
   @override
   void initState() {
@@ -137,14 +137,15 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                     const SizedBox(height: 14),
                     if (_loading)
                       const AppPageLoading()
-                  else if (_error != null)
+                    else if (_error != null)
                       _buildError()
                     else if (rows.isEmpty)
                       _buildEmpty()
                     else
                       _buildTable(rows, meta),
                     if (!_loading && _error == null && meta != null) ...[
-                      const SizedBox(height: 8),                      Row(
+                      const SizedBox(height: 8),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
