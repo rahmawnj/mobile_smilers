@@ -530,6 +530,58 @@ class StreamResponse {
   }
 }
 
+class HomeRoomItem {
+  const HomeRoomItem({
+    required this.id,
+    required this.namaRuangan,
+    required this.totalLinenMasuk,
+    required this.totalLinenKeluar,
+  });
+
+  final int id;
+  final String namaRuangan;
+  final int totalLinenMasuk;
+  final int totalLinenKeluar;
+
+  factory HomeRoomItem.fromJson(Map<String, dynamic> json) {
+    return HomeRoomItem(
+      id: _toInt(json['id']),
+      namaRuangan: json['nama_ruangan']?.toString() ?? '',
+      totalLinenMasuk: _toInt(json['total_linen_masuk']),
+      totalLinenKeluar: _toInt(json['total_linen_keluar']),
+    );
+  }
+
+  int get selisih => totalLinenMasuk - totalLinenKeluar;
+}
+
+class HomeResponse {
+  const HomeResponse({
+    required this.linenReady,
+    required this.linenLaundry,
+    required this.linenRuangan,
+    required this.keluarMasukLinen,
+  });
+
+  final int linenReady;
+  final int linenLaundry;
+  final int linenRuangan;
+  final List<HomeRoomItem> keluarMasukLinen;
+
+  factory HomeResponse.fromJson(Map<String, dynamic> json) {
+    final data = Map<String, dynamic>.from((json['data'] as Map?) ?? const {});
+    return HomeResponse(
+      linenReady: _toInt(data['linen_ready']),
+      linenLaundry: _toInt(data['linen_laundry']),
+      linenRuangan: _toInt(data['linen_ruangan']),
+      keluarMasukLinen: (data['keluar_masuk_linen'] as List? ?? const [])
+          .whereType<Map>()
+          .map((item) => HomeRoomItem.fromJson(Map<String, dynamic>.from(item)))
+          .toList(),
+    );
+  }
+}
+
 class AppInfo {
   const AppInfo({
     required this.appName,
@@ -582,6 +634,14 @@ class ApiService {
     }
 
     return StreamResponse.fromJson(data);
+  }
+
+  Future<HomeResponse> getHome() async {
+    final data = await _get('/home');
+    if (data['status'] != null && data['status'].toString() != 'success') {
+      throw ApiException(data['message']?.toString() ?? 'Gagal mengambil data Home.');
+    }
+    return HomeResponse.fromJson(data);
   }
 
   Future<AppInfo> getAppInfo() async {
