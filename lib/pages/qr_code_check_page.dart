@@ -73,7 +73,9 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage> {
                               TextField(
                                 controller: _qrController,
                                 readOnly: true,
-                                enabled: false,
+                                autofocus: true,
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: (_) => _checkQr(),
                                 decoration: InputDecoration(
                                   hintText: 'Masukkan QR Code',
                                   prefixIcon: const Icon(Icons.qr_code_scanner_rounded, color: Color(0xffe29c02)),
@@ -85,7 +87,38 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage> {
                                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xffe29c02), width: 1.5)),
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 46,
+                                child: ElevatedButton.icon(
+                                  onPressed: _loading ? null : _checkQr,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xffe29c02),
+                                    foregroundColor: Colors.white,
+                                    disabledBackgroundColor: const Color(0xffead7a5),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  icon: _loading
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Icon(Icons.search_rounded),
+                                  label: Text(
+                                    _loading ? 'Memeriksa...' : 'Cek QR Code',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
