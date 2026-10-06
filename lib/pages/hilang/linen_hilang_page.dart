@@ -244,12 +244,12 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                         value: _filterRoom,
                         hint: const Text('Ruangan'),
                         items: [
-                          const DropdownMenuItem<int?>(
+                          const DropdownMenuItem<int>(
                             value: null,
                             child: Text('Semua Ruangan'),
                           ),
                           ..._rooms.map(
-                            (room) => DropdownMenuItem<int?>(
+                            (room) => DropdownMenuItem<int>(
                               value: room.id,
                               child: Text(room.namaRuangan),
                             ),
@@ -268,12 +268,12 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                     AppCategoryFilterDropdown<int>(
                       value: _filterCategory,
                       items: [
-                        const DropdownMenuItem<int?>(
+                        const DropdownMenuItem<int>(
                           value: null,
                           child: Text('Semua kategori'),
                         ),
                         ..._categories.map(
-                          (category) => DropdownMenuItem<int?>(
+                          (category) => DropdownMenuItem<int>(
                             value: _toInt(category['id']),
                             child: Text(
                               category['nama_kategori_linen']?.toString() ??
