@@ -125,6 +125,39 @@ class _QrResultCard extends StatelessWidget {
   const _QrResultCard({required this.result});
   final LinenQrCheckResult result;
 
+  String _formatLastPosition(String? value) {
+    if (value == null || value.trim().isEmpty) return '-';
+
+    final raw = value.trim();
+    if (!raw.startsWith('{') || !raw.endsWith('}')) return raw;
+
+    final normalized = raw
+        .replaceAll('{', '')
+        .replaceAll('}', '')
+        .split(',')
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .map((part) {
+          final separator = part.indexOf(':');
+          if (separator == -1) return part;
+          final key = part.substring(0, separator).trim();
+          final val = part.substring(separator + 1).trim();
+          switch (key) {
+            case 'nama ruangan':
+              return val;
+            case 'tanggal_keluar':
+              return 'Keluar: $val';
+            case 'tanggal_masuk':
+              return 'Masuk: $val';
+            default:
+              return '$key: $val';
+          }
+        })
+        .join('\n');
+
+    return normalized.isEmpty ? '-' : normalized;
+  }
+
   @override
   Widget build(BuildContext context) {
     final status = result.status.isEmpty ? '-' : result.status;
@@ -168,39 +201,6 @@ class _ResultRow extends StatelessWidget {
   const _ResultRow({required this.label, required this.value});
   final String label;
   final String value;
-
-  String _formatLastPosition(String? value) {
-    if (value == null || value.trim().isEmpty) return '-';
-
-    final raw = value.trim();
-    if (!raw.startsWith('{') || !raw.endsWith('}')) return raw;
-
-    final normalized = raw
-        .replaceAll('{', '')
-        .replaceAll('}', '')
-        .split(',')
-        .map((part) => part.trim())
-        .where((part) => part.isNotEmpty)
-        .map((part) {
-          final separator = part.indexOf(':');
-          if (separator == -1) return part;
-          final key = part.substring(0, separator).trim();
-          final val = part.substring(separator + 1).trim();
-          switch (key) {
-            case 'nama ruangan':
-              return val;
-            case 'tanggal_keluar':
-              return 'Keluar: $val';
-            case 'tanggal_masuk':
-              return 'Masuk: $val';
-            default:
-              return '$key: $val';
-          }
-        })
-        .join(' • ');
-
-    return normalized.isEmpty ? '-' : normalized;
-  }
 
   @override
   Widget build(BuildContext context) {
