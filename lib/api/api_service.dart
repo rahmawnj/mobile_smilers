@@ -533,15 +533,18 @@ class StreamResponse {
 class AppInfo {
   const AppInfo({
     required this.appName,
+    required this.appAddress,
     required this.appLogo,
   });
 
   final String appName;
+  final String appAddress;
   final String appLogo;
 
   factory AppInfo.fromJson(Map<String, dynamic> json) {
     return AppInfo(
       appName: json['app_name']?.toString() ?? '',
+      appAddress: json['app_address']?.toString() ?? '',
       appLogo: json['app_logo']?.toString() ?? '',
     );
   }
