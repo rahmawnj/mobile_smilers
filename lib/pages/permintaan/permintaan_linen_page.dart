@@ -287,12 +287,24 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                               _load();
                             }
                           },
-                          icon: const Icon(Icons.add),
-                          label: const Text('Buat Permintaan'),
+                          icon: const Icon(
+                            Icons.add_rounded,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            'Buat Permintaan',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(0, 46),
+                            backgroundColor: const Color(0xff1261dc),
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size(0, 44),
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(14),
                             ),
                           ),
                         ),
