@@ -4,6 +4,8 @@ import '../api/api_service.dart';
 import '../widgets/shared_widgets.dart';
 import 'api_login_page.dart';
 import 'change_password_page.dart';
+import 'manual_book_page.dart';
+import 'about_smile_rs_page.dart';
 import 'profile_page.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -145,20 +147,22 @@ class _SettingsPageState extends State<SettingsPage> {
                           icon: Icons.menu_book_outlined,
                           title: 'Manual Book',
                           subtitle: 'Panduan penggunaan aplikasi SmileRS',
-                          onTap: () => _showInfo(
-                            'Manual Book',
-                            'Panduan penggunaan aplikasi akan tersedia di sini.',
-                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              smoothPageRoute((_) => const ManualBookPage()),
+                            );
+                          },
                         ),
                         const _SettingDivider(),
                         _SettingMenu(
                           icon: Icons.info_outline_rounded,
                           title: 'Tentang SmileRS',
                           subtitle: 'Informasi tentang aplikasi SmileRS',
-                          onTap: () => _showInfo(
-                            'Tentang SmileRS',
-                            'SmileRS adalah sistem manajemen linen untuk rumah sakit.',
-                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              smoothPageRoute((_) => const AboutSmileRsPage()),
+                            );
+                          },
                         ),
                         const SizedBox(height: 48),
                         SizedBox(
