@@ -281,12 +281,6 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                           _TransactionTable(rows: transaksi),
                       ],
                     ),
-        ),
-      ),
-    );
-  }
-}
-
                   ),
                 ),
               ],
