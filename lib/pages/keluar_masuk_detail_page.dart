@@ -141,31 +141,11 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                           title: 'Detail Keluar Masuk Linen & Tirai',
                         ),
                         const SizedBox(height: 14),
-                        TableSurface(
-                          child: Padding(
-                            padding: const EdgeInsets.all(14),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _InfoRow(
-                                  label: 'Nama Ruangan',
-                                  value: namaRuangan,
-                                ),
-                                _InfoRow(
-                                  label: 'Stok/Linen Masuk',
-                                  value: totalMasuk,
-                                ),
-                                _InfoRow(
-                                  label: 'Linen Keluar',
-                                  value: totalKeluar,
-                                ),
-                                _InfoRow(
-                                  label: 'Selisih',
-                                  value: selisih,
-                                ),
-                              ],
-                            ),
-                          ),
+                        _DetailSummaryCard(
+                          namaRuangan: namaRuangan,
+                          totalMasuk: totalMasuk,
+                          totalKeluar: totalKeluar,
+                          selisih: selisih,
                         ),
                         const SizedBox(height: 18),
                         const SectionTitle(title: 'Transaksi'),
@@ -200,6 +180,191 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                       ],
                     ),
         ),
+      ),
+    );
+  }
+}
+
+class _DetailSummaryCard extends StatelessWidget {
+  const _DetailSummaryCard({
+    required this.namaRuangan,
+    required this.totalMasuk,
+    required this.totalKeluar,
+    required this.selisih,
+  });
+
+  final String namaRuangan;
+  final String totalMasuk;
+  final String totalKeluar;
+  final String selisih;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: .055),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xffeaf2ff),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.meeting_room_rounded,
+                  color: Color(0xff1261dc),
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Nama Ruangan',
+                      style: TextStyle(
+                        color: Color(0xff7d8c99),
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      namaRuangan,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xff172b4d),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _DetailStatCard(
+                icon: Icons.arrow_downward_rounded,
+                label: 'Linen Masuk',
+                value: totalMasuk,
+                iconColor: const Color(0xffe29c02),
+                background: const Color(0xfffff7e6),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _DetailStatCard(
+                icon: Icons.arrow_upward_rounded,
+                label: 'Linen Keluar',
+                value: totalKeluar,
+                iconColor: const Color(0xff02c0cc),
+                background: const Color(0xffe8fbfc),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _DetailStatCard(
+                icon: Icons.compare_arrows_rounded,
+                label: 'Selisih',
+                value: selisih,
+                iconColor: const Color(0xff1261dc),
+                background: const Color(0xffeaf2ff),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _DetailStatCard extends StatelessWidget {
+  const _DetailStatCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.iconColor,
+    required this.background,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color iconColor;
+  final Color background;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .045),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: Icon(icon, color: iconColor, size: 17),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xff7d8c99),
+              fontSize: 8,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xff172b4d),
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
       ),
     );
   }
