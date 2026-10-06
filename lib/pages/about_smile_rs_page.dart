@@ -7,156 +7,109 @@ class AboutSmileRsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f8fc),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff1261dc),
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Tentang SmileRS',
-          style: TextStyle(fontWeight: FontWeight.w800),
-        ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 30),
-        children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: .05),
-                  blurRadius: 14,
-                  offset: const Offset(0, 4),
+      body: SafeArea(
+        bottom: false,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Container(
+              height: 170,
+              width: double.infinity,
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xff5cc9bd), Color(0xff159cf1)],
                 ),
-              ],
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(26)),
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -55,
+                    top: -70,
+                    child: Container(
+                      width: 170, height: 170,
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .10)),
+                    ),
+                  ),
+                  Positioned(
+                    left: -75,
+                    bottom: -105,
+                    child: Container(
+                      width: 180, height: 180,
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .08)),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 22, 22, 26),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const AppBackButton(),
+                        const SizedBox(width: 14),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'TENTANG SMILERS',
+                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -.3),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Informasi aplikasi SmileRS',
+                                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            child: Column(
-              children: [
-                Container(
-                  width: 76,
-                  height: 76,
+            Transform.translate(
+              offset: const Offset(0, -30),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
+                child: Container(
+                  padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: const Color(0xffeaf2ff),
-                    borderRadius: BorderRadius.circular(22),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withValues(alpha: .09), blurRadius: 20, offset: const Offset(0, 8)),
+                    ],
                   ),
-                  child: const Icon(
-                    Icons.local_hospital_rounded,
-                    color: Color(0xff1261dc),
-                    size: 42,
-                  ),
+                  child: _AboutContent(),
                 ),
-                const SizedBox(height: 14),
-                const Text(
-                  'SmileRS',
-                  style: TextStyle(
-                    color: Color(0xff172b4d),
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Sistem Manajemen Linen Rumah Sakit',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xff7d8c99),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'SmileRS merupakan aplikasi untuk membantu pengelolaan linen dan tirai rumah sakit secara terintegrasi, mulai dari pemantauan stok dan posisi linen hingga pencatatan transaksi keluar masuk.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xff526273),
-                    fontSize: 11,
-                    height: 1.6,
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 14),
-          _AboutItem(
-            icon: Icons.inventory_2_outlined,
-            title: 'Manajemen Linen',
-            text: 'Memantau linen berdasarkan status Ready, Laundry, dan Ruangan.',
-          ),
-          _AboutItem(
-            icon: Icons.swap_horiz_rounded,
-            title: 'Transaksi',
-            text: 'Mencatat dan memantau pergerakan linen serta tirai keluar dan masuk.',
-          ),
-          _AboutItem(
-            icon: Icons.qr_code_scanner_rounded,
-            title: 'Identifikasi Linen',
-            text: 'Mendukung pemeriksaan linen menggunakan QR Code.',
-          ),
-          _AboutItem(
-            icon: Icons.analytics_outlined,
-            title: 'Monitoring',
-            text: 'Menyediakan ringkasan dan rekap data untuk membantu monitoring operasional.',
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-class _AboutItem extends StatelessWidget {
-  const _AboutItem({
-    required this.icon,
-    required this.title,
-    required this.text,
-  });
-
-  final IconData icon;
-  final String title;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xffe8edf3)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color(0xff1261dc), size: 21),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Color(0xff34495e),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  text,
-                  style: const TextStyle(
-                    color: Color(0xff7d8c99),
-                    fontSize: 9,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+class _AboutContent extends StatelessWidget {
+  @override Widget build(BuildContext context) => Column(children: const [
+    Icon(Icons.local_hospital_rounded,color: Color(0xff159cf1),size:48),
+    SizedBox(height:12),
+    Text('SmileRS',style:TextStyle(color:Color(0xff34495e),fontSize:22,fontWeight:FontWeight.w900)),
+    SizedBox(height:4),
+    Text('Sistem Manajemen Linen Rumah Sakit',textAlign:TextAlign.center,style:TextStyle(color:Color(0xff8b99a5),fontSize:10,fontWeight:FontWeight.w600)),
+    SizedBox(height:20),
+    Divider(height:1,color:Color(0xffedf1f5)),
+    SizedBox(height:18),
+    Text('SmileRS merupakan aplikasi untuk membantu pengelolaan linen dan tirai rumah sakit secara terintegrasi, mulai dari pemantauan data hingga pencatatan transaksi keluar masuk.',textAlign:TextAlign.center,style:TextStyle(color:Color(0xff526273),fontSize:11,height:1.6)),
+    SizedBox(height:22),
+    _AboutItem(icon:Icons.inventory_2_outlined,title:'Manajemen Linen',text:'Memantau linen Ready, Laundry, dan Ruangan.'),
+    _AboutItem(icon:Icons.swap_horiz_rounded,title:'Transaksi',text:'Mencatat pergerakan linen dan tirai keluar masuk.'),
+    _AboutItem(icon:Icons.qr_code_scanner_rounded,title:'Identifikasi Linen',text:'Mendukung pemeriksaan linen menggunakan QR Code.'),
+    _AboutItem(icon:Icons.analytics_outlined,title:'Monitoring',text:'Menyediakan ringkasan dan rekap untuk monitoring operasional.'),
+  ]);
 }
