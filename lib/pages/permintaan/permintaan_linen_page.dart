@@ -272,56 +272,66 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                         ),
                       ),
                     ),
-                    DropdownButton<int?>(
-                      value: _roomId,
-                      hint: const Text('Ruangan'),
-                      items: [
-                        const DropdownMenuItem<int?>(
-                          value: null,
-                          child: Text('Semua'),
-                        ),
-                        ..._rooms.map(
-                          (room) => DropdownMenuItem<int?>(
-                            value: _toInt(room['id']),
-                            child: Text(
-                              room['nama_ruangan']?.toString() ?? '-',
+                    SizedBox(
+                      width: compact ? (constraints.maxWidth - 8) / 2 : 170,
+                      child: AppFilterDropdown<int>(
+                        value: _roomId,
+                        hint: 'Ruangan',
+                        icon: Icons.meeting_room_outlined,
+                        items: [
+                          const DropdownMenuItem<int>(
+                            value: null,
+                            child: Text('Semua Ruangan'),
+                          ),
+                          ..._rooms.map(
+                            (room) => DropdownMenuItem<int>(
+                              value: _toInt(room['id']),
+                              child: Text(
+                                room['nama_ruangan']?.toString() ?? '-',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _roomId = value;
-                          _page = 1;
-                        });
-                        _load();
-                      },
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _roomId = value;
+                            _page = 1;
+                          });
+                          _load();
+                        },
+                      ),
                     ),
-                    DropdownButton<String?>(
-                      value: _status,
-                      hint: const Text('Status'),
-                      items: const [
-                        DropdownMenuItem<String?>(
-                          value: null,
-                          child: Text('Semua'),
-                        ),
-                        DropdownMenuItem<String?>(
-                          value: 'belum',
-                          child: Text('Belum'),
-                        ),
-                        DropdownMenuItem<String?>(
-                          value: 'terkirim',
-                          child: Text('Terkirim'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _status = value;
-                          _page = 1;
-                        });
-                        _load();
-                      },
+                    SizedBox(
+                      width: compact ? (constraints.maxWidth - 8) / 2 : 170,
+                      child: AppFilterDropdown<String>(
+                        value: _status,
+                        hint: 'Status',
+                        icon: Icons.assignment_outlined,
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: null,
+                            child: Text('Semua Status'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'belum',
+                            child: Text('Belum'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'terkirim',
+                            child: Text('Terkirim'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _status = value;
+                            _page = 1;
+                          });
+                          _load();
+                        },
+                      ),
                     ),
+                    const SizedBox(width: 8),
                     ElevatedButton.icon(
                       onPressed: () async {
                         final created =
