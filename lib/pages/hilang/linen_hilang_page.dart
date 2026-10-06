@@ -265,38 +265,34 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                       ),
                     ),
                     const SizedBox(width: 14),
-                    AppCategoryFilterDropdown<int>(
-                      value: _filterCategory,
-                      items: [
-                        const DropdownMenuItem<int>(
-                          value: null,
-                          child: Text('Semua kategori'),
-                        ),
-                        ..._categories.map(
-                          (category) => DropdownMenuItem<int>(
-                            value: _toInt(category['id']),
-                            child: Text(
-                              category['nama_kategori_linen']?.toString() ??
-                                  category['nama']?.toString() ??
-                                  '-',
-                              overflow: TextOverflow.ellipsis,
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton<int?>(
+                        value: _filterCategory,
+                        hint: const Text('Kategori'),
+                        items: [
+                          const DropdownMenuItem<int?>(
+                            value: null,
+                            child: Text('Semua Kategori'),
+                          ),
+                          ..._categories.map(
+                            (category) => DropdownMenuItem<int?>(
+                              value: _toInt(category['id']),
+                              child: Text(
+                                category['nama_kategori_linen']?.toString() ??
+                                    category['nama']?.toString() ??
+                                    '-',
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _filterCategory = value;
-                          _page = 1;
-                        });
-                        _load();
-                      },
-                      onClear: _filterCategory == null
-                          ? null
-                          : () => setState(() {
-                                _filterCategory = null;
-                                _page = 1;
-                              }),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _filterCategory = value;
+                            _page = 1;
+                          });
+                          _load();
+                        },
+                      ),
                     ),
                     const SizedBox(width: 14),
                     IconButton(
