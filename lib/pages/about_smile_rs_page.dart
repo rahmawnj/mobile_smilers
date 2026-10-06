@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/shared_widgets.dart';
+
 class AboutSmileRsPage extends StatelessWidget {
   const AboutSmileRsPage({super.key});
 
@@ -112,4 +114,44 @@ class _AboutContent extends StatelessWidget {
     _AboutItem(icon:Icons.qr_code_scanner_rounded,title:'Identifikasi Linen',text:'Mendukung pemeriksaan linen menggunakan QR Code.'),
     _AboutItem(icon:Icons.analytics_outlined,title:'Monitoring',text:'Menyediakan ringkasan dan rekap untuk monitoring operasional.'),
   ]);
+}
+
+
+class _AboutItem extends StatelessWidget {
+  const _AboutItem({required this.icon, required this.title, required this.text});
+  final IconData icon;
+  final String title;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: const Color(0xffeef7ff),
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Icon(icon, color: const Color(0xff159cf1), size: 19),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(color: Color(0xff34495e), fontSize: 11, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 3),
+                Text(text, style: const TextStyle(color: Color(0xff8b99a5), fontSize: 10, height: 1.4)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
