@@ -125,8 +125,9 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                 await Future.wait([_load(), _loadQueue()]);
               }
             },
-            icon: const Icon(Icons.assignment_rounded),
-            label: const Text('Form'),
+            icon: const Icon(Icons.assignment_rounded, size: 20),
+            label: const Text('Form', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff1261dc), foregroundColor: Colors.white, minimumSize: const Size(0, 44), padding: const EdgeInsets.symmetric(horizontal: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
           ),
         ]),
         const SizedBox(height:10),
