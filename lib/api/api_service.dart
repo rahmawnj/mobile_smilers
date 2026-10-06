@@ -448,11 +448,10 @@ class LinenQrCheckResult {
             }
           })
           .join('\\n');
-      return parts.isEmpty ? null : parts;
+      return parts.isEmpty ? null : parts.join('\\n');
     }
     return raw;
   }
-      );
 }
 
 class LinenScanQueueItem {
