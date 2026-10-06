@@ -239,62 +239,74 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<int?>(
-                        value: _filterRoom,
-                        hint: const Text('Ruangan'),
-                        items: [
-                          const DropdownMenuItem<int>(
-                            value: null,
-                            child: Text('Semua Ruangan'),
-                          ),
-                          ..._rooms.map(
-                            (room) => DropdownMenuItem<int>(
-                              value: room.id,
-                              child: Text(room.namaRuangan),
+                    SizedBox(
+                      width: 170,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<int?>(
+                          value: _filterRoom,
+                          isExpanded: true,
+                          hint: const Text('Ruangan'),
+                          items: [
+                            const DropdownMenuItem<int>(
+                              value: null,
+                              child: Text('Semua Ruangan'),
                             ),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _filterRoom = value;
-                            _page = 1;
-                          });
-                          _load();
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<int?>(
-                        value: _filterCategory,
-                        hint: const Text('Kategori'),
-                        items: [
-                          const DropdownMenuItem<int?>(
-                            value: null,
-                            child: Text('Semua Kategori'),
-                          ),
-                          ..._categories.map(
-                            (category) => DropdownMenuItem<int?>(
-                              value: _toInt(category['id']),
-                              child: Text(
-                                category['nama_kategori_linen']?.toString() ??
-                                    category['nama']?.toString() ??
-                                    '-',
+                            ..._rooms.map(
+                              (room) => DropdownMenuItem<int>(
+                                value: room.id,
+                                child: Text(
+                                  room.namaRuangan,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _filterCategory = value;
-                            _page = 1;
-                          });
-                          _load();
-                        },
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _filterRoom = value;
+                              _page = 1;
+                            });
+                            _load();
+                          },
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 170,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<int?>(
+                          value: _filterCategory,
+                          isExpanded: true,
+                          hint: const Text('Kategori'),
+                          items: [
+                            const DropdownMenuItem<int?>(
+                              value: null,
+                              child: Text('Semua Kategori'),
+                            ),
+                            ..._categories.map(
+                              (category) => DropdownMenuItem<int?>(
+                                value: _toInt(category['id']),
+                                child: Text(
+                                  category['nama_kategori_linen']?.toString() ??
+                                      category['nama']?.toString() ??
+                                      '-',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _filterCategory = value;
+                              _page = 1;
+                            });
+                            _load();
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     IconButton(
                       onPressed: _pickRange,
                       tooltip: 'Pilih rentang tanggal',
