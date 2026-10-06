@@ -25,6 +25,10 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
   Map<String, dynamic> _data = const {};
   LinenListResponse<LinenKeluarItem>? _keluarResponse;
   LinenListResponse<LinenMasukItem>? _masukResponse;
+  int _keluarPage = 1;
+  int _masukPage = 1;
+  int _keluarPerPage = 10;
+  int _masukPerPage = 10;
 
   @override
   void initState() {
@@ -41,8 +45,8 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
     try {
       final results = await Future.wait<dynamic>([
         ApiService.instance.getInOutDetail(widget.ruanganId),
-        ApiService.instance.getLinenKeluar(ruangan: widget.ruanganId, perPage: 100, page: 1),
-        ApiService.instance.getLinenMasuk(ruangan: widget.ruanganId, perPage: 100, page: 1),
+        ApiService.instance.getLinenKeluar(ruangan: widget.ruanganId, perPage: _keluarPerPage, page: _keluarPage),
+        ApiService.instance.getLinenMasuk(ruangan: widget.ruanganId, perPage: _masukPerPage, page: _masukPage),
       ]);
       if (!mounted) return;
       final raw = results[0]['data'];
@@ -198,10 +202,42 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                         const SectionTitle(title: 'Linen & Tirai Keluar'),
                         const SizedBox(height: 8),
                         _LinenKeluarDetailTable(rows: _keluarResponse?.data ?? const []),
+                        if (_keluarResponse != null)
+                          _DetailPager(
+                            meta: _keluarResponse!.meta,
+                            perPage: _keluarPerPage,
+                            onPage: (page) {
+                              setState(() => _keluarPage = page);
+                              _load();
+                            },
+                            onPerPage: (value) {
+                              setState(() {
+                                _keluarPerPage = value;
+                                _keluarPage = 1;
+                              });
+                              _load();
+                            },
+                          ),
                         const SizedBox(height: 18),
                         const SectionTitle(title: 'Linen & Tirai Masuk'),
                         const SizedBox(height: 8),
                         _LinenMasukDetailTable(rows: _masukResponse?.data ?? const []),
+                        if (_masukResponse != null)
+                          _DetailPager(
+                            meta: _masukResponse!.meta,
+                            perPage: _masukPerPage,
+                            onPage: (page) {
+                              setState(() => _masukPage = page);
+                              _load();
+                            },
+                            onPerPage: (value) {
+                              setState(() {
+                                _masukPerPage = value;
+                                _masukPage = 1;
+                              });
+                              _load();
+                            },
+                          ),
                         const SizedBox(height: 18),
                         const SectionTitle(title: 'Transaksi'),
                         const SizedBox(height: 8),
@@ -236,6 +272,65 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                     ),
         ),
       ),
+    );
+  }
+}
+
+class _DetailPager extends StatelessWidget {
+  const _DetailPager({
+    required this.meta,
+    required this.perPage,
+    required this.onPage,
+    required this.onPerPage,
+  });
+
+  final LinenMeta meta;
+  final int perPage;
+  final ValueChanged<int> onPage;
+  final ValueChanged<int> onPerPage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Total ${meta.total} data',
+              style: const TextStyle(
+                color: Color(0xff7d8c99),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Jumlah',
+                  style: TextStyle(
+                    color: Color(0xff8b99a5),
+                    fontSize: 10,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                AppPerPageDropdown(
+                  value: perPage,
+                  onChanged: onPerPage,
+                ),
+              ],
+            ),
+          ],
+        ),
+        if (meta.lastPage > 1)
+          AppPagination(
+            meta: meta,
+            onPage: onPage,
+            alignment: MainAxisAlignment.center,
+          ),
+      ],
     );
   }
 }
