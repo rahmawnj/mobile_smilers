@@ -163,7 +163,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
               child: AppCategoryFilterDropdown<int>(
                 value: _selectedCategoryId,
                 items: [
-                  const DropdownMenuItem<int?>(
+                  const DropdownMenuItem<int>(
                     value: null,
                     child: Text('Semua kategori'),
                   ),
@@ -172,7 +172,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
                     final name = item['nama_kategori_linen']?.toString() ??
                         item['nama']?.toString() ??
                         '-';
-                    return DropdownMenuItem<int?>(
+                    return DropdownMenuItem<int>(
                       value: id,
                       child: Text(
                         name,
