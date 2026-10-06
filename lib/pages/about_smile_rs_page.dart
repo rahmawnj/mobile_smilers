@@ -47,7 +47,7 @@ class AboutSmileRsPage extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const AppBackButton(),
+                        AppBackButton(),
                         const SizedBox(width: 14),
                         const Expanded(
                           child: Column(
@@ -96,7 +96,7 @@ class AboutSmileRsPage extends StatelessWidget {
 }
 
 class _AboutContent extends StatelessWidget {
-  @override Widget build(BuildContext context) => Column(children: const [
+  @override Widget build(BuildContext context) => Column(children: [
     Icon(Icons.local_hospital_rounded,color: Color(0xff159cf1),size:48),
     SizedBox(height:12),
     Text('SmileRS',style:TextStyle(color:Color(0xff34495e),fontSize:22,fontWeight:FontWeight.w900)),
