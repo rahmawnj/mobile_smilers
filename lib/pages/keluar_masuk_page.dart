@@ -340,13 +340,12 @@ class _InOutTable extends StatelessWidget {
                   );
                   return;
                 }
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => InOutDetailPage(
+                Navigator.of(context).push(
+                  smoothPageRoute<void>((_) => InOutDetailPage(
                     userName: userName,
                     ruanganId: ruanganId,
                     namaRuangan: r['nama_ruangan']?.toString() ?? '-',
-                  ),
-                ));
+                  ));
               },
               icon: const Icon(
                 Icons.visibility_outlined,
