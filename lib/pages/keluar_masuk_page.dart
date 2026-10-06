@@ -264,8 +264,14 @@ class _InOutPageState extends State<InOutPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 6),
-                                  AppPagination(meta: _response!.meta, onPage: (page) { setState(() => _page = page); _load(); }),
-                                  AppPerPageDropdown(value: _perPage, onChanged: (value) { setState(() { _perPage = value; _page = 1; }); _load(); }),
+                                  AppPagination(
+                                    meta: _response!.meta,
+                                    alignment: MainAxisAlignment.center,
+                                    onPage: (page) {
+                                      setState(() => _page = page);
+                                      _load();
+                                    },
+                                  ),
                                 ],
                               ]),
               ),
