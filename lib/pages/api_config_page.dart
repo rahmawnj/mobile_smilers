@@ -37,16 +37,14 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
     final normalized = ApiConfig.normalize(value);
     final uri = Uri.tryParse(normalized);
 
+    // Setiap kali user menekan update, branding lama langsung dihapus.
+    // Jika URL baru gagal diakses / app-info gagal diambil, nama dan logo
+    // lama tidak akan tetap tampil.
     await ApiService.instance.clearStoredAppInfo();
 
-    if (value.isEmpty ||
-        normalized.isEmpty ||
-        uri == null ||
-        uri.host.isEmpty ||
+    if (value.isEmpty || normalized.isEmpty || uri == null || uri.host.isEmpty ||
         (uri.scheme != 'http' && uri.scheme != 'https')) {
-      _show(
-        'URL tidak valid. Contoh: https://server-rumah-sakit.com atau http://192.168.1.100',
-      );
+      _show('URL tidak valid. Contoh: https://server-rumah-sakit.com atau http://192.168.1.100');
       return;
     }
 
@@ -61,7 +59,9 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
         MaterialPageRoute(builder: (_) => const ApiLoginPage()),
       );
     } on ApiException catch (e) {
-      if (mounted) _show(e.message);
+      if (mounted) {
+        _show(e.message);
+      }
     } catch (_) {
       if (mounted) {
         _show('Tidak dapat mengambil informasi aplikasi dari server.');
@@ -80,184 +80,146 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff5f8fc),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 430),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xffe5ebf1)),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x10000000),
-                      blurRadius: 10,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffeaf2ff),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.dns_outlined,
-                            color: Color(0xff1261dc),
-                            size: 21,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Konfigurasi Server',
-                                style: TextStyle(
-                                  color: Color(0xff334454),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              SizedBox(height: 3),
-                              Text(
-                                'Atur alamat server API rumah sakit.',
-                                style: TextStyle(
-                                  color: Color(0xff8b99a5),
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Base URL',
-                      style: TextStyle(
-                        color: Color(0xff52616f),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xff45D3B0),
+              Color(0xff55D5C8),
+              Color(0xff3EB9D7),
+              Color(0xff55A9E8),
+            ],
+            stops: [0.0, 0.38, 0.70, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 370),
+                child: Container(
+                  padding: const EdgeInsets.all(26),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: .97),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: .20),
+                        blurRadius: 35,
+                        offset: const Offset(0, 18),
                       ),
-                    ),
-                    const SizedBox(height: 7),
-                    SizedBox(
-                      height: 46,
-                      child: TextField(
-                        controller: _controller,
-                        keyboardType: TextInputType.url,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (_) => _save(),
-                        style: const TextStyle(
-                          color: Color(0xff465564),
-                          fontSize: 11,
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 66,
+                        height: 66,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff118D9A).withValues(alpha: .10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        decoration: InputDecoration(
-                          hintText: 'https://server-rumah-sakit.com',
-                          hintStyle: const TextStyle(
-                            color: Color(0xff9aa8b5),
-                            fontSize: 10,
-                          ),
-                          prefixIcon: const Icon(
-                            Icons.dns_outlined,
-                            color: Color(0xff7f8c98),
-                            size: 18,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: Color(0xffe5ebf1),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: Color(0xffe5ebf1),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: Color(0xff1261dc),
-                            ),
-                          ),
+                        child: const Icon(
+                          Icons.dns_rounded,
+                          color: Color(0xff118D9A),
+                          size: 32,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 7),
-                    const Text(
-                      'Contoh: https://server-rumah-sakit.com atau http://192.168.1.100',
-                      style: TextStyle(
-                        color: Color(0xff9aa8b5),
-                        fontSize: 9,
+                      const SizedBox(height: 18),
+                      const Text(
+                        'KONFIGURASI SERVER',
+                        style: TextStyle(color: Color(0xff173A58), fontSize: 19, fontWeight: FontWeight.w800, letterSpacing: 1.2),
                       ),
-                    ),
-                    const SizedBox(height: 18),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 46,
-                      child: ElevatedButton.icon(
-                        onPressed: _saving ? null : _save,
-                        icon: _saving
-                            ? const SizedBox(
-                                width: 17,
-                                height: 17,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Icon(Icons.save_outlined, size: 18),
-                        label: Text(
-                          _saving ? 'Menyimpan...' : 'Simpan & Lanjut',
+                      const SizedBox(height: 7),
+                      const Text(
+                        'Masukkan alamat server rumah sakit terlebih dahulu.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Color(0xff8291A0), fontSize: 11),
+                      ),
+                      const SizedBox(height: 25),
+                      SizedBox(
+                        height: 46,
+                        child: TextField(
+                          controller: _controller,
+                          keyboardType: TextInputType.url,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _save(),
                           style: const TextStyle(
+                            color: Color(0xff465564),
                             fontSize: 11,
-                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff1261dc),
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: const Color(0xff9fbbe4),
-                          disabledForegroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                          decoration: InputDecoration(
+                            hintText: 'https://server-rumah-sakit.com atau http://192.168.1.100',
+                            hintStyle: const TextStyle(
+                              color: Color(0xff9aa8b5),
+                              fontSize: 10,
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.dns_outlined,
+                              color: Color(0xff7f8c98),
+                              size: 18,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Color(0xffe5ebf1),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Color(0xffe5ebf1),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Color(0xff1261dc),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                    const Center(
-                      child: Text(
+                      const SizedBox(height: 10),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Contoh: https://server-rumah-sakit.com', style: TextStyle(color: Color(0xff94A2AC), fontSize: 10)),
+                      ),
+                      const SizedBox(height: 22),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton.icon(
+                          onPressed: _saving ? null : _save,
+                          icon: _saving
+                              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                              : const Icon(Icons.save_outlined),
+                          label: Text(_saving ? 'Menyimpan...' : 'Simpan & Lanjut'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xff1197A2),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
                         'URL disimpan di perangkat ini dan dipakai untuk seluruh request API.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xff9aa8b5),
-                          fontSize: 9,
-                        ),
+                        style: TextStyle(color: Color(0xffA0ADB6), fontSize: 9),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
