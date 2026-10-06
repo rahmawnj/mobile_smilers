@@ -98,7 +98,7 @@ class ManualBookPage extends StatelessWidget {
 }
 
 class _ManualContent extends StatelessWidget {
-  @override Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
+  @override Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Text('Panduan Penggunaan',style: TextStyle(color: Color(0xff34495e),fontSize:16,fontWeight: FontWeight.w800)),
     SizedBox(height:5), Text('Pelajari fitur utama SmileRS dengan langkah sederhana.',style: TextStyle(color: Color(0xff8b99a5),fontSize:10)),
     SizedBox(height:20),
