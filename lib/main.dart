@@ -63,7 +63,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class AppStartupPage extends StatefulWidget {
   const AppStartupPage({super.key});
 
@@ -138,25 +137,10 @@ class _AppStartupPageState extends State<AppStartupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    // No custom splash artwork; keep a plain background while startup checks run.
+    return const Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/logo.png',
-              width: 112,
-              height: 112,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 22),
-            const CircularProgressIndicator(
-              color: Color(0xff118D9A),
-            ),
-          ],
-        ),
-      ),
+      body: SizedBox.expand(),
     );
   }
 }
