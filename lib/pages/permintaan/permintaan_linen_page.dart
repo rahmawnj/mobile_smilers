@@ -334,69 +334,66 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Wrap(
-                              spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        SizedBox(
-                          width: compact ? (constraints.maxWidth - 8) / 2 : 170,
-                          child: AppFilterDropdown<int>(
-                            value: _roomId,
-                            hint: 'Ruangan',
-                            icon: Icons.meeting_room_outlined,
-                            items: [
-                              const DropdownMenuItem<int>(
-                                value: null,
-                                child: Text('Semua Ruangan'),
-                              ),
-                              ..._rooms.map(
-                                (room) => DropdownMenuItem<int>(
-                                  value: _toInt(room['id']),
-                                  child: Text(
-                                    room['nama_ruangan']?.toString() ?? '-',
-                                    overflow: TextOverflow.ellipsis,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: AppFilterDropdown<int>(
+                                    value: _roomId,
+                                    hint: 'Ruangan',
+                                    icon: Icons.meeting_room_outlined,
+                                    items: [
+                                      const DropdownMenuItem<int>(
+                                        value: null,
+                                        child: Text('Semua Ruangan'),
+                                      ),
+                                      ..._rooms.map(
+                                        (room) => DropdownMenuItem<int>(
+                                          value: _toInt(room['id']),
+                                          child: Text(
+                                            room['nama_ruangan']?.toString() ?? '-',
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _roomId = value;
+                                        _page = 1;
+                                      });
+                                      _load();
+                                    },
                                   ),
                                 ),
-                              ),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                _roomId = value;
-                                _page = 1;
-                              });
-                              _load();
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: compact ? (constraints.maxWidth - 8) / 2 : 170,
-                          child: AppFilterDropdown<String>(
-                            value: _status,
-                            hint: 'Status',
-                            icon: Icons.assignment_outlined,
-                            items: const [
-                              DropdownMenuItem<String>(
-                                value: null,
-                                child: Text('Semua Status'),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'belum',
-                                child: Text('Belum'),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'terkirim',
-                                child: Text('Terkirim'),
-                              ),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                _status = value;
-                                _page = 1;
-                              });
-                              _load();
-                            },
-                          ),
-                        ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: AppFilterDropdown<String>(
+                                    value: _status,
+                                    hint: 'Status',
+                                    icon: Icons.assignment_outlined,
+                                    items: const [
+                                      DropdownMenuItem<String>(
+                                        value: null,
+                                        child: Text('Semua Status'),
+                                      ),
+                                      DropdownMenuItem<String>(
+                                        value: 'belum',
+                                        child: Text('Belum'),
+                                      ),
+                                      DropdownMenuItem<String>(
+                                        value: 'terkirim',
+                                        child: Text('Terkirim'),
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _status = value;
+                                        _page = 1;
+                                      });
+                                      _load();
+                                    },
+                                  ),
+                                ),
                               ],
                             ),
                           ],
