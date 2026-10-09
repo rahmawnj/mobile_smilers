@@ -103,67 +103,263 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
       await showDialog<void>(
         context: context,
         builder: (dialogContext) {
-          return AlertDialog(
-            title: Text('Permintaan #$id'),
-            content: SizedBox(
-              width: 760,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Tanggal: ${data['tanggal_permintaan'] ?? '-'}'),
-                    Text('Ruangan: ${data['nama_ruangan'] ?? '-'}'),
-                    Text('Kepala Ruangan: ${data['nama_kepala_ruangan'] ?? '-'}'),
-                    Text('Alasan: ${data['alasan_permintaan'] ?? '-'}'),
-                    Text('Status: ${data['status'] ?? '-'}'),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Data Barang',
-                      style: TextStyle(fontWeight: FontWeight.w700),
+          final status = data['status']?.toString() ?? '-';
+          final sent = status.trim().toLowerCase() == 'terkirim';
+          const accent = Color(0xff6e139a);
+
+          Widget detailInfo(IconData icon, String label, String value) {
+            return Container(
+              constraints: const BoxConstraints(minWidth: 220),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xfff8f6fb),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xffeee6f4)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(11),
                     ),
-                    const SizedBox(height: 8),
-                    if (items.isEmpty)
-                      const Text('Tidak ada data barang.')
-                    else
-                      AppDataTable(
-      headingColor: const Color(0xff6e139a),
-                        columns: const [
-                          DataColumn(label: Text('No')),
-                          DataColumn(label: Text('Nama Linen')),
-                          DataColumn(label: Text('Kategori Linen')),
-                          DataColumn(label: Text('Jumlah')),
-                        ],
-                        rows: items.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final item = entry.value;
-                          return DataRow(
-                            cells: [
-                              DataCell(Text('${index + 1}')),
-                              DataCell(
-                                Text(item['nama_linen']?.toString() ?? '-'),
-                              ),
-                              DataCell(
-                                Text(
-                                  item['kategori_linen']?.toString() ?? '-',
+                    child: Icon(icon, color: accent, size: 19),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(label, style: const TextStyle(
+                          color: Color(0xff7b8492), fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        )),
+                        const SizedBox(height: 4),
+                        Text(value.isEmpty ? '-' : value, style: const TextStyle(
+                          color: Color(0xff263445), fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Dialog(
+            backgroundColor: Colors.white,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 760, maxHeight: 720),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(22, 20, 16, 20),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xff6e139a), Color(0xff8b35b4)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.16),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(Icons.receipt_long_rounded,
+                            color: Colors.white, size: 23),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Detail Permintaan',
+                                style: TextStyle(color: Colors.white,
+                                  fontSize: 18, fontWeight: FontWeight.w800)),
+                              SizedBox(height: 3),
+                              Text('Informasi permintaan linen dan tirai',
+                                style: TextStyle(color: Colors.white70, fontSize: 12)),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Tutup',
+                          onPressed: () => Navigator.pop(dialogContext),
+                          icon: const Icon(Icons.close_rounded, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Text('Informasi Permintaan',
+                                style: TextStyle(fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xff263445))),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 11, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: sent ? const Color(0xffe8f8ef) : const Color(0xfffff4df),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(sent ? Icons.check_circle_rounded : Icons.schedule_rounded,
+                                      size: 14,
+                                      color: sent ? const Color(0xff18834a) : const Color(0xffa66a00)),
+                                    const SizedBox(width: 5),
+                                    Text(status,
+                                      style: TextStyle(fontSize: 11,
+                                        fontWeight: FontWeight.w800,
+                                        color: sent ? const Color(0xff18834a) : const Color(0xffa66a00))),
+                                  ],
                                 ),
                               ),
-                              DataCell(
-                                Text(item['jumlah']?.toString() ?? '0'),
-                              ),
                             ],
-                          );
-                        }).toList(),
+                          ),
+                          const SizedBox(height: 12),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final width = (constraints.maxWidth - 10) / 2;
+                              return Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: [
+                                  SizedBox(width: width, child: detailInfo(
+                                    Icons.calendar_month_rounded, 'Tanggal Permintaan',
+                                    data['tanggal_permintaan']?.toString() ?? '-')),
+                                  SizedBox(width: width, child: detailInfo(
+                                    Icons.meeting_room_rounded, 'Ruangan',
+                                    data['nama_ruangan']?.toString() ?? '-')),
+                                  SizedBox(width: width, child: detailInfo(
+                                    Icons.person_outline_rounded, 'Kepala Ruangan',
+                                    data['nama_kepala_ruangan']?.toString() ?? '-')),
+                                  SizedBox(width: width, child: detailInfo(
+                                    Icons.notes_rounded, 'Alasan Permintaan',
+                                    data['alasan_permintaan']?.toString() ?? '-')),
+                                ],
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 22),
+                          Row(
+                            children: [
+                              Container(
+                                width: 34,
+                                height: 34,
+                                decoration: BoxDecoration(
+                                  color: accent.withValues(alpha: 0.10),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.inventory_2_outlined,
+                                  color: accent, size: 18),
+                              ),
+                              const SizedBox(width: 10),
+                              const Expanded(
+                                child: Text('Daftar Linen',
+                                  style: TextStyle(fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xff263445))),
+                              ),
+                              Text('${items.length} item',
+                                style: const TextStyle(fontSize: 12,
+                                  color: Color(0xff7b8492), fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          if (items.isEmpty)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: const Color(0xfff8f6fb),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: const Text('Belum ada data barang pada permintaan ini.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Color(0xff7b8492))),
+                            )
+                          else
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: AppDataTable(
+                                  headingColor: accent,
+                                  columns: const [
+                                    DataColumn(label: Text('No')),
+                                    DataColumn(label: Text('Nama Linen')),
+                                    DataColumn(label: Text('Kategori Linen')),
+                                    DataColumn(label: Text('Jumlah')),
+                                  ],
+                                  rows: items.asMap().entries.map((entry) {
+                                    final item = entry.value;
+                                    return DataRow(cells: [
+                                      DataCell(Text('${entry.key + 1}')),
+                                      DataCell(Text(item['nama_linen']?.toString() ?? '-')),
+                                      DataCell(Text(item['kategori_linen']?.toString() ?? '-')),
+                                      DataCell(Text(item['jumlah']?.toString() ?? '0')),
+                                    ]);
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                  ],
-                ),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                    decoration: const BoxDecoration(
+                      border: Border(top: BorderSide(color: Color(0xffedf0f5))),
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        icon: const Icon(Icons.check_rounded, size: 18),
+                        label: const Text('Selesai'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: accent,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Tutup'),
-              ),
-            ],
           );
         },
       );
