@@ -240,29 +240,12 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                   DropdownButtonFormField<int?>(
                     value: _filterRoom,
                     isExpanded: true,
-                    decoration: InputDecoration(
-                      hintText: 'Semua Ruangan',
-                      prefixIcon: const Icon(Icons.meeting_room_rounded, size: 19),
+                    decoration: const InputDecoration(
+                      labelText: 'Ruangan',
                       filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 13,
-                      ),
+                      fillColor: Color(0xfff5f8fc),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(
-                          color: Color(0xff1261dc),
-                          width: 1.2,
-                        ),
                       ),
                     ),
                     items: [
@@ -292,29 +275,12 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                   DropdownButtonFormField<int?>(
                     value: _filterCategory,
                     isExpanded: true,
-                    decoration: InputDecoration(
-                      hintText: 'Semua Kategori',
-                      prefixIcon: const Icon(Icons.category_rounded, size: 19),
+                    decoration: const InputDecoration(
+                      labelText: 'Kategori',
                       filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 13,
-                      ),
+                      fillColor: Color(0xfff5f8fc),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(
-                          color: Color(0xff1261dc),
-                          width: 1.2,
-                        ),
                       ),
                     ),
                     items: [
@@ -342,41 +308,22 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                       _load();
                     },
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _pickRange,
-                          icon: const Icon(Icons.date_range_rounded, size: 18),
-                          label: const Text('Filter Tanggal'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xff1261dc),
-                            backgroundColor: Colors.white,
-                            minimumSize: const Size.fromHeight(44),
-                            side: const BorderSide(color: Color(0xffdce5ef)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
+                      IconButton(
+                        onPressed: _pickRange,
+                        tooltip: 'Pilih rentang tanggal',
+                        style: IconButton.styleFrom(
+                          backgroundColor: const Color(0xff1261dc),
+                          foregroundColor: Colors.white,
                         ),
+                        icon: const Icon(Icons.date_range_rounded, size: 20),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _resetFilters,
-                          icon: const Icon(Icons.filter_alt_off_rounded, size: 18),
-                          label: const Text('Reset Filter'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xffef4d7b),
-                            backgroundColor: Colors.white,
-                            minimumSize: const Size.fromHeight(44),
-                            side: const BorderSide(color: Color(0xffffd5e1)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                        ),
+                      IconButton(
+                        onPressed: _resetFilters,
+                        tooltip: 'Reset filter',
+                        icon: const Icon(Icons.filter_alt_off_rounded),
                       ),
                     ],
                   ),
