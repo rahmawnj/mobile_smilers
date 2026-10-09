@@ -8,11 +8,14 @@ import 'widgets/shared_widgets.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  final hasServerUrl = await ApiConfig.hasSavedBaseUrl();
+  runApp(MyApp(showConfigFirst: !hasServerUrl));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.showConfigFirst});
+
+  final bool showConfigFirst;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const AppStartupPage(),
+      // Tampilkan halaman konfigurasi langsung jika URL server belum disimpan.
+      // AppStartupPage hanya dipakai untuk memvalidasi konfigurasi yang sudah ada.
+      home: showConfigFirst ? const ApiConfigPage() : const AppStartupPage(),
     );
   }
 }
