@@ -93,9 +93,61 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
   }
 
   Future<void> _showDetail(int id) async {
+    var loadingDialogOpen = true;
+
+    // Tampilkan indikator segera, sambil menunggu detail dari API.
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (loadingContext) => PopScope(
+        canPop: false,
+        child: Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 30),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  width: 42,
+                  height: 42,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xff6e139a)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Memuat Detail Permintaan',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xff263445),
+                  ),
+                ),
+                const SizedBox(height: 7),
+                const Text(
+                  'Mohon tunggu, data linen sedang diambil...',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: Color(0xff7b8492)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
     try {
       final result = await ApiService.instance.getPermintaanLinenDetail(id);
       if (!mounted) return;
+
+      Navigator.of(context, rootNavigator: true).pop();
+      loadingDialogOpen = false;
 
       final data = result.data;
       final items = data['items'] is List ? data['items'] as List : const [];
@@ -365,8 +417,22 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
       );
     } on ApiException catch (e) {
       if (mounted) {
+        if (loadingDialogOpen) {
+          Navigator.of(context, rootNavigator: true).pop();
+          loadingDialogOpen = false;
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message)),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        if (loadingDialogOpen) {
+          Navigator.of(context, rootNavigator: true).pop();
+          loadingDialogOpen = false;
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Gagal memuat detail permintaan. Silakan coba lagi.')),
         );
       }
     }
