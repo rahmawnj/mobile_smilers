@@ -310,9 +310,32 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
+                    const SizedBox(height: 12),
+                    Card(
+                      color: Colors.white,
+                      elevation: 2,
+                      shadowColor: Colors.black12,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: const BorderSide(color: Color(0xffedf0f5)),
+                      ),
+                      margin: EdgeInsets.zero,
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Filter Data',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xff263445),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Wrap(
+                              spacing: 8,
                       runSpacing: 8,
                       children: [
                         SizedBox(
@@ -374,7 +397,11 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                             },
                           ),
                         ),
-                      ],
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 );
