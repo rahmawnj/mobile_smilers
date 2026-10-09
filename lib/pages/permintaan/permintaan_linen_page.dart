@@ -209,10 +209,11 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
               borderRadius: BorderRadius.circular(22),
             ),
             clipBehavior: Clip.antiAlias,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 760, maxHeight: 720),
+            child: SizedBox(
+              width: 760,
+              height: MediaQuery.of(dialogContext).size.height * 0.78,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
                     width: double.infinity,
