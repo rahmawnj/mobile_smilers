@@ -416,85 +416,89 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                         if (_roomsLoading)
                           const LinearProgressIndicator(minHeight: 2),
                         const SizedBox(height: 8),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            final compact = constraints.maxWidth < 650;
-                            final roomField = DropdownButtonFormField<int?>(
-                              value: _filterRoom,
-                              decoration: const InputDecoration(
-                                labelText: 'Ruangan',
-                                filled: true,
-                                fillColor: Color(0xfff5f8fc),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                              items: [
-                                const DropdownMenuItem<int?>(
-                                  value: null,
-                                  child: Text('Semua Ruangan'),
-                                ),
-                                ..._rooms.map(
-                                  (room) => DropdownMenuItem<int?>(
-                                    value: room.id,
-                                    child: Text(room.nama),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<int?>(
+                                value: _filterRoom,
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  labelText: 'Ruangan',
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor: const Color(0xfff5f8fc),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 10,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
                                   ),
                                 ),
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  _filterRoom = value;
-                                  _page = 1;
-                                });
-                                _load();
-                              },
-                            );
-                            final resetButton = IconButton(
-                              onPressed: _resetFilters,
-                              tooltip: 'Reset filter',
-                              icon: const Icon(Icons.filter_alt_off_rounded),
-                            );
-
-                            if (compact) {
-                              return Column(
-                                children: [
-                                  roomField,
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                    onPressed: _pickRange,
-                                    tooltip: 'Pilih rentang tanggal',
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: const Color(0xff1261dc),
-                                      foregroundColor: Colors.white,
+                                items: [
+                                  const DropdownMenuItem<int?>(
+                                    value: null,
+                                    child: Text('Semua Ruangan'),
+                                  ),
+                                  ..._rooms.map(
+                                    (room) => DropdownMenuItem<int?>(
+                                      value: room.id,
+                                      child: Text(
+                                        room.nama,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                    icon: const Icon(Icons.date_range_rounded, size: 20),
-                                  ),
-                                      resetButton,
-                                    ],
                                   ),
                                 ],
-                              );
-                            }
-
-                            return Row(
-                              children: [
-                                Expanded(child: roomField),
-                                const SizedBox(width: 8),
-                                IconButton(
-                                    onPressed: _pickRange,
-                                    tooltip: 'Pilih rentang tanggal',
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: const Color(0xff1261dc),
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    icon: const Icon(Icons.date_range_rounded, size: 20),
-                                  ),
-                                resetButton,
-                              ],
-                            );
-                          },
+                                onChanged: (value) {
+                                  setState(() {
+                                    _filterRoom = value;
+                                    _page = 1;
+                                  });
+                                  _load();
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            SizedBox(
+                              width: 42,
+                              height: 44,
+                              child: IconButton(
+                                onPressed: _pickRange,
+                                tooltip: 'Pilih rentang tanggal',
+                                style: IconButton.styleFrom(
+                                  backgroundColor: const Color(0xff1261dc),
+                                  foregroundColor: Colors.white,
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.zero,
+                                ),
+                                icon: const Icon(
+                                  Icons.calendar_month_rounded,
+                                  size: 19,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            SizedBox(
+                              width: 42,
+                              height: 44,
+                              child: IconButton(
+                                onPressed: _resetFilters,
+                                tooltip: 'Reset filter',
+                                style: IconButton.styleFrom(
+                                  foregroundColor: const Color(0xff6f7f8d),
+                                  backgroundColor: const Color(0xfff1f4f8),
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.zero,
+                                ),
+                                icon: const Icon(
+                                  Icons.filter_alt_off_rounded,
+                                  size: 19,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         if (_selectedDateRange != null)
                           Padding(
