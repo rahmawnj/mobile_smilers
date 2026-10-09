@@ -235,95 +235,152 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 170,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<int?>(
-                          value: _filterRoom,
-                          isExpanded: true,
-                          hint: const Text('Ruangan'),
-                          items: [
-                            const DropdownMenuItem<int>(
-                              value: null,
-                              child: Text('Semua Ruangan'),
-                            ),
-                            ..._rooms.map(
-                              (room) => DropdownMenuItem<int>(
-                                value: room.id,
-                                child: Text(
-                                  room.namaRuangan,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              _filterRoom = value;
-                              _page = 1;
-                            });
-                            _load();
-                          },
+              child: Column(
+                children: [
+                  DropdownButtonFormField<int?>(
+                    value: _filterRoom,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      hintText: 'Semua Ruangan',
+                      prefixIcon: const Icon(Icons.meeting_room_rounded, size: 19),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 13,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(
+                          color: Color(0xff1261dc),
+                          width: 1.2,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    SizedBox(
-                      width: 170,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<int?>(
-                          value: _filterCategory,
-                          isExpanded: true,
-                          hint: const Text('Kategori'),
-                          items: [
-                            const DropdownMenuItem<int?>(
-                              value: null,
-                              child: Text('Semua Kategori'),
-                            ),
-                            ..._categories.map(
-                              (category) => DropdownMenuItem<int?>(
-                                value: _toInt(category['id']),
-                                child: Text(
-                                  category['nama_kategori_linen']?.toString() ??
-                                      category['nama']?.toString() ??
-                                      '-',
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              _filterCategory = value;
-                              _page = 1;
-                            });
-                            _load();
-                          },
+                    items: [
+                      const DropdownMenuItem<int?>(
+                        value: null,
+                        child: Text('Semua Ruangan'),
+                      ),
+                      ..._rooms.map(
+                        (room) => DropdownMenuItem<int?>(
+                          value: room.id,
+                          child: Text(
+                            room.namaRuangan,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _filterRoom = value;
+                        _page = 1;
+                      });
+                      _load();
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<int?>(
+                    value: _filterCategory,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      hintText: 'Semua Kategori',
+                      prefixIcon: const Icon(Icons.category_rounded, size: 19),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 13,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(
+                          color: Color(0xff1261dc),
+                          width: 1.2,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      onPressed: _pickRange,
-                      tooltip: 'Pilih rentang tanggal',
-                      style: IconButton.styleFrom(
-                        backgroundColor: const Color(0xff1261dc),
-                        foregroundColor: Colors.white,
+                    items: [
+                      const DropdownMenuItem<int?>(
+                        value: null,
+                        child: Text('Semua Kategori'),
                       ),
-                      icon: const Icon(Icons.date_range_rounded, size: 20),
-                    ),
-                    const SizedBox(width: 4),
-                    IconButton(
-                      tooltip: 'Reset filter',
-                      onPressed: _resetFilters,
-                      icon: const Icon(Icons.filter_alt_off_rounded),
-                    ),
-                  ],
-                ),
+                      ..._categories.map(
+                        (category) => DropdownMenuItem<int?>(
+                          value: _toInt(category['id']),
+                          child: Text(
+                            category['nama_kategori_linen']?.toString() ??
+                                category['nama']?.toString() ??
+                                '-',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _filterCategory = value;
+                        _page = 1;
+                      });
+                      _load();
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _pickRange,
+                          icon: const Icon(Icons.date_range_rounded, size: 18),
+                          label: const Text('Filter Tanggal'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xff1261dc),
+                            backgroundColor: Colors.white,
+                            minimumSize: const Size.fromHeight(44),
+                            side: const BorderSide(color: Color(0xffdce5ef)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _resetFilters,
+                          icon: const Icon(Icons.filter_alt_off_rounded, size: 18),
+                          label: const Text('Reset Filter'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xffef4d7b),
+                            backgroundColor: Colors.white,
+                            minimumSize: const Size.fromHeight(44),
+                            side: const BorderSide(color: Color(0xffffd5e1)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
             if (_dateRange != null)
