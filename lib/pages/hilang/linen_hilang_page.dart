@@ -235,99 +235,144 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Column(
-                children: [
-                  DropdownButtonFormField<int?>(
-                    value: _filterRoom,
-                    isExpanded: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Ruangan',
-                      filled: true,
-                      fillColor: Color(0xfff5f8fc),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: .04),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
                     ),
-                    items: [
-                      const DropdownMenuItem<int?>(
-                        value: null,
-                        child: Text('Semua Ruangan'),
-                      ),
-                      ..._rooms.map(
-                        (room) => DropdownMenuItem<int?>(
-                          value: room.id,
-                          child: Text(
-                            room.namaRuangan,
-                            overflow: TextOverflow.ellipsis,
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: DropdownButtonFormField<int?>(
+                        value: _filterRoom,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: 'Ruangan',
+                          isDense: true,
+                          filled: true,
+                          fillColor: const Color(0xfff5f8fc),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
                           ),
                         ),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _filterRoom = value;
-                        _page = 1;
-                      });
-                      _load();
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<int?>(
-                    value: _filterCategory,
-                    isExpanded: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Kategori',
-                      filled: true,
-                      fillColor: Color(0xfff5f8fc),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
+                        items: [
+                          const DropdownMenuItem<int?>(
+                            value: null,
+                            child: Text('Semua'),
+                          ),
+                          ..._rooms.map(
+                            (room) => DropdownMenuItem<int?>(
+                              value: room.id,
+                              child: Text(
+                                room.namaRuangan,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _filterRoom = value;
+                            _page = 1;
+                          });
+                          _load();
+                        },
                       ),
                     ),
-                    items: [
-                      const DropdownMenuItem<int?>(
-                        value: null,
-                        child: Text('Semua Kategori'),
-                      ),
-                      ..._categories.map(
-                        (category) => DropdownMenuItem<int?>(
-                          value: _toInt(category['id']),
-                          child: Text(
-                            category['nama_kategori_linen']?.toString() ??
-                                category['nama']?.toString() ??
-                                '-',
-                            overflow: TextOverflow.ellipsis,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 4,
+                      child: DropdownButtonFormField<int?>(
+                        value: _filterCategory,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: 'Kategori',
+                          isDense: true,
+                          filled: true,
+                          fillColor: const Color(0xfff5f8fc),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
                           ),
                         ),
+                        items: [
+                          const DropdownMenuItem<int?>(
+                            value: null,
+                            child: Text('Semua'),
+                          ),
+                          ..._categories.map(
+                            (category) => DropdownMenuItem<int?>(
+                              value: _toInt(category['id']),
+                              child: Text(
+                                category['nama_kategori_linen']?.toString() ??
+                                    category['nama']?.toString() ??
+                                    '-',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _filterCategory = value;
+                            _page = 1;
+                          });
+                          _load();
+                        },
                       ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _filterCategory = value;
-                        _page = 1;
-                      });
-                      _load();
-                    },
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      IconButton(
+                    ),
+                    const SizedBox(width: 4),
+                    SizedBox(
+                      width: 40,
+                      height: 44,
+                      child: IconButton(
                         onPressed: _pickRange,
                         tooltip: 'Pilih rentang tanggal',
                         style: IconButton.styleFrom(
                           backgroundColor: const Color(0xff1261dc),
                           foregroundColor: Colors.white,
+                          shape: const CircleBorder(),
+                          padding: EdgeInsets.zero,
                         ),
-                        icon: const Icon(Icons.date_range_rounded, size: 20),
+                        icon: const Icon(Icons.calendar_month_rounded, size: 19),
                       ),
-                      IconButton(
+                    ),
+                    const SizedBox(width: 2),
+                    SizedBox(
+                      width: 40,
+                      height: 44,
+                      child: IconButton(
                         onPressed: _resetFilters,
                         tooltip: 'Reset filter',
-                        icon: const Icon(Icons.filter_alt_off_rounded),
+                        style: IconButton.styleFrom(
+                          foregroundColor: const Color(0xff6f7f8d),
+                          backgroundColor: const Color(0xfff1f4f8),
+                          shape: const CircleBorder(),
+                          padding: EdgeInsets.zero,
+                        ),
+                        icon: const Icon(Icons.filter_alt_off_rounded, size: 19),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
             if (_dateRange != null)
