@@ -587,17 +587,36 @@ class DashboardHeader extends StatelessWidget {
 
                 const SizedBox(width: 12),
 
-                _HeaderActionButton(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => SettingsPage(
-                          userName: userName,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        width: 54,
+                        height: 54,
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(5),
+                        child: Image.asset(
+                          'assets/logo.png',
+                          fit: BoxFit.contain,
                         ),
                       ),
-                    );
-                  },
-                  icon: Icons.manage_accounts_rounded,
+                    ),
+                    const SizedBox(height: 10),
+                    _HeaderActionButton(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => SettingsPage(
+                              userName: userName,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: Icons.manage_accounts_rounded,
+                    ),
+                  ],
                 ),
               ],
             ),
