@@ -217,9 +217,9 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        'URL disimpan di perangkat ini dan dipakai untuk seluruh request API.',
+                        'https://smilers.co.id',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Color(0xffA0ADB6), fontSize: 9),
+                        style: TextStyle(color: Color(0xffA0ADB6), fontSize: 10),
                       ),
                     ],
                   ),
