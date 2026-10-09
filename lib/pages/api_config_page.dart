@@ -44,7 +44,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
 
     if (value.isEmpty || normalized.isEmpty || uri == null || uri.host.isEmpty ||
         (uri.scheme != 'http' && uri.scheme != 'https')) {
-      _show('URL tidak valid. Contoh: https://server-rumah-sakit.com atau http://192.168.1.100');
+      _show('URL tidak valid. Contoh: https://smilers.co.id');
       return;
     }
 
@@ -154,7 +154,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                             fontSize: 11,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'https://server-rumah-sakit.com atau http://192.168.1.100',
+                            hintText: 'https://smilers.co.id',
                             hintStyle: const TextStyle(
                               color: Color(0xff9aa8b5),
                               fontSize: 10,
@@ -193,7 +193,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                       const SizedBox(height: 10),
                       const Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Contoh: https://server-rumah-sakit.com', style: TextStyle(color: Color(0xff94A2AC), fontSize: 10)),
+                        child: Text('Contoh: https://smilers.co.id', style: TextStyle(color: Color(0xff94A2AC), fontSize: 10)),
                       ),
                       const SizedBox(height: 22),
                       SizedBox(
@@ -214,12 +214,6 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'https://smilers.co.id',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Color(0xffA0ADB6), fontSize: 10),
                       ),
                     ],
                   ),
