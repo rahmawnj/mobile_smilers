@@ -200,7 +200,7 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
       ),
       child: Row(
         children: [
-          const AppBackButton(),
+          const AppBackButton(icon: Icons.home_rounded),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
