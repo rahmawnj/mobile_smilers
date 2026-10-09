@@ -117,18 +117,11 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
                   ),
                   child: Column(
                     children: [
-                      Container(
-                        width: 66,
-                        height: 66,
-                        decoration: BoxDecoration(
-                          color: const Color(0xff118D9A).withValues(alpha: .10),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Icon(
-                          Icons.dns_rounded,
-                          color: Color(0xff118D9A),
-                          size: 32,
-                        ),
+                      Image.asset(
+                        'assets/logo.png',
+                        width: 82,
+                        height: 82,
+                        fit: BoxFit.contain,
                       ),
                       const SizedBox(height: 18),
                       const Text(
