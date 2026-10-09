@@ -55,8 +55,56 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       await ApiService.instance.getAppInfo();
 
       if (!mounted) return;
+
+      // Beri feedback sukses sebelum berpindah halaman.
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Color(0xff118D9A),
+            duration: Duration(milliseconds: 900),
+            content: Row(
+              children: [
+                Icon(Icons.check_circle_rounded, color: Colors.white),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Konfigurasi server berhasil!',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
+      await Future<void>.delayed(const Duration(milliseconds: 900));
+      if (!mounted) return;
+
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ApiLoginPage()),
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 450),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          pageBuilder: (_, animation, secondaryAnimation) =>
+              const ApiLoginPage(),
+          transitionsBuilder: (_, animation, secondaryAnimation, child) {
+            final curved = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOutCubic,
+            );
+            return FadeTransition(
+              opacity: curved,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0.06, 0),
+                  end: Offset.zero,
+                ).animate(curved),
+                child: child,
+              ),
+            );
+          },
+        ),
       );
     } on ApiException catch (e) {
       if (mounted) {
