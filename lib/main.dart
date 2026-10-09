@@ -138,10 +138,23 @@ class _AppStartupPageState extends State<AppStartupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
-        child: CircularProgressIndicator(
-          color: Color(0xff118D9A),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/logo.png',
+              width: 112,
+              height: 112,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 22),
+            const CircularProgressIndicator(
+              color: Color(0xff118D9A),
+            ),
+          ],
         ),
       ),
     );
