@@ -122,7 +122,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                 rows: rows.asMap().entries.map((entry) {
                   final item = entry.value;
                   return DataRow(cells: [
-                    DataCell(Text('\${entry.key + 1}')),
+                    DataCell(Text('${entry.key + 1}')),
                     DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
                     DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
                     DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
@@ -144,7 +144,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                 ..writeln('No,Nama Linen,Kategori Linen,Jumlah,Ruangan');
               for (var i = 0; i < rows.length; i++) {
                 final item = rows[i];
-                String cell(String value) => '"\${value.replaceAll('"', '""')}"';
+                String cell(String value) => '"' + value.replaceAll('"', '""') + '"';
                 csv.writeln([
                   i + 1,
                   cell(item.namaLinen),
@@ -156,11 +156,10 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
               final bytes = Uint8List.fromList([
                 0xEF, 0xBB, 0xBF, ...utf8.encode(csv.toString()),
               ]);
-              await FilePicker.platform.saveFile(
+              await FilePicker.saveFile(
                 dialogTitle: 'Simpan data Linen & Tirai Keluar',
                 fileName: 'linen_tirai_keluar.csv',
-                type: FileType.custom,
-                allowedExtensions: ['csv'],
+                mimeType: 'text/csv',
                 bytes: bytes,
               );
             },
