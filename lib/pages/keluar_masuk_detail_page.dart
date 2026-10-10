@@ -685,7 +685,7 @@ class _LinenKeluarDetailTable extends StatelessWidget {
       rows: rows.asMap().entries.map((entry) {
         final item = entry.value;
         return DataRow(cells: [
-          DataCell(Text('\${entry.key + 1}')),
+          DataCell(Text('${entry.key + 1}')),
           DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
           DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
           DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
@@ -715,7 +715,7 @@ class _LinenMasukDetailTable extends StatelessWidget {
       rows: rows.asMap().entries.map((entry) {
         final item = entry.value;
         return DataRow(cells: [
-          DataCell(Text('\${entry.key + 1}')),
+          DataCell(Text('${entry.key + 1}')),
           DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
           DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
           DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
