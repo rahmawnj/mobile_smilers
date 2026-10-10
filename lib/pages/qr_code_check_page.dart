@@ -130,10 +130,30 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
                         const SizedBox(height: 8),
                         Text(
                           error.errorCode == MobileScannerErrorCode.permissionDenied
-                              ? 'Izinkan akses kamera di pengaturan aplikasi.'
+                              ? 'Akses kamera diperlukan untuk scan QR. Tekan tombol di bawah untuk mencoba meminta izin lagi. Jika izin pernah ditolak permanen, aktifkan Kamera melalui Pengaturan aplikasi.'
                               : 'Periksa izin kamera atau tutup aplikasi lain yang sedang menggunakan kamera.',
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                        const SizedBox(height: 18),
+                        FilledButton.icon(
+                          onPressed: () async {
+                            try {
+                              await _scanner.start();
+                            } catch (_) {
+                              if (mounted) {
+                                setState(() {
+                                  _error = 'Izin kamera belum aktif. Buka Pengaturan aplikasi, izinkan Kamera, lalu coba lagi.';
+                                });
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.camera_alt_rounded),
+                          label: const Text('Izinkan / Coba kamera lagi'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xff02c0cc),
+                            foregroundColor: const Color(0xff101820),
+                          ),
                         ),
                       ],
                     )),
