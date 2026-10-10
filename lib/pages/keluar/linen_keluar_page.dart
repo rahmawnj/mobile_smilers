@@ -182,7 +182,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
 
   Future<LinenListResponse<LinenKeluarItem>> _getKeluarPreviewPage(int page) {
     return ApiService.instance.getLinenKeluar(
-      perPage: 20,
+      perPage: 500,
       page: page,
       search: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
       ruangan: _filterRoom,
