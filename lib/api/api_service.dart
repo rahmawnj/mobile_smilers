@@ -346,10 +346,10 @@ class LinenHilangRuanganItem {
   );
 }
 class LinenKeluarItem {
-  const LinenKeluarItem({required this.id,required this.namaLinen,required this.qrCode,required this.tagRfid,required this.keRuangan,required this.jam,required this.tanggal,required this.user});
-  final int id; final String namaLinen,qrCode,tagRfid,keRuangan,jam,tanggal,user;
+  const LinenKeluarItem({required this.id,required this.namaLinen,required this.namaKategoriLinen,required this.jumlah,required this.qrCode,required this.tagRfid,required this.keRuangan,required this.jam,required this.tanggal,required this.user});
+  final int id; final String namaLinen,namaKategoriLinen,jumlah,qrCode,tagRfid,keRuangan,jam,tanggal,user;
   factory LinenKeluarItem.fromJson(Map<String,dynamic> j)=>LinenKeluarItem(
-    id:_toInt(j['id']),namaLinen:j['nama_linen']?.toString()??'',qrCode:j['qr_code']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',
+    id:_toInt(j['id']),namaLinen:j['nama_linen']?.toString()??'',namaKategoriLinen:(j['nama_kategori_linen']??j['kategori_linen']??j['kategori'])?.toString()??'',jumlah:(j['jumlah']??j['jumlah_linen']??j['qty'])?.toString()??'',qrCode:j['qr_code']?.toString()??'',tagRfid:j['tag_rfid']?.toString()??'',
     keRuangan:j['ke_ruangan']?.toString()??j['ruangan']?.toString()??'',jam:j['jam']?.toString()??'',tanggal:j['tanggal']?.toString()??'',user:j['user']?.toString()??'');
 }
 class LinenKeluarRoomOption {
@@ -473,6 +473,7 @@ class LinenMasukItem {
     required this.id,
     required this.namaLinen,
     required this.namaKategoriLinen,
+    required this.jumlah,
     required this.qrCode,
     required this.tagRfid,
     required this.dariRuangan,
@@ -481,11 +482,12 @@ class LinenMasukItem {
     required this.keterangan,
   });
   final int id;
-  final String namaLinen, namaKategoriLinen, qrCode, tagRfid, dariRuangan, jam, tanggal, keterangan;
+  final String namaLinen, namaKategoriLinen, jumlah, qrCode, tagRfid, dariRuangan, jam, tanggal, keterangan;
   factory LinenMasukItem.fromJson(Map<String,dynamic> j)=>LinenMasukItem(
     id:_toInt(j['id']),
     namaLinen:j['nama_linen']?.toString()??'',
-    namaKategoriLinen:j['nama_kategori_linen']?.toString()??'',
+    namaKategoriLinen:(j['nama_kategori_linen']??j['kategori_linen']??j['kategori'])?.toString()??'',
+    jumlah:(j['jumlah']??j['jumlah_linen']??j['qty'])?.toString()??'',
     qrCode:j['qr_code']?.toString()??'',
     tagRfid:j['tag_rfid']?.toString()??'',
     dariRuangan:j['dari_ruangan']?.toString()??'',
