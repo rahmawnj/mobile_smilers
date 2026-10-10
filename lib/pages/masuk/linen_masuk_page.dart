@@ -587,13 +587,8 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       columns: const [
         DataColumn(label: Text('No')),
         DataColumn(label: Text('Nama Linen')),
-        DataColumn(label: Text('Nama Kategori Linen')),
-        DataColumn(label: Text('QR Code')),
-        DataColumn(label: Text('Tag RFID')),
-        DataColumn(label: Text('Dari Ruangan')),
-        DataColumn(label: Text('Jam')),
-        DataColumn(label: Text('Tanggal')),
-        DataColumn(label: Text('Keterangan')),
+        DataColumn(label: Text('Kategori Linen')),
+        DataColumn(label: Text('Jumlah')),
       ],
       rows: rows.asMap().entries.map((entry) {
         final item = entry.value;
@@ -602,12 +597,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
           DataCell(Text(no.toString())),
           DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
           DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
-          DataCell(Text(item.qrCode.isEmpty ? '-' : item.qrCode)),
-          DataCell(Text(item.tagRfid.isEmpty ? '-' : item.tagRfid)),
-          DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan)),
-          DataCell(Text(item.jam.isEmpty ? '-' : item.jam)),
-          DataCell(Text(item.tanggal.isEmpty ? '-' : item.tanggal)),
-          DataCell(Text(item.keterangan.isEmpty ? '-' : item.keterangan)),
+          DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
         ]);
       }).toList(),
     );
