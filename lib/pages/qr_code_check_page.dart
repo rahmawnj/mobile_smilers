@@ -220,7 +220,30 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
                   style: const TextStyle(color: Color(0xff263645), fontSize: 15, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 6),
-                const Text('Pemindaian otomatis. Hasil akan terbuka setelah QR berhasil dibaca.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 12, height: 1.5)),
+                const Text('Pemindaian otomatis. Hasil akan terbuka setelah QR berhasil dibaca.', textAlign: TextAlign.center, style: TextStyle(color: Color(0xff7d8c99), fontSize: 12, height: 1.5)),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      await _scanner.stop();
+                      if (!context.mounted) return;
+                      await Navigator.of(context).push(smoothPageRoute<void>(
+                        (_) => _QrManualInputPage(userName: widget.userName),
+                      ));
+                      if (!mounted) return;
+                      if (!_processing) await _scanner.start();
+                    },
+                    icon: const Icon(Icons.keyboard_alt_outlined),
+                    label: const Text('Input QR Code Manual'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xff0e57ed),
+                      side: const BorderSide(color: Color(0xff0e57ed)),
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
               ]),
             ),
           ],
