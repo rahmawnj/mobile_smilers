@@ -109,14 +109,12 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                             children: [
                               _RoomDetailTable(
                                 title: 'Linen di Ruangan',
-                                columns: const ['No', 'Nama Linen', 'Nama Kategori Linen', 'Status', 'Tanggal Keluar', 'Jam Keluar'],
+                                columns: const ['No', 'Nama Linen', 'Kategori Linen', 'Jumlah'],
                                 rows: detailRows.asMap().entries.map((entry) => [
                                   ((_detailPage - 1) * 10 + entry.key + 1),
-                                  entry.value.namaLinen,
-                                  entry.value.namaKategoriLinen,
-                                  entry.value.status,
-                                  entry.value.tanggalKeluar,
-                                  entry.value.jamKeluar,
+                                  entry.value.namaLinen.isEmpty ? '-' : entry.value.namaLinen,
+                                  entry.value.namaKategoriLinen.isEmpty ? '-' : entry.value.namaKategoriLinen,
+                                  '-',
                                 ]).toList(),
                               ),
                               if (_response != null)
