@@ -53,8 +53,8 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
       _processing = true;
       _error = null;
     });
-    await _scanner.stop();
     try {
+      await _scanner.stop();
       final result = await ApiService.instance.checkLinenQr(code);
       if (!mounted) return;
       await Navigator.of(context).push(MaterialPageRoute(
