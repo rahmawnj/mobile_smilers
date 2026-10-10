@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../api/api_service.dart';
@@ -287,6 +291,141 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     }
   }
 
+  Future<LinenListResponse<LinenMasukItem>> _getMasukPreviewPage(int page) {
+    return ApiService.instance.getLinenMasuk(
+      perPage: 500,
+      page: page,
+      search: _searchController.text.trim().isEmpty
+          ? null
+          : _searchController.text.trim(),
+      ruangan: _filterRoom,
+      date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!)
+          ? _date(_selectedDateRange!.start)
+          : null,
+      daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!)
+          ? _range(_selectedDateRange!)
+          : null,
+    );
+  }
+
+  Future<List<LinenMasukItem>> _loadAllMasukRows() async {
+    final firstPage = await ApiService.instance.getLinenMasuk(
+      perPage: 100,
+      page: 1,
+      search: _searchController.text.trim().isEmpty
+          ? null
+          : _searchController.text.trim(),
+      ruangan: _filterRoom,
+      date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!)
+          ? _date(_selectedDateRange!.start)
+          : null,
+      daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!)
+          ? _range(_selectedDateRange!)
+          : null,
+    );
+    final allRows = <LinenMasukItem>[...firstPage.data];
+    for (var page = 2; page <= firstPage.meta.lastPage; page++) {
+      final response = await ApiService.instance.getLinenMasuk(
+        perPage: 100,
+        page: page,
+        search: _searchController.text.trim().isEmpty
+            ? null
+            : _searchController.text.trim(),
+        ruangan: _filterRoom,
+        date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!)
+            ? _date(_selectedDateRange!.start)
+            : null,
+        daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!)
+            ? _range(_selectedDateRange!)
+            : null,
+      );
+      allRows.addAll(response.data);
+    }
+    return allRows;
+  }
+
+  Future<void> _downloadMasukPdf(List<LinenMasukItem> rows) async {
+    final document = pw.Document();
+    document.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(28),
+        build: (context) => [
+          pw.Text(
+            'DATA LINEN & TIRAI MASUK',
+            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+          ),
+          pw.SizedBox(height: 5),
+          pw.Text('Tanggal cetak: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}'),
+          if (_filterRoom != null)
+            pw.Text('Filter ruangan: ${_rooms.where((room) => room.id == _filterRoom).map((room) => room.nama).firstOrNull ?? '-'}'),
+          if (_selectedDateRange != null)
+            pw.Text('Periode: ${_isSingleDate(_selectedDateRange!) ? _date(_selectedDateRange!.start) : _range(_selectedDateRange!)}'),
+          if (_searchController.text.trim().isNotEmpty)
+            pw.Text('Pencarian: ${_searchController.text.trim()}'),
+          pw.SizedBox(height: 14),
+          pw.TableHelper.fromTextArray(
+            headers: ['No', 'Nama Linen', 'Kategori Linen', 'Jumlah', 'Ruangan'],
+            data: rows.asMap().entries.map((entry) {
+              final item = entry.value;
+              return [
+                '${entry.key + 1}',
+                item.namaLinen.isEmpty ? '-' : item.namaLinen,
+                item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen,
+                item.jumlah.isEmpty ? '-' : item.jumlah,
+                item.dariRuangan.isEmpty ? '-' : item.dariRuangan,
+              ];
+            }).toList(),
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
+            cellStyle: const pw.TextStyle(fontSize: 8),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+            cellPadding: const pw.EdgeInsets.all(6),
+            border: pw.TableBorder.all(color: PdfColors.grey500, width: .5),
+          ),
+          pw.SizedBox(height: 42),
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Expanded(
+                child: pw.Column(children: [
+                  pw.Text('PETUGAS LINEN', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                  pw.SizedBox(height: 48),
+                  pw.Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(), style: const pw.TextStyle(fontSize: 10)),
+                ]),
+              ),
+              pw.Expanded(
+                child: pw.Column(children: [
+                  pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                  pw.SizedBox(height: 48),
+                  pw.Text('____________________________', style: const pw.TextStyle(fontSize: 10)),
+                ]),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+    final bytes = Uint8List.fromList(await document.save());
+    await FilePicker.saveFile(
+      dialogTitle: 'Simpan PDF Linen & Tirai Masuk',
+      fileName: 'linen_tirai_masuk.pdf',
+      mimeType: 'application/pdf',
+      bytes: bytes,
+    );
+  }
+
+  Future<void> _previewDownload() async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => _LinenMasukPreviewDialog(
+        userName: widget.userName,
+        loadPage: _getMasukPreviewPage,
+        downloadAll: _loadAllMasukRows,
+        downloadPdf: _downloadMasukPdf,
+      ),
+    );
+  }
+
   Future<void> _pickRange() async {
     final range = await showDateRangePicker(
       context: context,
@@ -385,6 +524,20 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                             : const Icon(Icons.qr_code_scanner_rounded),
                         label: const Text('Scan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
                         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff1261dc), foregroundColor: Colors.white, minimumSize: const Size(0, 44), padding: const EdgeInsets.symmetric(horizontal: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                      ),
+                      const SizedBox(width: 4),
+                      IconButton(
+                        onPressed: _previewDownload,
+                        tooltip: 'Preview dan download',
+                        style: IconButton.styleFrom(
+                          backgroundColor: const Color(0xffeaf2ff),
+                          foregroundColor: const Color(0xff1261dc),
+                          minimumSize: const Size(44, 44),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        icon: const Icon(Icons.preview_rounded, size: 21),
                       ),
                     ],
                   ),
@@ -630,6 +783,231 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       child: Center(
         child: Text('Belum ada data Linen & Tirai Masuk.'),
       ),
+    );
+  }
+}
+
+
+class _LinenMasukPreviewDialog extends StatefulWidget {
+  const _LinenMasukPreviewDialog({
+    required this.userName,
+    required this.loadPage,
+    required this.downloadAll,
+    required this.downloadPdf,
+  });
+
+  final String userName;
+  final Future<LinenListResponse<LinenMasukItem>> Function(int page) loadPage;
+  final Future<List<LinenMasukItem>> Function() downloadAll;
+  final Future<void> Function(List<LinenMasukItem>) downloadPdf;
+
+  @override
+  State<_LinenMasukPreviewDialog> createState() => _LinenMasukPreviewDialogState();
+}
+
+class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
+  final ScrollController _scrollController = ScrollController();
+  final List<LinenMasukItem> _rows = [];
+  int _nextPage = 1;
+  int _lastPage = 1;
+  int? _total;
+  bool _loading = true;
+  bool _loadingMore = false;
+  bool _downloadingPdf = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _loadNextPage();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients || _loadingMore || _loading) return;
+    if (_scrollController.position.extentAfter < 240 && _nextPage <= _lastPage) {
+      _loadNextPage();
+    }
+  }
+
+  Future<void> _loadNextPage() async {
+    if (_loadingMore || (_nextPage > _lastPage && _rows.isNotEmpty)) return;
+    final page = _nextPage;
+    setState(() {
+      _loading = _rows.isEmpty;
+      _loadingMore = _rows.isNotEmpty;
+      _error = null;
+    });
+    try {
+      final response = await widget.loadPage(page);
+      if (!mounted) return;
+      setState(() {
+        _rows.addAll(response.data);
+        _nextPage = page + 1;
+        _lastPage = response.meta.lastPage;
+        _total = response.meta.total;
+        _loading = false;
+        _loadingMore = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _loadingMore = false;
+        _error = e is ApiException
+            ? e.message
+            : 'Gagal memuat data. Periksa koneksi lalu coba lagi.';
+      });
+    }
+  }
+
+  Future<void> _downloadPdf() async {
+    setState(() => _downloadingPdf = true);
+    try {
+      final rows = await widget.downloadAll();
+      if (!mounted) return;
+      if (rows.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tidak ada data untuk diunduh.')),
+        );
+        return;
+      }
+      await widget.downloadPdf(rows);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal membuat PDF: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _downloadingPdf = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Preview Linen & Tirai Masuk'),
+      content: SizedBox(
+        width: 760,
+        height: 520,
+        child: Column(
+          children: [
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _error != null && _rows.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(_error!, textAlign: TextAlign.center),
+                              const SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: _loadNextPage,
+                                child: const Text('Coba Lagi'),
+                              ),
+                            ],
+                          ),
+                        )
+                      : _rows.isEmpty
+                          ? const Center(child: Text('Tidak ada data untuk di-preview.'))
+                          : SingleChildScrollView(
+                              controller: _scrollController,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: DataTable(
+                                  headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
+                                  headingTextStyle: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  columns: const [
+                                    DataColumn(label: Text('No')),
+                                    DataColumn(label: Text('Nama Linen')),
+                                    DataColumn(label: Text('Kategori Linen')),
+                                    DataColumn(label: Text('Jumlah')),
+                                    DataColumn(label: Text('Ruangan')),
+                                  ],
+                                  rows: _rows.asMap().entries.map((entry) {
+                                    final item = entry.value;
+                                    return DataRow(cells: [
+                                      DataCell(Text('${entry.key + 1}')),
+                                      DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+                                      DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
+                                      DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
+                                      DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan)),
+                                    ]);
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+            ),
+            if (_loadingMore)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                    SizedBox(width: 8),
+                    Text('Memuat data berikutnya...', style: TextStyle(fontSize: 11)),
+                  ],
+                ),
+              ),
+            if (_error != null && _rows.isNotEmpty)
+              TextButton(onPressed: _loadNextPage, child: const Text('Gagal memuat. Coba lagi')),
+            const Divider(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(children: [
+                    const Text('PETUGAS LINEN', textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                    const SizedBox(height: 38),
+                    Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(),
+                        textAlign: TextAlign.center),
+                  ]),
+                ),
+                Expanded(
+                  child: Column(children: const [
+                    Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                    SizedBox(height: 38),
+                    Text('____________________________', textAlign: TextAlign.center),
+                  ]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • muat saat scroll',
+              style: const TextStyle(color: Color(0xff7d8c99), fontSize: 11, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _downloadingPdf ? null : () => Navigator.of(context).pop(),
+          child: const Text('Tutup'),
+        ),
+        ElevatedButton.icon(
+          onPressed: _downloadingPdf || _loading ? null : _downloadPdf,
+          icon: _downloadingPdf
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+              : const Icon(Icons.picture_as_pdf_rounded),
+          label: Text(_downloadingPdf ? 'Menyiapkan PDF...' : 'Download PDF'),
+        ),
+      ],
     );
   }
 }
