@@ -89,7 +89,6 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 8, 12, 14),
-              decoration: const BoxDecoration(color: Colors.white),
               child: Row(children: [
                 IconButton(
                   onPressed: () => Navigator.of(context).maybePop(),
