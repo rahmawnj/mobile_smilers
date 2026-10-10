@@ -57,8 +57,8 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
       await _scanner.stop();
       final result = await ApiService.instance.checkLinenQr(code);
       if (!mounted) return;
-      await Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => _QrResultPage(userName: widget.userName, result: result),
+      await Navigator.of(context).push(smoothPageRoute<void>(
+        (_) => _QrResultPage(userName: widget.userName, result: result),
       ));
       if (!mounted) return;
       setState(() => _processing = false);
@@ -87,25 +87,34 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 12, 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(8, 10, 12, 14),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xff5cc9bd), Color(0xff159cf1)],
+                ),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+              ),
               child: Row(children: [
                 IconButton(
                   onPressed: () => Navigator.of(context).maybePop(),
-                  icon: const Icon(Icons.arrow_back_rounded, color: Color(0xff263645)),
+                  icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
                 ),
                 const Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Scan QR Linen', style: TextStyle(color: Color(0xff263645), fontSize: 19, fontWeight: FontWeight.w800)),
-                    SizedBox(height: 3),
-                    Text('Kamera aktif otomatis', style: TextStyle(color: Color(0xff7d8c99), fontSize: 12)),
+                    Text('Scan QR Linen', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
+                    SizedBox(height: 4),
+                    Text('Kamera aktif otomatis', style: TextStyle(color: Colors.white70, fontSize: 11)),
                   ],
                 )),
                 IconButton(
                   tooltip: 'Flash',
                   onPressed: () => _scanner.toggleTorch(),
-                  icon: const Icon(Icons.flash_on_rounded, color: Color(0xff0e57ed)),
+                  icon: const Icon(Icons.flash_on_rounded, color: Colors.white),
                 ),
               ]),
             ),
@@ -296,9 +305,9 @@ class _QrManualInputPageState extends State<_QrManualInputPage> {
       backgroundColor: const Color(0xfff5f8fc),
       appBar: AppBar(
         title: const Text('Input QR Code'),
-        backgroundColor: const Color(0xff0e57ed),
         foregroundColor: Colors.white,
         elevation: 0,
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xff5cc9bd), Color(0xff159cf1)]))),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -307,8 +316,8 @@ class _QrManualInputPageState extends State<_QrManualInputPage> {
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xffe3e9ef)),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xffe5ebf1)),
             ),
             child: Form(
               key: _formKey,
@@ -394,11 +403,11 @@ class _QrResultPage extends StatelessWidget {
     ];
     return Scaffold(
       backgroundColor: const Color(0xfff5f8fc),
-      appBar: AppBar(title: const Text('Hasil QR Code'), backgroundColor: const Color(0xff0e57ed), foregroundColor: Colors.white, elevation: 0),
+      appBar: AppBar(title: const Text('Hasil QR Code'), foregroundColor: Colors.white, elevation: 0, flexibleSpace: Container(decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xff5cc9bd), Color(0xff159cf1)])))),
       body: ListView(padding: const EdgeInsets.all(16), children: [
         Container(
           padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xffe3e9ef))),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: const Color(0xffe5ebf1))),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Container(width: 46, height: 46, decoration: BoxDecoration(color: const Color(0xff02c0cc).withValues(alpha: .12), borderRadius: BorderRadius.circular(14)), child: const Icon(Icons.qr_code_2_rounded, color: Color(0xff02aab6), size: 26)),
