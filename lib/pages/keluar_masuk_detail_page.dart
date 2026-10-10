@@ -669,12 +669,29 @@ class _InfoRow extends StatelessWidget {
 class _LinenKeluarDetailTable extends StatelessWidget {
   const _LinenKeluarDetailTable({required this.rows});
   final List<LinenKeluarItem> rows;
-  @override Widget build(BuildContext context) {
+
+  @override
+  Widget build(BuildContext context) {
     if (rows.isEmpty) return _emptyTable('Belum ada data Linen & Tirai Keluar.');
     return AppDataTable(
       headingColor: const Color(0xff02c0cc),
-      columns: const [DataColumn(label: Text('No')), DataColumn(label: Text('Nama Linen')), DataColumn(label: Text('QR Code')), DataColumn(label: Text('Tag RFID')), DataColumn(label: Text('Ke Ruangan')), DataColumn(label: Text('Jam')), DataColumn(label: Text('Tanggal')), DataColumn(label: Text('User'))],
-      rows: rows.asMap().entries.map((entry) { final item=entry.value; return DataRow(cells: [DataCell(Text('${entry.key+1}')), DataCell(Text(item.namaLinen.isEmpty?'-':item.namaLinen)), DataCell(Text(item.qrCode.isEmpty?'-':item.qrCode)), DataCell(Text(item.tagRfid.isEmpty?'-':item.tagRfid)), DataCell(Text(item.keRuangan.isEmpty?'-':item.keRuangan)), DataCell(Text(item.jam.isEmpty?'-':item.jam)), DataCell(Text(item.tanggal.isEmpty?'-':item.tanggal)), DataCell(Text(item.user.isEmpty?'-':item.user))]); }).toList(),
+      columns: const [
+        DataColumn(label: Text('No')),
+        DataColumn(label: Text('Nama Linen')),
+        DataColumn(label: Text('Kategori Linen')),
+        DataColumn(label: Text('Jumlah')),
+        DataColumn(label: Text('Ruangan')),
+      ],
+      rows: rows.asMap().entries.map((entry) {
+        final item = entry.value;
+        return DataRow(cells: [
+          DataCell(Text('\${entry.key + 1}')),
+          DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+          DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
+          DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
+          DataCell(Text(item.keRuangan.isEmpty ? '-' : item.keRuangan)),
+        ]);
+      }).toList(),
     );
   }
 }
@@ -682,12 +699,29 @@ class _LinenKeluarDetailTable extends StatelessWidget {
 class _LinenMasukDetailTable extends StatelessWidget {
   const _LinenMasukDetailTable({required this.rows});
   final List<LinenMasukItem> rows;
-  @override Widget build(BuildContext context) {
+
+  @override
+  Widget build(BuildContext context) {
     if (rows.isEmpty) return _emptyTable('Belum ada data Linen & Tirai Masuk.');
     return AppDataTable(
       headingColor: const Color(0xffe29c02),
-      columns: const [DataColumn(label: Text('No')), DataColumn(label: Text('Nama Linen')), DataColumn(label: Text('Nama Kategori Linen')), DataColumn(label: Text('QR Code')), DataColumn(label: Text('Tag RFID')), DataColumn(label: Text('Dari Ruangan')), DataColumn(label: Text('Jam')), DataColumn(label: Text('Tanggal')), DataColumn(label: Text('Keterangan'))],
-      rows: rows.asMap().entries.map((entry) { final item=entry.value; return DataRow(cells: [DataCell(Text('${entry.key+1}')), DataCell(Text(item.namaLinen.isEmpty?'-':item.namaLinen)), DataCell(Text(item.namaKategoriLinen.isEmpty?'-':item.namaKategoriLinen)), DataCell(Text(item.qrCode.isEmpty?'-':item.qrCode)), DataCell(Text(item.tagRfid.isEmpty?'-':item.tagRfid)), DataCell(Text(item.dariRuangan.isEmpty?'-':item.dariRuangan)), DataCell(Text(item.jam.isEmpty?'-':item.jam)), DataCell(Text(item.tanggal.isEmpty?'-':item.tanggal)), DataCell(Text(item.keterangan.isEmpty?'-':item.keterangan))]); }).toList(),
+      columns: const [
+        DataColumn(label: Text('No')),
+        DataColumn(label: Text('Nama Linen')),
+        DataColumn(label: Text('Kategori Linen')),
+        DataColumn(label: Text('Jumlah')),
+        DataColumn(label: Text('Ruangan')),
+      ],
+      rows: rows.asMap().entries.map((entry) {
+        final item = entry.value;
+        return DataRow(cells: [
+          DataCell(Text('\${entry.key + 1}')),
+          DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+          DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
+          DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
+          DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan)),
+        ]);
+      }).toList(),
     );
   }
 }
