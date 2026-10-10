@@ -522,6 +522,11 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: DataTable(
+                                  headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
+                                  headingTextStyle: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                   columns: const [
                                     DataColumn(label: Text('No')),
                                     DataColumn(label: Text('Nama Linen')),
