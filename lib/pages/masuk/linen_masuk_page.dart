@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../api/api_service.dart';
 import '../../widgets/pagination_widget.dart';
@@ -121,9 +122,9 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   }
 
   Future<void> _scan() async {
-    final value = await showDialog<String>(
-      context: context,
-      builder: (dialogContext) => const _ScanLinenMasukDialog(),
+    if (_scanning) return;
+    final value = await Navigator.of(context).push<String>(
+      smoothPageRoute<String>((_) => const _ScanLinenMasukCameraPage()),
     );
 
     if (!mounted || value == null || value.isEmpty || _scanning) return;
@@ -676,59 +677,408 @@ class _ScanDetailRow extends StatelessWidget {
   }
 }
 
-class _ScanLinenMasukDialog extends StatefulWidget {
-  const _ScanLinenMasukDialog();
+class _ScanLinenMasukCameraPage extends StatefulWidget {
+  const _ScanLinenMasukCameraPage();
 
   @override
-  State<_ScanLinenMasukDialog> createState() => _ScanLinenMasukDialogState();
+  State<_ScanLinenMasukCameraPage> createState() => _ScanLinenMasukCameraPageState();
 }
 
-class _ScanLinenMasukDialogState extends State<_ScanLinenMasukDialog> {
-  late final TextEditingController _controller;
+class _ScanLinenMasukCameraPageState extends State<_ScanLinenMasukCameraPage>
+    with SingleTickerProviderStateMixin {
+  late final MobileScannerController _controller;
+  late final AnimationController _lineAnimation;
+  bool _detected = false;
+  String? _cameraError;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _controller = MobileScannerController(
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      formats: const [BarcodeFormat.qrCode],
+    );
+    _lineAnimation = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
   }
 
   @override
   void dispose() {
+    _lineAnimation.dispose();
     _controller.dispose();
     super.dispose();
   }
 
-  void _submit() {
-    final value = _controller.text.trim();
-    if (value.isEmpty) return;
-    Navigator.of(context).pop(value);
+  Future<void> _onDetect(BarcodeCapture capture) async {
+    if (_detected) return;
+    for (final barcode in capture.barcodes) {
+      final code = barcode.rawValue?.trim();
+      if (code != null && code.isNotEmpty) {
+        _detected = true;
+        await _controller.stop();
+        if (mounted) Navigator.of(context).pop(code);
+        return;
+      }
+    }
+  }
+
+  Future<void> _openManualInput() async {
+    await _controller.stop();
+    if (!mounted) return;
+    final code = await Navigator.of(context).push<String>(
+      smoothPageRoute<String>((_) => const _ManualLinenMasukInputPage()),
+    );
+    if (!mounted) return;
+    if (code != null && code.trim().isNotEmpty) {
+      Navigator.of(context).pop(code.trim());
+    } else {
+      try {
+        await _controller.start();
+      } catch (_) {
+        if (mounted) {
+          setState(() => _cameraError =
+              'Kamera belum aktif. Izinkan akses kamera atau gunakan input teks.');
+        }
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Scan Linen Masuk'),
-      content: TextField(
-        controller: _controller,
-        autofocus: true,
-        textInputAction: TextInputAction.done,
-        decoration: const InputDecoration(
-          labelText: 'RFID / QR Code',
-          hintText: 'Masukkan RFID atau QR Code',
-        ),
-        onSubmitted: (_) => _submit(),
+    return Scaffold(
+      backgroundColor: const Color(0xff101820),
+      appBar: AppBar(
+        title: const Text('Scan QR Linen Masuk'),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        backgroundColor: const Color(0xff1261dc),
+        actions: [
+          IconButton(
+            tooltip: 'Flash',
+            onPressed: () => _controller.toggleTorch(),
+            icon: const Icon(Icons.flash_on_rounded),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Batal'),
-        ),
-        ElevatedButton.icon(
-          onPressed: _submit,
-          icon: const Icon(Icons.qr_code_scanner_rounded),
-          label: const Text('Scan'),
-        ),
-      ],
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                MobileScanner(
+                  controller: _controller,
+                  onDetect: _onDetect,
+                  errorBuilder: (context, error) => Container(
+                    color: const Color(0xfff5f8fc),
+                    padding: const EdgeInsets.all(24),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.no_photography_outlined,
+                              size: 48, color: Color(0xff7d8c99)),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Kamera tidak dapat dibuka',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xff263645),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            error.errorCode == MobileScannerErrorCode.permissionDenied
+                                ? 'Izin kamera diperlukan. Aktifkan akses Kamera di pengaturan aplikasi, lalu coba lagi.'
+                                : 'Periksa izin kamera atau tutup aplikasi lain yang sedang menggunakan kamera.',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: Color(0xff7d8c99), fontSize: 12),
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton.icon(
+                            onPressed: () async {
+                              try {
+                                await _controller.start();
+                                if (mounted) setState(() => _cameraError = null);
+                              } catch (_) {
+                                if (mounted) {
+                                  setState(() => _cameraError =
+                                      'Kamera belum diizinkan. Coba input dengan teks.');
+                                }
+                              }
+                            },
+                            icon: const Icon(Icons.camera_alt_rounded),
+                            label: const Text('Coba kamera lagi'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  placeholderBuilder: (_) => const Center(
+                    child: CircularProgressIndicator(color: Color(0xff02c0cc)),
+                  ),
+                ),
+                IgnorePointer(
+                  child: Center(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final width = constraints.maxWidth * .76;
+                        final height = width * .76;
+                        return Container(
+                          width: width,
+                          height: height,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white24),
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: CustomPaint(painter: _MasukScanCornersPainter()),
+                              ),
+                              AnimatedBuilder(
+                                animation: _lineAnimation,
+                                builder: (_, __) => Positioned(
+                                  left: 12,
+                                  right: 12,
+                                  top: 12 + (height - 24) * _lineAnimation.value,
+                                  child: Container(
+                                    height: 3,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xff02e6d0),
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xff02e6d0)
+                                              .withValues(alpha: .7),
+                                          blurRadius: 12,
+                                          spreadRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                if (_cameraError != null)
+                  Positioned(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffffe9e9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _cameraError!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Color(0xffb42318), fontSize: 12),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 26),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+            ),
+            child: Column(
+              children: [
+                const Icon(Icons.qr_code_scanner_rounded,
+                    size: 30, color: Color(0xff1261dc)),
+                const SizedBox(height: 8),
+                const Text(
+                  'Arahkan QR Code ke dalam kotak',
+                  style: TextStyle(
+                    color: Color(0xff263645),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  'QR akan terbaca otomatis menggunakan kamera.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Color(0xff7d8c99), fontSize: 12),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _openManualInput,
+                    icon: const Icon(Icons.keyboard_alt_outlined),
+                    label: const Text('Input dengan Teks'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xff1261dc),
+                      side: const BorderSide(color: Color(0xff1261dc)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
+}
+
+class _ManualLinenMasukInputPage extends StatefulWidget {
+  const _ManualLinenMasukInputPage();
+
+  @override
+  State<_ManualLinenMasukInputPage> createState() =>
+      _ManualLinenMasukInputPageState();
+}
+
+class _ManualLinenMasukInputPageState extends State<_ManualLinenMasukInputPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _textController = TextEditingController();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+    Navigator.of(context).pop(_textController.text.trim());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      appBar: AppBar(
+        title: const Text('Input Linen Masuk'),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        backgroundColor: const Color(0xff1261dc),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xffe5ebf1)),
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Masukkan kode linen',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xff263645),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Masukkan QR Code atau RFID tanpa menggunakan kamera.',
+                    style: TextStyle(fontSize: 12, color: Color(0xff7d8c99)),
+                  ),
+                  const SizedBox(height: 18),
+                  TextFormField(
+                    controller: _textController,
+                    autofocus: true,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _submit(),
+                    decoration: InputDecoration(
+                      labelText: 'QR Code / RFID',
+                      hintText: 'Masukkan kode linen',
+                      prefixIcon: const Icon(Icons.qr_code_2_rounded),
+                      filled: true,
+                      fillColor: const Color(0xfff5f8fc),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? 'Kode linen wajib diisi.'
+                        : null,
+                  ),
+                  const SizedBox(height: 18),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: _submit,
+                      icon: const Icon(Icons.check_circle_outline_rounded),
+                      label: const Text('Lanjutkan'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xff1261dc),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MasukScanCornersPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const length = 28.0;
+    const radius = 3.0;
+    final paint = Paint()
+      ..color = const Color(0xff02e6d0)
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+    final path = Path()
+      ..moveTo(2, length)
+      ..lineTo(2, radius)
+      ..quadraticBezierTo(2, 2, radius, 2)
+      ..lineTo(length, 2)
+      ..moveTo(size.width - length, 2)
+      ..lineTo(size.width - radius, 2)
+      ..quadraticBezierTo(size.width - 2, 2, size.width - 2, radius)
+      ..lineTo(size.width - 2, length)
+      ..moveTo(2, size.height - length)
+      ..lineTo(2, size.height - radius)
+      ..quadraticBezierTo(2, size.height - 2, radius, size.height - 2)
+      ..lineTo(length, size.height - 2)
+      ..moveTo(size.width - length, size.height - 2)
+      ..lineTo(size.width - radius, size.height - 2)
+      ..quadraticBezierTo(size.width - 2, size.height - 2, size.width - 2,
+          size.height - radius)
+      ..lineTo(size.width - 2, size.height - length);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
