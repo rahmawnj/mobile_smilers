@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../api/api_service.dart';
@@ -89,6 +93,85 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
       await Future.wait([_load(),_loadQueue()]);
     } on ApiException catch(e) { if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(e.message))); }
   }
+  Future<void> _previewDownload() async {
+    final rows = _response?.data ?? const <LinenKeluarItem>[];
+    if (rows.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tidak ada data untuk di-preview atau diunduh.')),
+      );
+      return;
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Preview Download'),
+        content: SizedBox(
+          width: 560,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              child: DataTable(
+                columns: const [
+                  DataColumn(label: Text('No')),
+                  DataColumn(label: Text('Nama Linen')),
+                  DataColumn(label: Text('Kategori Linen')),
+                  DataColumn(label: Text('Jumlah')),
+                  DataColumn(label: Text('Ruangan')),
+                ],
+                rows: rows.asMap().entries.map((entry) {
+                  final item = entry.value;
+                  return DataRow(cells: [
+                    DataCell(Text('\${entry.key + 1}')),
+                    DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+                    DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
+                    DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
+                    DataCell(Text(item.keRuangan.isEmpty ? '-' : item.keRuangan)),
+                  ]);
+                }).toList(),
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Tutup'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              final csv = StringBuffer()
+                ..writeln('No,Nama Linen,Kategori Linen,Jumlah,Ruangan');
+              for (var i = 0; i < rows.length; i++) {
+                final item = rows[i];
+                String cell(String value) => '"\${value.replaceAll('"', '""')}"';
+                csv.writeln([
+                  i + 1,
+                  cell(item.namaLinen),
+                  cell(item.namaKategoriLinen),
+                  cell(item.jumlah),
+                  cell(item.keRuangan),
+                ].join(','));
+              }
+              final bytes = Uint8List.fromList([
+                0xEF, 0xBB, 0xBF, ...utf8.encode(csv.toString()),
+              ]);
+              await FilePicker.platform.saveFile(
+                dialogTitle: 'Simpan data Linen & Tirai Keluar',
+                fileName: 'linen_tirai_keluar.csv',
+                type: FileType.custom,
+                allowedExtensions: ['csv'],
+                bytes: bytes,
+              );
+            },
+            icon: const Icon(Icons.download_rounded),
+            label: const Text('Download'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _pickRange() async {
     final r=await showDateRangePicker(
       context:context,
@@ -128,6 +211,18 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
             icon: const Icon(Icons.assignment_rounded, size: 20),
             label: const Text('Form', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff1261dc), foregroundColor: Colors.white, minimumSize: const Size(0, 44), padding: const EdgeInsets.symmetric(horizontal: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            onPressed: _previewDownload,
+            tooltip: 'Preview dan download',
+            style: IconButton.styleFrom(
+              backgroundColor: const Color(0xffeaf2ff),
+              foregroundColor: const Color(0xff1261dc),
+              minimumSize: const Size(44, 44),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
+            icon: const Icon(Icons.preview_rounded, size: 21),
           ),
         ]),
         const SizedBox(height:10),
