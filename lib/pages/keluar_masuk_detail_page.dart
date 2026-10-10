@@ -210,7 +210,6 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                           selisih: selisih,
                         ),
                         const SizedBox(height: 18),
-                        const SectionTitle(title: 'Linen & Tirai Keluar'),
                         const SizedBox(height: 8),
                         _LinenKeluarDetailTable(rows: _keluarResponse?.data ?? const []),
                         if (_keluarResponse != null)
