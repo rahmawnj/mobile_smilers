@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -1043,16 +1044,44 @@ class ApiService {
   }
   Future<List<LinenRoomOption>> getLinenMasukRuangan() async=>_roomOptions(await _get('/linen-masuk/ruangan'));
   Future<LinenQrCheckResult> checkLinenQr(String qrCode) async {
-    final data = await _post('/linen/check-qr', {'qr_code': qrCode});
-    final item = data['data'];
+    // Batasi waktu tunggu khusus pemeriksaan QR agar loading tidak berputar selamanya.
+    try {
+      final token = await _requiredToken().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => throw const ApiException(
+          'Gagal mengambil sesi login. Silakan login ulang.',
+        ),
+      );
+      final mobileUrl = await ApiConfig.getMobileUrl().timeout(
+        const Duration(seconds: 5),
+      );
+      final response = await http
+          .post(
+            Uri.parse('$mobileUrl/linen/check-qr'),
+            headers: _authHeaders(token),
+            body: jsonEncode({'qr_code': qrCode}),
+          )
+          .timeout(
+            const Duration(seconds: 12),
+            onTimeout: () => throw const ApiException(
+              'Server terlalu lama merespons pemeriksaan QR (lebih dari 12 detik). Periksa koneksi atau server, lalu coba lagi.',
+            ),
+          );
+      final data = _handleResponse(response);
+      final item = data['data'];
 
-    if (item is! Map) {
-      throw const ApiException('Response check QR linen tidak valid.');
+      if (item is! Map) {
+        throw const ApiException('Response check QR linen tidak valid.');
+      }
+
+      return LinenQrCheckResult.fromJson(
+        Map<String, dynamic>.from(item),
+      );
+    } on TimeoutException {
+      throw const ApiException(
+        'Waktu tunggu pemeriksaan QR habis. Periksa koneksi internet dan server, lalu coba lagi.',
+      );
     }
-
-    return LinenQrCheckResult.fromJson(
-      Map<String, dynamic>.from(item),
-    );
   }
 
   Future<Map<String,dynamic>> scanLinenMasuk(String rfid)=>_post('/linen-masuk/scan',{'rfid':rfid});
