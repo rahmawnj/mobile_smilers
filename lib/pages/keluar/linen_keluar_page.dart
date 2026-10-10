@@ -181,8 +181,16 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   }
 
   Future<void> _previewDownload() async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (loadingContext) => const AlertDialog(
+        content: Row(children: [CircularProgressIndicator(), SizedBox(width: 16), Expanded(child: Text('Memuat semua data linen keluar...'))]),
+      ),
+    );
     try {
       final rows = await _loadAllKeluarRows();
+      if (mounted) Navigator.of(context, rootNavigator: true).pop();
       if (!mounted) return;
       if (rows.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
