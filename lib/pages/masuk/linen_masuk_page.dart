@@ -589,6 +589,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         DataColumn(label: Text('Nama Linen')),
         DataColumn(label: Text('Kategori Linen')),
         DataColumn(label: Text('Jumlah')),
+        DataColumn(label: Text('Ruang')),
       ],
       rows: rows.asMap().entries.map((entry) {
         final item = entry.value;
@@ -598,6 +599,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
           DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
           DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
           DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
+          DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan)),
         ]);
       }).toList(),
     );
