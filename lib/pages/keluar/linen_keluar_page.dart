@@ -180,108 +180,27 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     );
   }
 
+  Future<LinenListResponse<LinenKeluarItem>> _getKeluarPreviewPage(int page) {
+    return ApiService.instance.getLinenKeluar(
+      perPage: 20,
+      page: page,
+      search: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
+      ruangan: _filterRoom,
+      date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!) ? _date(_selectedDateRange!.start) : null,
+      daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!) ? _range(_selectedDateRange!) : null,
+    );
+  }
+
   Future<void> _previewDownload() async {
-    showDialog<void>(
+    await showDialog<void>(
       context: context,
-      barrierDismissible: false,
-      builder: (loadingContext) => const AlertDialog(
-        content: Row(children: [CircularProgressIndicator(), SizedBox(width: 16), Expanded(child: Text('Memuat semua data linen keluar...'))]),
+      builder: (dialogContext) => _LinenKeluarPreviewDialog(
+        userName: widget.userName,
+        loadPage: _getKeluarPreviewPage,
+        downloadAll: _loadAllKeluarRows,
+        downloadPdf: _downloadKeluarPdf,
       ),
     );
-    try {
-      final rows = await _loadAllKeluarRows();
-      if (mounted) Navigator.of(context, rootNavigator: true).pop();
-      if (!mounted) return;
-      if (rows.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak ada data untuk di-preview atau diunduh.')),
-        );
-        return;
-      }
-      await showDialog<void>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text('Preview Linen & Tirai Keluar'),
-          content: SizedBox(
-            width: 760,
-            height: 520,
-            child: Column(children: [
-              Expanded(child: SingleChildScrollView(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text('No')),
-                      DataColumn(label: Text('Nama Linen')),
-                      DataColumn(label: Text('Kategori Linen')),
-                      DataColumn(label: Text('Jumlah')),
-                      DataColumn(label: Text('Ruangan')),
-                    ],
-                    rows: rows.asMap().entries.map((entry) {
-                      final item = entry.value;
-                      return DataRow(cells: [
-                        DataCell(Text('${entry.key + 1}')),
-                        DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
-                        DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
-                        DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
-                        DataCell(Text(item.keRuangan.isEmpty ? '-' : item.keRuangan)),
-                      ]);
-                    }).toList(),
-                  ),
-                ),
-              )),
-              const Divider(),
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Expanded(child: Column(children: [
-                  const Text('PETUGAS LINEN', textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-                  const SizedBox(height: 38),
-                  Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(),
-                      textAlign: TextAlign.center),
-                ])),
-                Expanded(child: Column(children: const [
-                  Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-                  SizedBox(height: 38),
-                  Text('____________________________', textAlign: TextAlign.center),
-                ])),
-              ]),
-              const SizedBox(height: 8),
-              Text('Total ${rows.length} data • semua halaman',
-                  style: const TextStyle(color: Color(0xff7d8c99), fontSize: 11, fontWeight: FontWeight.w600)),
-            ]),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Tutup')),
-            ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  await _downloadKeluarPdf(rows);
-                } catch (e) {
-                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Gagal membuat PDF: ${e}')),
-                  );
-                }
-              },
-              icon: const Icon(Icons.picture_as_pdf_rounded),
-              label: const Text('Download PDF'),
-            ),
-          ],
-        ),
-      );
-    } on ApiException catch (e) {
-      if (mounted) {
-        Navigator.of(context, rootNavigator: true).pop();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
-      }
-    } catch (e) {
-      if (mounted) {
-        Navigator.of(context, rootNavigator: true).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat seluruh data linen: ${e}')),
-        );
-      }
-    }
   }
 
   Future<void> _pickRange() async {
@@ -465,5 +384,218 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         ],
       ]))),
     ]));
+  }
+}
+
+
+class _LinenKeluarPreviewDialog extends StatefulWidget {
+  const _LinenKeluarPreviewDialog({
+    required this.userName,
+    required this.loadPage,
+    required this.downloadAll,
+    required this.downloadPdf,
+  });
+
+  final String userName;
+  final Future<LinenListResponse<LinenKeluarItem>> Function(int page) loadPage;
+  final Future<List<LinenKeluarItem>> Function() downloadAll;
+  final Future<void> Function(List<LinenKeluarItem>) downloadPdf;
+
+  @override
+  State<_LinenKeluarPreviewDialog> createState() => _LinenKeluarPreviewDialogState();
+}
+
+class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
+  final ScrollController _scrollController = ScrollController();
+  final List<LinenKeluarItem> _rows = [];
+  int _nextPage = 1;
+  int _lastPage = 1;
+  int? _total;
+  bool _loading = true;
+  bool _loadingMore = false;
+  bool _downloadingPdf = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _loadNextPage();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients || _loadingMore || _loading) return;
+    if (_scrollController.position.extentAfter < 240 && _nextPage <= _lastPage) {
+      _loadNextPage();
+    }
+  }
+
+  Future<void> _loadNextPage() async {
+    if (_loadingMore || _nextPage > _lastPage && _rows.isNotEmpty) return;
+    final page = _nextPage;
+    setState(() {
+      _loading = _rows.isEmpty;
+      _loadingMore = _rows.isNotEmpty;
+      _error = null;
+    });
+    try {
+      final response = await widget.loadPage(page);
+      if (!mounted) return;
+      setState(() {
+        _rows.addAll(response.data);
+        _nextPage = page + 1;
+        _lastPage = response.meta.lastPage;
+        _total = response.meta.total;
+        _loading = false;
+        _loadingMore = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _loadingMore = false;
+        _error = e is ApiException ? e.message : 'Gagal memuat data. Periksa koneksi lalu coba lagi.';
+      });
+    }
+  }
+
+  Future<void> _downloadPdf() async {
+    setState(() => _downloadingPdf = true);
+    try {
+      final rows = await widget.downloadAll();
+      if (!mounted) return;
+      if (rows.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tidak ada data untuk diunduh.')),
+        );
+        return;
+      }
+      await widget.downloadPdf(rows);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal membuat PDF: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _downloadingPdf = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Preview Linen & Tirai Keluar'),
+      content: SizedBox(
+        width: 760,
+        height: 520,
+        child: Column(
+          children: [
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _error != null && _rows.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(_error!, textAlign: TextAlign.center),
+                              const SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: _loadNextPage,
+                                child: const Text('Coba Lagi'),
+                              ),
+                            ],
+                          ),
+                        )
+                      : _rows.isEmpty
+                          ? const Center(child: Text('Tidak ada data untuk di-preview.'))
+                          : SingleChildScrollView(
+                              controller: _scrollController,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: DataTable(
+                                  columns: const [
+                                    DataColumn(label: Text('No')),
+                                    DataColumn(label: Text('Nama Linen')),
+                                    DataColumn(label: Text('Kategori Linen')),
+                                    DataColumn(label: Text('Jumlah')),
+                                    DataColumn(label: Text('Ruangan')),
+                                  ],
+                                  rows: _rows.asMap().entries.map((entry) {
+                                    final item = entry.value;
+                                    return DataRow(cells: [
+                                      DataCell(Text('${entry.key + 1}')),
+                                      DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+                                      DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
+                                      DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
+                                      DataCell(Text(item.keRuangan.isEmpty ? '-' : item.keRuangan)),
+                                    ]);
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+            ),
+            if (_loadingMore) const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                  SizedBox(width: 8),
+                  Text('Memuat data berikutnya...', style: TextStyle(fontSize: 11)),
+                ],
+              ),
+            ),
+            if (_error != null && _rows.isNotEmpty)
+              TextButton(onPressed: _loadNextPage, child: Text('Gagal memuat. Coba lagi')),
+            const Divider(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: Column(children: [
+                  const Text('PETUGAS LINEN', textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                  const SizedBox(height: 38),
+                  Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(),
+                      textAlign: TextAlign.center),
+                ])),
+                Expanded(child: Column(children: const [
+                  Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                  SizedBox(height: 38),
+                  Text('____________________________', textAlign: TextAlign.center),
+                ])),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • muat saat scroll',
+              style: const TextStyle(color: Color(0xff7d8c99), fontSize: 11, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _downloadingPdf ? null : () => Navigator.of(context).pop(),
+          child: const Text('Tutup'),
+        ),
+        ElevatedButton.icon(
+          onPressed: _downloadingPdf || _loading ? null : _downloadPdf,
+          icon: _downloadingPdf
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+              : const Icon(Icons.picture_as_pdf_rounded),
+          label: Text(_downloadingPdf ? 'Menyiapkan PDF...' : 'Download PDF'),
+        ),
+      ],
+    );
   }
 }
