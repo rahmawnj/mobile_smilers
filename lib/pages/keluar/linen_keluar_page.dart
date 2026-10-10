@@ -192,6 +192,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
             DataColumn(label: Text('Nama Linen')),
             DataColumn(label: Text('Kategori Linen')),
             DataColumn(label: Text('Jumlah')),
+            DataColumn(label: Text('Ruangan')),
           ],
           rows: rows.asMap().entries.map((e) {
             final n = ((meta?.currentPage ?? _page) - 1) *
@@ -203,6 +204,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
               DataCell(Text(e.value.namaLinen.isEmpty ? '-' : e.value.namaLinen)),
               DataCell(Text(e.value.namaKategoriLinen.isEmpty ? '-' : e.value.namaKategoriLinen)),
               DataCell(Text(e.value.jumlah.isEmpty ? '-' : e.value.jumlah)),
+              DataCell(Text(e.value.keRuangan.isEmpty ? '-' : e.value.keRuangan)),
             ]);
           }).toList(),
         ),
