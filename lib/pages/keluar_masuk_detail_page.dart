@@ -78,12 +78,21 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
   }
 
   Future<List<LinenKeluarItem>> _loadAllKeluarRows() async {
-    final response = await ApiService.instance.getLinenKeluar(
+    final firstPage = await ApiService.instance.getLinenKeluar(
       ruangan: widget.ruanganId,
-      perPage: 1000,
+      perPage: 100,
       page: 1,
     );
-    return response.data;
+    final rows = <LinenKeluarItem>[...firstPage.data];
+    for (var page = 2; page <= firstPage.meta.lastPage; page++) {
+      final response = await ApiService.instance.getLinenKeluar(
+        ruangan: widget.ruanganId,
+        perPage: 100,
+        page: page,
+      );
+      rows.addAll(response.data);
+    }
+    return rows;
   }
 
   Future<void> _downloadKeluarPdf(List<LinenKeluarItem> rows) async {
@@ -398,8 +407,6 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                           selisih: selisih,
                         ),
                         const SizedBox(height: 18),
-                        const SectionTitle(title: 'Linen & Tirai Keluar'),
-                        const SizedBox(height: 8),
                         Row(
                           children: [
                             const Expanded(child: SectionTitle(title: 'Linen & Tirai Keluar')),
