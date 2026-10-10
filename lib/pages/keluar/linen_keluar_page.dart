@@ -190,12 +190,8 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           columns: const [
             DataColumn(label: Text('No')),
             DataColumn(label: Text('Nama Linen')),
-            DataColumn(label: Text('QR Code')),
-            DataColumn(label: Text('Tag RFID')),
-            DataColumn(label: Text('Ke Ruangan')),
-            DataColumn(label: Text('Jam')),
-            DataColumn(label: Text('Tanggal')),
-            DataColumn(label: Text('User')),
+            DataColumn(label: Text('Kategori Linen')),
+            DataColumn(label: Text('Jumlah')),
           ],
           rows: rows.asMap().entries.map((e) {
             final n = ((meta?.currentPage ?? _page) - 1) *
@@ -205,12 +201,8 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
             return DataRow(cells: [
               DataCell(Text(n.toString())),
               DataCell(Text(e.value.namaLinen.isEmpty ? '-' : e.value.namaLinen)),
-              DataCell(Text(e.value.qrCode.isEmpty ? '-' : e.value.qrCode)),
-              DataCell(Text(e.value.tagRfid.isEmpty ? '-' : e.value.tagRfid)),
-              DataCell(Text(e.value.keRuangan.isEmpty ? '-' : e.value.keRuangan)),
-              DataCell(Text(e.value.jam.isEmpty ? '-' : e.value.jam)),
-              DataCell(Text(e.value.tanggal.isEmpty ? '-' : e.value.tanggal)),
-              DataCell(Text(e.value.user.isEmpty ? '-' : e.value.user)),
+              DataCell(Text(e.value.namaKategoriLinen.isEmpty ? '-' : e.value.namaKategoriLinen)),
+              DataCell(Text(e.value.jumlah.isEmpty ? '-' : e.value.jumlah)),
             ]);
           }).toList(),
         ),
