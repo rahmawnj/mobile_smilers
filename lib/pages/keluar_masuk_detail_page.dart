@@ -1,4 +1,9 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import '../api/api_service.dart';
 import '../widgets/pagination_widget.dart';
@@ -69,6 +74,189 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
         _error = 'Tidak dapat mengambil detail Keluar Masuk dari server.';
         _loading = false;
       });
+    }
+  }
+
+  Future<List<LinenKeluarItem>> _loadAllKeluarRows() async {
+    final response = await ApiService.instance.getLinenKeluar(
+      ruangan: widget.ruanganId,
+      perPage: 1000,
+      page: 1,
+    );
+    return response.data;
+  }
+
+  Future<void> _downloadKeluarPdf(List<LinenKeluarItem> rows) async {
+    final document = pw.Document();
+    document.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(28),
+        build: (context) => [
+          pw.Text(
+            'DATA LINEN & TIRAI KELUAR',
+            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+          ),
+          pw.SizedBox(height: 5),
+          pw.Text('Ruangan: ${widget.namaRuangan}'),
+          pw.SizedBox(height: 16),
+          pw.TableHelper.fromTextArray(
+            headers: ['No', 'Nama Linen', 'Kategori Linen', 'Jumlah', 'Ruangan'],
+            data: rows.asMap().entries.map((entry) {
+              final item = entry.value;
+              return [
+                '${entry.key + 1}',
+                item.namaLinen.isEmpty ? '-' : item.namaLinen,
+                item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen,
+                item.jumlah.isEmpty ? '-' : item.jumlah,
+                item.keRuangan.isEmpty ? '-' : item.keRuangan,
+              ];
+            }).toList(),
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
+            cellStyle: const pw.TextStyle(fontSize: 8),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+            cellPadding: const pw.EdgeInsets.all(6),
+            border: pw.TableBorder.all(color: PdfColors.grey500, width: .5),
+          ),
+          pw.SizedBox(height: 45),
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Expanded(
+                child: pw.Column(
+                  children: [
+                    pw.Text('PETUGAS LINEN', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                    pw.SizedBox(height: 45),
+                    pw.Text(widget.userName.isEmpty ? '-' : widget.userName, style: const pw.TextStyle(fontSize: 10)),
+                  ],
+                ),
+              ),
+              pw.Expanded(
+                child: pw.Column(
+                  children: [
+                    pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                    pw.SizedBox(height: 45),
+                    pw.Text('________________________', style: const pw.TextStyle(fontSize: 10)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+    final bytes = Uint8List.fromList(await document.save());
+    await FilePicker.saveFile(
+      dialogTitle: 'Simpan PDF Linen & Tirai Keluar',
+      fileName: 'linen_tirai_keluar.pdf',
+      mimeType: 'application/pdf',
+      bytes: bytes,
+    );
+  }
+
+  Future<void> _previewKeluar() async {
+    try {
+      final rows = await _loadAllKeluarRows();
+      if (!mounted) return;
+      if (rows.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Belum ada data linen keluar untuk ruangan ini.')),
+        );
+        return;
+      }
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text('Linen & Tirai Keluar - ${widget.namaRuangan}'),
+          content: SizedBox(
+            width: 720,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text('No')),
+                        DataColumn(label: Text('Nama Linen')),
+                        DataColumn(label: Text('Kategori Linen')),
+                        DataColumn(label: Text('Jumlah')),
+                        DataColumn(label: Text('Ruangan')),
+                      ],
+                      rows: rows.asMap().entries.map((entry) {
+                        final item = entry.value;
+                        return DataRow(cells: [
+                          DataCell(Text('${entry.key + 1}')),
+                          DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
+                          DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
+                          DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
+                          DataCell(Text(item.keRuangan.isEmpty ? '-' : item.keRuangan)),
+                        ]);
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const Text('PETUGAS LINEN', style: TextStyle(fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 36),
+                            Text(widget.userName.isEmpty ? '-' : widget.userName, textAlign: TextAlign.center),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: const [
+                            Text('PETUGAS LAUNDRY', style: TextStyle(fontWeight: FontWeight.bold)),
+                            SizedBox(height: 36),
+                            Text('________________________'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Tutup'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () async {
+                try {
+                  await _downloadKeluarPdf(rows);
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Gagal membuat PDF: $e')),
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.picture_as_pdf_rounded),
+              label: const Text('Download PDF'),
+            ),
+          ],
+        ),
+      );
+    } on ApiException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal memuat seluruh data linen: $e')),
+        );
+      }
     }
   }
 
@@ -212,7 +400,48 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                         const SizedBox(height: 18),
                         const SectionTitle(title: 'Linen & Tirai Keluar'),
                         const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Expanded(child: SectionTitle(title: 'Linen & Tirai Keluar')),
+                            IconButton(
+                              onPressed: _previewKeluar,
+                              tooltip: 'Preview seluruh data dan download PDF',
+                              icon: const Icon(Icons.preview_rounded, color: Color(0xff1261dc)),
+                              style: IconButton.styleFrom(backgroundColor: const Color(0xffeaf2ff)),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
                         _LinenKeluarDetailTable(rows: _keluarResponse?.data ?? const []),
+                        const SizedBox(height: 22),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  const Text('PETUGAS LINEN', textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
+                                  const SizedBox(height: 38),
+                                  Text(widget.userName.isEmpty ? '-' : widget.userName,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: const [
+                                  Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
+                                  SizedBox(height: 38),
+                                  Text('________________________', textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 10)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                         if (_keluarResponse != null)
                           _DetailPager(
                             meta: _keluarResponse!.meta,
