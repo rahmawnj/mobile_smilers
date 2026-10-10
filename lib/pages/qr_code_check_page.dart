@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../api/api_service.dart';
+import '../widgets/shared_widgets.dart';
 
 class QrCodeCheckPage extends StatefulWidget {
   const QrCodeCheckPage({super.key, required this.userName});
@@ -82,34 +83,30 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff101820),
+      backgroundColor: const Color(0xfff5f8fc),
       body: SafeArea(
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 8, 12, 14),
+              decoration: const BoxDecoration(color: Colors.white),
               child: Row(children: [
                 IconButton(
                   onPressed: () => Navigator.of(context).maybePop(),
-                  icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back_rounded, color: Color(0xff263645)),
                 ),
                 const Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Scan QR Linen', style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w800)),
+                    Text('Scan QR Linen', style: TextStyle(color: Color(0xff263645), fontSize: 19, fontWeight: FontWeight.w800)),
                     SizedBox(height: 3),
-                    Text('Kamera aktif otomatis', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text('Kamera aktif otomatis', style: TextStyle(color: Color(0xff7d8c99), fontSize: 12)),
                   ],
                 )),
                 IconButton(
-                  tooltip: 'Ganti kamera',
-                  onPressed: () => _scanner.switchCamera(),
-                  icon: const Icon(Icons.cameraswitch_rounded, color: Colors.white),
-                ),
-                IconButton(
                   tooltip: 'Flash',
                   onPressed: () => _scanner.toggleTorch(),
-                  icon: const Icon(Icons.flash_on_rounded, color: Colors.white),
+                  icon: const Icon(Icons.flash_on_rounded, color: Color(0xff0e57ed)),
                 ),
               ]),
             ),
@@ -119,21 +116,21 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
                   controller: _scanner,
                   onDetect: _onDetect,
                   errorBuilder: (context, error) => Container(
-                    color: const Color(0xff17212b),
+                    color: const Color(0xfff5f8fc),
                     padding: const EdgeInsets.all(28),
                     child: Center(child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.no_photography_outlined, color: Colors.white70, size: 48),
+                        const Icon(Icons.no_photography_outlined, color: Color(0xff7d8c99), size: 48),
                         const SizedBox(height: 14),
-                        const Text('Kamera tidak dapat dibuka', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
+                        const Text('Kamera tidak dapat dibuka', style: TextStyle(color: Color(0xff263645), fontSize: 17, fontWeight: FontWeight.w800)),
                         const SizedBox(height: 8),
                         Text(
                           error.errorCode == MobileScannerErrorCode.permissionDenied
                               ? 'Akses kamera diperlukan untuk scan QR. Tekan tombol di bawah untuk mencoba meminta izin lagi. Jika izin pernah ditolak permanen, aktifkan Kamera melalui Pengaturan aplikasi.'
                               : 'Periksa izin kamera atau tutup aplikasi lain yang sedang menggunakan kamera.',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white70, fontSize: 13),
+                          style: const TextStyle(color: Color(0xff7d8c99), fontSize: 13),
                         ),
                         const SizedBox(height: 18),
                         FilledButton.icon(
@@ -151,14 +148,14 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
                           icon: const Icon(Icons.camera_alt_rounded),
                           label: const Text('Izinkan / Coba kamera lagi'),
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xff02c0cc),
-                            foregroundColor: const Color(0xff101820),
+                            backgroundColor: const Color(0xff0e57ed),
+                            foregroundColor: Colors.white,
                           ),
                         ),
                       ],
                     )),
                   ),
-                  placeholderBuilder: (_) => const Center(child: CircularProgressIndicator(color: Color(0xff02c0cc))),
+                  placeholderBuilder: (_) => const Center(child: CircularProgressIndicator(color: Color(0xff0e57ed))),
                 ),
                 IgnorePointer(child: Center(child: LayoutBuilder(builder: (context, constraints) {
                   final width = constraints.maxWidth * .76;
@@ -207,20 +204,20 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 22, 24, 28),
-              decoration: const BoxDecoration(color: Color(0xff17212b), borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+              decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(18))),
               child: Column(children: [
                 if (_error != null) Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   margin: const EdgeInsets.only(bottom: 14),
-                  decoration: BoxDecoration(color: const Color(0xff512d31), borderRadius: BorderRadius.circular(12)),
-                  child: Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                  decoration: BoxDecoration(color: const Color(0xffffe9e9), borderRadius: BorderRadius.circular(12)),
+                  child: Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Color(0xffb42318), fontSize: 12)),
                 ),
-                const Icon(Icons.qr_code_scanner_rounded, color: Color(0xff02c0cc), size: 30),
+                const Icon(Icons.qr_code_scanner_rounded, color: Color(0xff0e57ed), size: 30),
                 const SizedBox(height: 10),
                 Text(
                   _processing ? 'Sedang memproses QR Code' : 'Posisikan QR di dalam kotak',
-                  style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800),
+                  style: const TextStyle(color: Color(0xff263645), fontSize: 15, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 6),
                 const Text('Pemindaian otomatis. Hasil akan terbuka setelah QR berhasil dibaca.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 12, height: 1.5)),
@@ -228,6 +225,113 @@ class _QrCodeCheckPageState extends State<QrCodeCheckPage>
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _QrManualInputPage extends StatefulWidget {
+  const _QrManualInputPage({required this.userName});
+  final String userName;
+
+  @override
+  State<_QrManualInputPage> createState() => _QrManualInputPageState();
+}
+
+class _QrManualInputPageState extends State<_QrManualInputPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _controller = TextEditingController();
+  bool _loading = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate() || _loading) return;
+    setState(() { _loading = true; _error = null; });
+    try {
+      final result = await ApiService.instance.checkLinenQr(_controller.text.trim());
+      if (!mounted) return;
+      await Navigator.of(context).push(smoothPageRoute<void>(
+        (_) => _QrResultPage(userName: widget.userName, result: result),
+      ));
+    } on ApiException catch (e) {
+      if (mounted) setState(() => _error = e.message);
+    } catch (_) {
+      if (mounted) setState(() => _error = 'Gagal memeriksa QR Code. Coba lagi.');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f8fc),
+      appBar: AppBar(
+        title: const Text('Input QR Code'),
+        backgroundColor: const Color(0xff0e57ed),
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xffe3e9ef)),
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Masukkan kode QR', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Color(0xff263645))),
+                  const SizedBox(height: 6),
+                  const Text('Gunakan cara ini jika ingin memasukkan kode tanpa kamera.', style: TextStyle(fontSize: 12, color: Color(0xff7d8c99))),
+                  const SizedBox(height: 18),
+                  TextFormField(
+                    controller: _controller,
+                    autofocus: true,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _submit(),
+                    decoration: InputDecoration(
+                      labelText: 'QR Code / kode linen',
+                      hintText: 'Masukkan kode QR',
+                      prefixIcon: const Icon(Icons.qr_code_2_rounded),
+                      filled: true,
+                      fillColor: const Color(0xfff5f8fc),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xffe3e9ef))),
+                    ),
+                    validator: (value) => value == null || value.trim().isEmpty ? 'Kode QR wajib diisi.' : null,
+                  ),
+                  if (_error != null) ...[
+                    const SizedBox(height: 12),
+                    Text(_error!, style: const TextStyle(color: Color(0xffb42318), fontSize: 12)),
+                  ],
+                  const SizedBox(height: 18),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: _loading ? null : _submit,
+                      icon: _loading ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.search_rounded),
+                      label: Text(_loading ? 'Memeriksa...' : 'Periksa QR Code'),
+                      style: FilledButton.styleFrom(backgroundColor: const Color(0xff0e57ed), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -268,7 +372,7 @@ class _QrResultPage extends StatelessWidget {
     ];
     return Scaffold(
       backgroundColor: const Color(0xfff5f8fc),
-      appBar: AppBar(title: const Text('Hasil QR Code'), backgroundColor: Colors.white, foregroundColor: const Color(0xff263645), elevation: 0),
+      appBar: AppBar(title: const Text('Hasil QR Code'), backgroundColor: const Color(0xff0e57ed), foregroundColor: Colors.white, elevation: 0),
       body: ListView(padding: const EdgeInsets.all(16), children: [
         Container(
           padding: const EdgeInsets.all(18),
