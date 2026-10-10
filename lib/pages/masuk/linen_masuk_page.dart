@@ -589,7 +589,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         DataColumn(label: Text('Nama Linen')),
         DataColumn(label: Text('Kategori Linen')),
         DataColumn(label: Text('Jumlah')),
-        DataColumn(label: Text('Ruang')),
+        DataColumn(label: Text('Ruangan')),
       ],
       rows: rows.asMap().entries.map((entry) {
         final item = entry.value;
