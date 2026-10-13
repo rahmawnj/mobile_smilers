@@ -308,18 +308,11 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   }
 
   Future<List<LinenMasukItem>> _loadAllMasukRows(DateTime? previewDate) async {
-    final firstPage = await ApiService.instance.getLinenMasuk(
-      perPage: 100,
-      page: 1,
-      search: _searchController.text.trim().isEmpty
-          ? null
-          : _searchController.text.trim(),
-      ruangan: _filterRoom,
-      date: previewDate == null ? null : _date(previewDate),
-      daterange: null,
-    );
-    final allRows = <LinenMasukItem>[...firstPage.data];
-    for (var page = 2; page <= firstPage.meta.lastPage; page++) {
+    const maxRows = 5000;
+    final rows = <LinenMasukItem>[];
+    var page = 1;
+    var lastPage = 1;
+    do {
       final response = await ApiService.instance.getLinenMasuk(
         perPage: 100,
         page: page,
@@ -330,9 +323,11 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         date: previewDate == null ? null : _date(previewDate),
         daterange: null,
       );
-      allRows.addAll(response.data);
-    }
-    return allRows;
+      lastPage = response.meta.lastPage;
+      rows.addAll(response.data.take(maxRows - rows.length));
+      page++;
+    } while (page <= lastPage && rows.length < maxRows);
+    return rows;
   }
 
   Future<void> _downloadMasukPdf(
@@ -830,7 +825,9 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
 
   void _onScroll() {
     if (!_scrollController.hasClients || _loadingMore || _loading) return;
-    if (_scrollController.position.extentAfter < 240 && _nextPage <= _lastPage) {
+    if (_scrollController.position.extentAfter < 240 &&
+        _nextPage <= _lastPage &&
+        _rows.length < 5000) {
       _loadNextPage();
     }
   }
@@ -847,7 +844,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
       final response = await widget.loadPage(page, _filterDate);
       if (!mounted) return;
       setState(() {
-        _rows.addAll(response.data);
+        _rows.addAll(response.data.take(5000 - _rows.length));
         _nextPage = page + 1;
         _lastPage = response.meta.lastPage;
         _total = response.meta.total;
@@ -1056,7 +1053,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • muat saat scroll',
+              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • maksimal 5.000 data',
               style: const TextStyle(color: Color(0xff7d8c99), fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ],
