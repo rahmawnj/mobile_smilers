@@ -291,7 +291,10 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     }
   }
 
-  Future<LinenListResponse<LinenMasukItem>> _getMasukPreviewPage(int page) {
+  Future<LinenListResponse<LinenMasukItem>> _getMasukPreviewPage(
+    int page,
+    DateTime? previewDate,
+  ) {
     return ApiService.instance.getLinenMasuk(
       perPage: 500,
       page: page,
@@ -299,16 +302,12 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
           ? null
           : _searchController.text.trim(),
       ruangan: _filterRoom,
-      date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!)
-          ? _date(_selectedDateRange!.start)
-          : null,
-      daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!)
-          ? _range(_selectedDateRange!)
-          : null,
+      date: previewDate == null ? null : _date(previewDate),
+      daterange: null,
     );
   }
 
-  Future<List<LinenMasukItem>> _loadAllMasukRows() async {
+  Future<List<LinenMasukItem>> _loadAllMasukRows(DateTime? previewDate) async {
     final firstPage = await ApiService.instance.getLinenMasuk(
       perPage: 100,
       page: 1,
@@ -316,12 +315,8 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
           ? null
           : _searchController.text.trim(),
       ruangan: _filterRoom,
-      date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!)
-          ? _date(_selectedDateRange!.start)
-          : null,
-      daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!)
-          ? _range(_selectedDateRange!)
-          : null,
+      date: previewDate == null ? null : _date(previewDate),
+      daterange: null,
     );
     final allRows = <LinenMasukItem>[...firstPage.data];
     for (var page = 2; page <= firstPage.meta.lastPage; page++) {
@@ -332,19 +327,18 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
             ? null
             : _searchController.text.trim(),
         ruangan: _filterRoom,
-        date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!)
-            ? _date(_selectedDateRange!.start)
-            : null,
-        daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!)
-            ? _range(_selectedDateRange!)
-            : null,
+        date: previewDate == null ? null : _date(previewDate),
+        daterange: null,
       );
       allRows.addAll(response.data);
     }
     return allRows;
   }
 
-  Future<void> _downloadMasukPdf(List<LinenMasukItem> rows) async {
+  Future<void> _downloadMasukPdf(
+    List<LinenMasukItem> rows, [
+    DateTime? previewDate,
+  ]) async {
     final document = pw.Document();
     document.addPage(
       pw.MultiPage(
@@ -359,8 +353,8 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
           pw.Text('Tanggal cetak: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}'),
           if (_filterRoom != null)
             pw.Text('Filter ruangan: ${_rooms.where((room) => room.id == _filterRoom).map((room) => room.nama).firstOrNull ?? '-'}'),
-          if (_selectedDateRange != null)
-            pw.Text('Periode: ${_isSingleDate(_selectedDateRange!) ? _date(_selectedDateRange!.start) : _range(_selectedDateRange!)}'),
+          if (previewDate != null)
+            pw.Text('Filter tanggal: ${_date(previewDate)}'),
           if (_searchController.text.trim().isNotEmpty)
             pw.Text('Pencarian: ${_searchController.text.trim()}'),
           pw.SizedBox(height: 14),
@@ -797,9 +791,12 @@ class _LinenMasukPreviewDialog extends StatefulWidget {
   });
 
   final String userName;
-  final Future<LinenListResponse<LinenMasukItem>> Function(int page) loadPage;
-  final Future<List<LinenMasukItem>> Function() downloadAll;
-  final Future<void> Function(List<LinenMasukItem>) downloadPdf;
+  final Future<LinenListResponse<LinenMasukItem>> Function(
+    int page,
+    DateTime? previewDate,
+  ) loadPage;
+  final Future<List<LinenMasukItem>> Function(DateTime? previewDate) downloadAll;
+  final Future<void> Function(List<LinenMasukItem>, [DateTime? previewDate]) downloadPdf;
 
   @override
   State<_LinenMasukPreviewDialog> createState() => _LinenMasukPreviewDialogState();
@@ -815,6 +812,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
   bool _loadingMore = false;
   bool _downloadingPdf = false;
   String? _error;
+  DateTime? _filterDate;
 
   @override
   void initState() {
@@ -846,7 +844,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
       _error = null;
     });
     try {
-      final response = await widget.loadPage(page);
+      final response = await widget.loadPage(page, _filterDate);
       if (!mounted) return;
       setState(() {
         _rows.addAll(response.data);
@@ -868,10 +866,48 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
     }
   }
 
+  Future<void> _pickPreviewDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _filterDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      helpText: 'Pilih tanggal transaksi',
+      cancelText: 'Batal',
+      confirmText: 'Terapkan',
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _filterDate = DateTime(picked.year, picked.month, picked.day);
+      _rows.clear();
+      _nextPage = 1;
+      _lastPage = 1;
+      _total = null;
+      _error = null;
+      _loading = true;
+      _loadingMore = false;
+    });
+    await _loadNextPage();
+  }
+
+  void _resetPreviewDate() {
+    setState(() {
+      _filterDate = null;
+      _rows.clear();
+      _nextPage = 1;
+      _lastPage = 1;
+      _total = null;
+      _error = null;
+      _loading = true;
+      _loadingMore = false;
+    });
+    _loadNextPage();
+  }
+
   Future<void> _downloadPdf() async {
     setState(() => _downloadingPdf = true);
     try {
-      final rows = await widget.downloadAll();
+      final rows = await widget.downloadAll(_filterDate);
       if (!mounted) return;
       if (rows.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -879,7 +915,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
         );
         return;
       }
-      await widget.downloadPdf(rows);
+      await widget.downloadPdf(rows, _filterDate);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -900,6 +936,37 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
         height: 520,
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
+                      icon: const Icon(Icons.calendar_month_rounded, size: 18),
+                      label: Text(
+                        _filterDate == null
+                            ? 'Filter per hari'
+                            : 'Tanggal: ${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xff1261dc),
+                        side: const BorderSide(color: Color(0xffd8e4f5)),
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: _filterDate == null || _loading || _downloadingPdf
+                        ? null
+                        : _resetPreviewDate,
+                    child: const Text('Reset'),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
