@@ -739,10 +739,10 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         final no = (meta == null ? 0 : (meta.currentPage - 1) * meta.perPage) + entry.key + 1;
         return DataRow(cells: [
           DataCell(Text(no.toString())),
-          DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
-          DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
-          DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
-          DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan)),
+          DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen, style: const TextStyle(fontSize: 10))),
+          DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen, style: const TextStyle(fontSize: 10))),
+          DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah, style: const TextStyle(fontSize: 10))),
+          DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan, style: const TextStyle(fontSize: 10))),
         ]);
       }).toList(),
     );
@@ -988,9 +988,15 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: DataTable(
+                                  horizontalMargin: 8,
+                                  columnSpacing: 14,
+                                  headingRowHeight: 34,
+                                  dataRowMinHeight: 30,
+                                  dataRowMaxHeight: 36,
                                   headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
                                   headingTextStyle: const TextStyle(
                                     color: Colors.white,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                   ),
                                   columns: const [
@@ -1003,11 +1009,11 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                                   rows: _rows.asMap().entries.map((entry) {
                                     final item = entry.value;
                                     return DataRow(cells: [
-                                      DataCell(Text('${entry.key + 1}')),
-                                      DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
-                                      DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
-                                      DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
-                                      DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan)),
+                                      DataCell(Text('${entry.key + 1}', style: const TextStyle(fontSize: 10))),
+                                      DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen, style: const TextStyle(fontSize: 10))),
+                                      DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen, style: const TextStyle(fontSize: 10))),
+                                      DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah, style: const TextStyle(fontSize: 10))),
+                                      DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan, style: const TextStyle(fontSize: 10))),
                                     ]);
                                   }).toList(),
                                 ),
