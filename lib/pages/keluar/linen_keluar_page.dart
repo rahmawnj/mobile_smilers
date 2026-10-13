@@ -113,13 +113,17 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   }
 
   Future<List<LinenKeluarItem>> _loadAllKeluarRows(DateTime? previewDate) async {
-    final firstPage = await _getKeluarPage(1, previewDate: previewDate);
-    final allRows = <LinenKeluarItem>[...firstPage.data];
-    for (var page = 2; page <= firstPage.meta.lastPage; page++) {
+    const maxRows = 5000;
+    final rows = <LinenKeluarItem>[];
+    var page = 1;
+    var lastPage = 1;
+    do {
       final response = await _getKeluarPage(page, previewDate: previewDate);
-      allRows.addAll(response.data);
-    }
-    return allRows;
+      lastPage = response.meta.lastPage;
+      rows.addAll(response.data.take(maxRows - rows.length));
+      page++;
+    } while (page <= lastPage && rows.length < maxRows);
+    return rows;
   }
 
   Future<void> _downloadKeluarPdf(
@@ -441,7 +445,9 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
 
   void _onScroll() {
     if (!_scrollController.hasClients || _loadingMore || _loading) return;
-    if (_scrollController.position.extentAfter < 240 && _nextPage <= _lastPage) {
+    if (_scrollController.position.extentAfter < 240 &&
+        _nextPage <= _lastPage &&
+        _rows.length < 5000) {
       _loadNextPage();
     }
   }
@@ -458,7 +464,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
       final response = await widget.loadPage(page, _filterDate);
       if (!mounted) return;
       setState(() {
-        _rows.addAll(response.data);
+        _rows.addAll(response.data.take(5000 - _rows.length));
         _nextPage = page + 1;
         _lastPage = response.meta.lastPage;
         _total = response.meta.total;
@@ -660,7 +666,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • muat saat scroll',
+              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • maksimal 5.000 data',
               style: const TextStyle(color: Color(0xff7d8c99), fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ],
