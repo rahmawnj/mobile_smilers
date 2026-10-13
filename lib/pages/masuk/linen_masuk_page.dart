@@ -308,7 +308,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   }
 
   Future<List<LinenMasukItem>> _loadAllMasukRows(DateTime? previewDate) async {
-    const maxRows = 1000;
+    const maxRows = 5000;
     final rows = <LinenMasukItem>[];
     var page = 1;
     var lastPage = 1;
@@ -857,7 +857,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
     if (!_scrollController.hasClients || _loadingMore || _loading) return;
     if (_scrollController.position.extentAfter < 240 &&
         _nextPage <= _lastPage &&
-        _rows.length < 1000) {
+        _rows.length < 5000) {
       _loadNextPage();
     }
   }
@@ -874,7 +874,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
       final response = await widget.loadPage(page, _filterDate);
       if (!mounted) return;
       setState(() {
-        _rows.addAll(response.data.take(1000 - _rows.length));
+        _rows.addAll(response.data.take(5000 - _rows.length));
         _nextPage = page + 1;
         _lastPage = response.meta.lastPage;
         _total = response.meta.total;
@@ -1089,7 +1089,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • maksimal 1.000 data',
+              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • maksimal 5.000 data',
               style: const TextStyle(color: Color(0xff7d8c99), fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ],
