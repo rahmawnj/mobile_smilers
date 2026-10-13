@@ -30,7 +30,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
 
   @override void initState(){super.initState();_loadOptions();_load();_loadQueue();}
   @override void dispose(){_searchController.dispose();super.dispose();}
-  String _date(DateTime d)=>'\${d.month}/\${d.day}/\${d.year}';
+  String _date(DateTime d) => '${d.month}/${d.day}/${d.year}';
   String _range(DateTimeRange r)=>'\${_date(r.start)} - \${_date(r.end)}';
   bool _isSingleDate(DateTimeRange r) =>
       r.start.year == r.end.year &&
@@ -95,28 +95,37 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
       await Future.wait([_load(),_loadQueue()]);
     } on ApiException catch(e) { if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(e.message))); }
   }
-  Future<LinenListResponse<LinenKeluarItem>> _getKeluarPage(int page) {
+  Future<LinenListResponse<LinenKeluarItem>> _getKeluarPage(
+    int page, {
+    int perPage = 100,
+    DateTime? previewDate,
+  }) {
     return ApiService.instance.getLinenKeluar(
-      perPage: 100,
+      perPage: perPage,
       page: page,
-      search: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
+      search: _searchController.text.trim().isEmpty
+          ? null
+          : _searchController.text.trim(),
       ruangan: _filterRoom,
-      date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!) ? _date(_selectedDateRange!.start) : null,
-      daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!) ? _range(_selectedDateRange!) : null,
+      date: previewDate == null ? null : _date(previewDate),
+      daterange: null,
     );
   }
 
-  Future<List<LinenKeluarItem>> _loadAllKeluarRows() async {
-    final firstPage = await _getKeluarPage(1);
+  Future<List<LinenKeluarItem>> _loadAllKeluarRows(DateTime? previewDate) async {
+    final firstPage = await _getKeluarPage(1, previewDate: previewDate);
     final allRows = <LinenKeluarItem>[...firstPage.data];
     for (var page = 2; page <= firstPage.meta.lastPage; page++) {
-      final response = await _getKeluarPage(page);
+      final response = await _getKeluarPage(page, previewDate: previewDate);
       allRows.addAll(response.data);
     }
     return allRows;
   }
 
-  Future<void> _downloadKeluarPdf(List<LinenKeluarItem> rows) async {
+  Future<void> _downloadKeluarPdf(
+    List<LinenKeluarItem> rows, [
+    DateTime? previewDate,
+  ]) async {
     final document = pw.Document();
     document.addPage(
       pw.MultiPage(
@@ -129,8 +138,8 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           pw.Text('Tanggal cetak: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}'),
           if (_filterRoom != null)
             pw.Text('Filter ruangan: ${_options?.ruangan.where((r) => r.id == _filterRoom).map((r) => r.namaRuangan).firstOrNull ?? '-'}'),
-          if (_selectedDateRange != null)
-            pw.Text('Periode: ${_isSingleDate(_selectedDateRange!) ? _date(_selectedDateRange!.start) : _range(_selectedDateRange!)}'),
+          if (previewDate != null)
+            pw.Text('Filter tanggal: ${_date(previewDate)}'),
           if (_searchController.text.trim().isNotEmpty)
             pw.Text('Pencarian: ${_searchController.text.trim()}'),
           pw.SizedBox(height: 14),
@@ -180,15 +189,11 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     );
   }
 
-  Future<LinenListResponse<LinenKeluarItem>> _getKeluarPreviewPage(int page) {
-    return ApiService.instance.getLinenKeluar(
-      perPage: 500,
-      page: page,
-      search: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
-      ruangan: _filterRoom,
-      date: _selectedDateRange != null && _isSingleDate(_selectedDateRange!) ? _date(_selectedDateRange!.start) : null,
-      daterange: _selectedDateRange != null && !_isSingleDate(_selectedDateRange!) ? _range(_selectedDateRange!) : null,
-    );
+  Future<LinenListResponse<LinenKeluarItem>> _getKeluarPreviewPage(
+    int page,
+    DateTime? previewDate,
+  ) {
+    return _getKeluarPage(page, perPage: 500, previewDate: previewDate);
   }
 
   Future<void> _previewDownload() async {
@@ -397,9 +402,12 @@ class _LinenKeluarPreviewDialog extends StatefulWidget {
   });
 
   final String userName;
-  final Future<LinenListResponse<LinenKeluarItem>> Function(int page) loadPage;
-  final Future<List<LinenKeluarItem>> Function() downloadAll;
-  final Future<void> Function(List<LinenKeluarItem>) downloadPdf;
+  final Future<LinenListResponse<LinenKeluarItem>> Function(
+    int page,
+    DateTime? previewDate,
+  ) loadPage;
+  final Future<List<LinenKeluarItem>> Function(DateTime? previewDate) downloadAll;
+  final Future<void> Function(List<LinenKeluarItem>, [DateTime? previewDate]) downloadPdf;
 
   @override
   State<_LinenKeluarPreviewDialog> createState() => _LinenKeluarPreviewDialogState();
@@ -415,6 +423,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   bool _loadingMore = false;
   bool _downloadingPdf = false;
   String? _error;
+  DateTime? _filterDate;
 
   @override
   void initState() {
@@ -446,7 +455,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
       _error = null;
     });
     try {
-      final response = await widget.loadPage(page);
+      final response = await widget.loadPage(page, _filterDate);
       if (!mounted) return;
       setState(() {
         _rows.addAll(response.data);
@@ -466,10 +475,48 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
     }
   }
 
+  Future<void> _pickPreviewDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _filterDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      helpText: 'Pilih tanggal transaksi',
+      cancelText: 'Batal',
+      confirmText: 'Terapkan',
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _filterDate = DateTime(picked.year, picked.month, picked.day);
+      _rows.clear();
+      _nextPage = 1;
+      _lastPage = 1;
+      _total = null;
+      _error = null;
+      _loading = true;
+      _loadingMore = false;
+    });
+    await _loadNextPage();
+  }
+
+  void _resetPreviewDate() {
+    setState(() {
+      _filterDate = null;
+      _rows.clear();
+      _nextPage = 1;
+      _lastPage = 1;
+      _total = null;
+      _error = null;
+      _loading = true;
+      _loadingMore = false;
+    });
+    _loadNextPage();
+  }
+
   Future<void> _downloadPdf() async {
     setState(() => _downloadingPdf = true);
     try {
-      final rows = await widget.downloadAll();
+      final rows = await widget.downloadAll(_filterDate);
       if (!mounted) return;
       if (rows.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -477,7 +524,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
         );
         return;
       }
-      await widget.downloadPdf(rows);
+      await widget.downloadPdf(rows, _filterDate);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -498,6 +545,37 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
         height: 520,
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
+                      icon: const Icon(Icons.calendar_month_rounded, size: 18),
+                      label: Text(
+                        _filterDate == null
+                            ? 'Filter per hari'
+                            : 'Tanggal: ${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xff1261dc),
+                        side: const BorderSide(color: Color(0xffd8e4f5)),
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: _filterDate == null || _loading || _downloadingPdf
+                        ? null
+                        : _resetPreviewDate,
+                    child: const Text('Reset'),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
