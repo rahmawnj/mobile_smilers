@@ -130,60 +130,96 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     List<LinenKeluarItem> rows, [
     DateTime? previewDate,
   ]) async {
+    // Pecah PDF menjadi halaman kecil agar layout ribuan baris tidak membekukan UI.
     final document = pw.Document();
-    document.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(28),
-        build: (context) => [
-          pw.Text('DATA LINEN & TIRAI KELUAR',
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-          pw.SizedBox(height: 5),
-          pw.Text('Tanggal cetak: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}'),
-          if (_filterRoom != null)
-            pw.Text('Filter ruangan: ${_options?.ruangan.where((r) => r.id == _filterRoom).map((r) => r.namaRuangan).firstOrNull ?? '-'}'),
-          if (previewDate != null)
-            pw.Text('Filter tanggal: ${_date(previewDate)}'),
-          if (_searchController.text.trim().isNotEmpty)
-            pw.Text('Pencarian: ${_searchController.text.trim()}'),
-          pw.SizedBox(height: 14),
-          pw.TableHelper.fromTextArray(
-            headers: ['No', 'Nama Linen', 'Kategori Linen', 'Jumlah', 'Ruangan'],
-            data: rows.asMap().entries.map((entry) {
-              final item = entry.value;
-              return [
-                '${entry.key + 1}',
-                item.namaLinen.isEmpty ? '-' : item.namaLinen,
-                item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen,
-                item.jumlah.isEmpty ? '-' : item.jumlah,
-                item.keRuangan.isEmpty ? '-' : item.keRuangan,
-              ];
-            }).toList(),
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
-            cellStyle: const pw.TextStyle(fontSize: 8),
-            headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-            cellPadding: const pw.EdgeInsets.all(6),
-            border: pw.TableBorder.all(color: PdfColors.grey500, width: .5),
-          ),
-          pw.SizedBox(height: 42),
-          pw.Row(
+    final tableRows = rows.asMap().entries.map((entry) {
+      final item = entry.value;
+      return <String>[
+        '${entry.key + 1}',
+        item.namaLinen.isEmpty ? '-' : item.namaLinen,
+        item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen,
+        item.jumlah.isEmpty ? '-' : item.jumlah,
+        item.keRuangan.isEmpty ? '-' : item.keRuangan,
+      ];
+    }).toList(growable: false);
+    final roomName = _options?.ruangan.where((r) => r.id == _filterRoom).map((r) => r.namaRuangan).firstOrNull ?? '-';
+    final searchText = _searchController.text.trim();
+    const rowsPerPage = 25;
+    final pageCount = (tableRows.length / rowsPerPage).ceil();
+
+    for (var pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+      final startIndex = pageIndex * rowsPerPage;
+      final endIndex = (startIndex + rowsPerPage < tableRows.length)
+          ? startIndex + rowsPerPage
+          : tableRows.length;
+      final pageRows = tableRows.sublist(startIndex, endIndex);
+      final isLastPage = pageIndex == pageCount - 1;
+
+      document.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4.landscape,
+          margin: const pw.EdgeInsets.all(24),
+          build: (context) => pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Expanded(child: pw.Column(children: [
-                pw.Text('PETUGAS LINEN', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                pw.SizedBox(height: 48),
-                pw.Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(), style: const pw.TextStyle(fontSize: 10)),
-              ])),
-              pw.Expanded(child: pw.Column(children: [
-                pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                pw.SizedBox(height: 48),
-                pw.Text('____________________________', style: const pw.TextStyle(fontSize: 10)),
-              ])),
+              pw.Text(
+                'DATA LINEN & TIRAI KELUAR',
+                style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 3),
+              pw.Text(
+                'Halaman ${pageIndex + 1} dari $pageCount • Tanggal cetak: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                style: const pw.TextStyle(fontSize: 7),
+              ),
+              if (_filterRoom != null)
+                pw.Text('Filter ruangan: $roomName', style: const pw.TextStyle(fontSize: 7)),
+              if (previewDate != null)
+                pw.Text('Filter tanggal: ${_date(previewDate)}', style: const pw.TextStyle(fontSize: 7)),
+              if (searchText.isNotEmpty)
+                pw.Text('Pencarian: $searchText', style: const pw.TextStyle(fontSize: 7)),
+              pw.SizedBox(height: 7),
+              pw.TableHelper.fromTextArray(
+                headers: const ['No', 'Nama Linen', 'Kategori Linen', 'Jumlah', 'Ruangan'],
+                data: pageRows,
+                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
+                cellStyle: const pw.TextStyle(fontSize: 7),
+                headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+                cellPadding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+                border: pw.TableBorder.all(color: PdfColors.grey500, width: .4),
+              ),
+              if (isLastPage) ...[
+                pw.SizedBox(height: 18),
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Expanded(
+                      child: pw.Column(children: [
+                        pw.Text('PETUGAS LINEN', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
+                        pw.SizedBox(height: 28),
+                        pw.Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(), style: const pw.TextStyle(fontSize: 8)),
+                      ]),
+                    ),
+                    pw.Expanded(
+                      child: pw.Column(children: [
+                        pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
+                        pw.SizedBox(height: 28),
+                        pw.Text('____________________________', style: const pw.TextStyle(fontSize: 8)),
+                      ]),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+
+      // Beri kesempatan event loop memperbarui indikator loading dan menerima input.
+      if (pageIndex % 4 == 3) {
+        await Future<void>.delayed(Duration.zero);
+      }
+    }
+
     final bytes = Uint8List.fromList(await document.save());
     await FilePicker.saveFile(
       dialogTitle: 'Simpan PDF Linen & Tirai Keluar',
