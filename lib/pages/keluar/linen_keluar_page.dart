@@ -207,9 +207,11 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                         pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
                         pw.SizedBox(height: 28),
                         pw.Text(
-                          rows.firstWhere((item) => item.user.trim().isNotEmpty, orElse: () => rows.first).user.trim().isEmpty
-                              ? '-'
-                              : rows.firstWhere((item) => item.user.trim().isNotEmpty, orElse: () => rows.first).user.trim(),
+                          previewRoom == null
+                              ? ''
+                              : rows.firstWhere((item) => item.user.trim().isNotEmpty, orElse: () => rows.first).user.trim().isEmpty
+                                  ? '-'
+                                  : rows.firstWhere((item) => item.user.trim().isNotEmpty, orElse: () => rows.first).user.trim(),
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ]),
@@ -566,6 +568,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   }
 
   String get _petugasLaundry {
+    if (_filterRoom == null) return '';
     for (final item in _rows) {
       final name = item.user.trim();
       if (name.isNotEmpty) return name;
