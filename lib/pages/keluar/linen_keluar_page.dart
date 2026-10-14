@@ -100,6 +100,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     int perPage = 100,
     DateTime? previewDate,
     int? previewRoom,
+    bool usePreviewRoom = false,
   }) {
     return ApiService.instance.getLinenKeluar(
       perPage: perPage,
@@ -107,7 +108,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
       search: _searchController.text.trim().isEmpty
           ? null
           : _searchController.text.trim(),
-      ruangan: previewRoom ?? _filterRoom,
+      ruangan: usePreviewRoom ? previewRoom : _filterRoom,
       date: previewDate == null ? null : _date(previewDate),
       daterange: null,
     );
@@ -119,7 +120,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     var page = 1;
     var lastPage = 1;
     do {
-      final response = await _getKeluarPage(page, previewDate: previewDate, previewRoom: previewRoom);
+      final response = await _getKeluarPage(page, previewDate: previewDate, previewRoom: previewRoom, usePreviewRoom: true);
       lastPage = response.meta.lastPage;
       rows.addAll(response.data.take(maxRows - rows.length));
       page++;
@@ -236,7 +237,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     DateTime? previewDate,
     int? previewRoom,
   ) {
-    return _getKeluarPage(page, perPage: 500, previewDate: previewDate, previewRoom: previewRoom);
+    return _getKeluarPage(page, perPage: 500, previewDate: previewDate, previewRoom: previewRoom, usePreviewRoom: true);
   }
 
   Future<void> _previewDownload() async {
