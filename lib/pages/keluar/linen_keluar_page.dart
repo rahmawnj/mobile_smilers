@@ -565,6 +565,14 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
     _applyPreviewFilters(resetDate: true, resetRoom: true);
   }
 
+  String get _petugasLaundry {
+    for (final item in _rows) {
+      final name = item.user.trim();
+      if (name.isNotEmpty) return name;
+    }
+    return '-';
+  }
+
   Future<void> _downloadPdf() async {
     setState(() => _downloadingPdf = true);
     try {
@@ -750,18 +758,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
                   const Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                   const SizedBox(height: 38),
-                  Text(
-                    _rows.firstWhere(
-                      (item) => item.user.trim().isNotEmpty,
-                      orElse: () => _rows.first,
-                    ).user.trim().isEmpty
-                        ? '-'
-                        : _rows.firstWhere(
-                            (item) => item.user.trim().isNotEmpty,
-                            orElse: () => _rows.first,
-                          ).user.trim(),
-                    textAlign: TextAlign.center,
-                  ),
+                  Text(_petugasLaundry, textAlign: TextAlign.center),
                 ])),
               ],
             ),
