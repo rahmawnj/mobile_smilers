@@ -594,55 +594,75 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: Column(
+              child: Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<int?>(
-                          value: _filterRoom,
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            labelText: 'Ruangan',
-                            prefixIcon: const Icon(Icons.meeting_room_rounded, size: 18),
-                            filled: true,
-                            fillColor: const Color(0xfff7faff),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(28), borderSide: const BorderSide(color: Color(0xffd8e4f5))),
-                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(28), borderSide: const BorderSide(color: Color(0xffd8e4f5))),
-                          ),
-                          items: [
-                            const DropdownMenuItem<int?>(value: null, child: Text('Semua Ruangan')),
-                            ...widget.rooms.map((room) => DropdownMenuItem<int?>(value: room.key, child: Text(room.value, overflow: TextOverflow.ellipsis))),
-                          ],
-                          onChanged: _loading || _downloadingPdf ? null : (value) => _applyPreviewFilters(room: value, resetRoom: value == null),
+                  Expanded(
+                    child: DropdownButtonFormField<int?>(
+                      value: _filterRoom,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: 'Ruangan',
+                        prefixIcon: const Icon(Icons.meeting_room_rounded, size: 18),
+                        filled: true,
+                        fillColor: const Color(0xfff7faff),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: Color(0xffd8e4f5)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: Color(0xffd8e4f5)),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      OutlinedButton.icon(
-                        onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
-                        icon: const Icon(Icons.calendar_month_rounded, size: 18),
-                        label: Text(
-                          _filterDate == null
-                              ? 'Tanggal'
-                              : '${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xff1261dc),
-                          side: const BorderSide(color: Color(0xffd8e4f5)),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                          padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 12),
-                        ),
-                      ),
-                    ],
+                      items: [
+                        const DropdownMenuItem<int?>(value: null, child: Text('Semua Ruangan')),
+                        ...widget.rooms.map((room) => DropdownMenuItem<int?>(
+                              value: room.key,
+                              child: Text(room.value, overflow: TextOverflow.ellipsis),
+                            )),
+                      ],
+                      onChanged: _loading || _downloadingPdf
+                          ? null
+                          : (value) => _applyPreviewFilters(
+                                room: value,
+                                resetRoom: value == null,
+                              ),
+                    ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      onPressed: (_filterDate == null && _filterRoom == null) || _loading || _downloadingPdf ? null : _resetPreviewFilters,
-                      icon: const Icon(Icons.filter_alt_off_rounded, size: 16),
-                      label: const Text('Reset filter'),
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
+                    onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
+                    icon: const Icon(Icons.calendar_month_rounded, size: 17),
+                    label: Text(
+                      _filterDate == null
+                          ? 'Tanggal'
+                          : '${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xff1261dc),
+                      side: const BorderSide(color: Color(0xffd8e4f5)),
+                      backgroundColor: const Color(0xfff7faff),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 10),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  OutlinedButton.icon(
+                    onPressed: (_filterDate == null && _filterRoom == null) ||
+                            _loading ||
+                            _downloadingPdf
+                        ? null
+                        : _resetPreviewFilters,
+                    icon: const Icon(Icons.filter_alt_off_rounded, size: 16),
+                    label: const Text('Reset'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xff1261dc),
+                      side: const BorderSide(color: Color(0xffd8e4f5)),
+                      backgroundColor: const Color(0xfff7faff),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 10),
                     ),
                   ),
                 ],
