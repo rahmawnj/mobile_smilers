@@ -206,7 +206,12 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
                       child: pw.Column(children: [
                         pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
                         pw.SizedBox(height: 28),
-                        pw.Text('____________________________', style: const pw.TextStyle(fontSize: 8)),
+                        pw.Text(
+                          rows.firstWhere((item) => item.user.trim().isNotEmpty, orElse: () => rows.first).user.trim().isEmpty
+                              ? '-'
+                              : rows.firstWhere((item) => item.user.trim().isNotEmpty, orElse: () => rows.first).user.trim(),
+                          style: const pw.TextStyle(fontSize: 8),
+                        ),
                       ]),
                     ),
                   ],
@@ -741,11 +746,22 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
                   Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(),
                       textAlign: TextAlign.center),
                 ])),
-                Expanded(child: Column(children: const [
-                  Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
+                Expanded(child: Column(children: [
+                  const Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-                  SizedBox(height: 38),
-                  Text('____________________________', textAlign: TextAlign.center),
+                  const SizedBox(height: 38),
+                  Text(
+                    _rows.firstWhere(
+                      (item) => item.user.trim().isNotEmpty,
+                      orElse: () => _rows.first,
+                    ).user.trim().isEmpty
+                        ? '-'
+                        : _rows.firstWhere(
+                            (item) => item.user.trim().isNotEmpty,
+                            orElse: () => _rows.first,
+                          ).user.trim(),
+                    textAlign: TextAlign.center,
+                  ),
                 ])),
               ],
             ),
