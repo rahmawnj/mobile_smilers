@@ -1005,38 +1005,31 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  OutlinedButton.icon(
+                  IconButton(
+                    tooltip: _filterDate == null
+                        ? 'Pilih tanggal'
+                        : 'Tanggal: ${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
                     onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
-                    icon: const Icon(Icons.calendar_month_rounded, size: 17),
-                    label: Text(
-                      _filterDate == null
-                          ? 'Tanggal'
-                          : '${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    style: OutlinedButton.styleFrom(
+                    icon: const Icon(Icons.calendar_month_rounded, size: 20),
+                    style: IconButton.styleFrom(
                       foregroundColor: const Color(0xff1261dc),
-                      side: const BorderSide(color: Color(0xffd8e4f5)),
                       backgroundColor: const Color(0xfff7faff),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 10),
+                      shape: const CircleBorder(),
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  OutlinedButton.icon(
+                  const SizedBox(width: 4),
+                  IconButton(
+                    tooltip: 'Reset filter',
                     onPressed: (_filterDate == null && _filterRoom == null) ||
                             _loading ||
                             _downloadingPdf
                         ? null
                         : _resetPreviewFilters,
-                    icon: const Icon(Icons.filter_alt_off_rounded, size: 16),
-                    label: const Text('Reset'),
-                    style: OutlinedButton.styleFrom(
+                    icon: const Icon(Icons.filter_alt_off_rounded, size: 20),
+                    style: IconButton.styleFrom(
                       foregroundColor: const Color(0xff1261dc),
-                      side: const BorderSide(color: Color(0xffd8e4f5)),
                       backgroundColor: const Color(0xfff7faff),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 10),
+                      shape: const CircleBorder(),
                     ),
                   ),
                 ],
