@@ -294,6 +294,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   Future<LinenListResponse<LinenMasukItem>> _getMasukPreviewPage(
     int page,
     DateTime? previewDate,
+    int? previewRoom,
   ) {
     return ApiService.instance.getLinenMasuk(
       perPage: 500,
@@ -301,13 +302,13 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       search: _searchController.text.trim().isEmpty
           ? null
           : _searchController.text.trim(),
-      ruangan: _filterRoom,
+      ruangan: previewRoom,
       date: previewDate == null ? null : _date(previewDate),
       daterange: null,
     );
   }
 
-  Future<List<LinenMasukItem>> _loadAllMasukRows(DateTime? previewDate) async {
+  Future<List<LinenMasukItem>> _loadAllMasukRows(DateTime? previewDate, int? previewRoom) async {
     const maxRows = 5000;
     final rows = <LinenMasukItem>[];
     var page = 1;
@@ -319,7 +320,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         search: _searchController.text.trim().isEmpty
             ? null
             : _searchController.text.trim(),
-        ruangan: _filterRoom,
+        ruangan: previewRoom,
         date: previewDate == null ? null : _date(previewDate),
         daterange: null,
       );
@@ -333,6 +334,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   Future<void> _downloadMasukPdf(
     List<LinenMasukItem> rows, [
     DateTime? previewDate,
+    int? previewRoom,
   ]) async {
     // Pecah PDF menjadi halaman kecil agar layout ribuan baris tidak membekukan UI.
     final document = pw.Document();
@@ -346,7 +348,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         item.dariRuangan.isEmpty ? '-' : item.dariRuangan,
       ];
     }).toList(growable: false);
-    final roomName = _rooms.where((room) => room.id == _filterRoom).map((room) => room.nama).firstOrNull ?? '-';
+    final roomName = _rooms.where((room) => room.id == previewRoom).map((room) => room.nama).firstOrNull ?? '-';
     final searchText = _searchController.text.trim();
     const rowsPerPage = 25;
     final pageCount = (tableRows.length / rowsPerPage).ceil();
@@ -375,7 +377,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                 'Halaman ${pageIndex + 1} dari $pageCount • Tanggal cetak: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                 style: const pw.TextStyle(fontSize: 7),
               ),
-              if (_filterRoom != null)
+              if (previewRoom != null)
                 pw.Text('Filter ruangan: $roomName', style: const pw.TextStyle(fontSize: 7)),
               if (previewDate != null)
                 pw.Text('Filter tanggal: ${_date(previewDate)}', style: const pw.TextStyle(fontSize: 7)),
@@ -441,6 +443,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         loadPage: _getMasukPreviewPage,
         downloadAll: _loadAllMasukRows,
         downloadPdf: _downloadMasukPdf,
+        rooms: _rooms.map((room) => MapEntry(room.id, room.nama)).toList(),
       ),
     );
   }
@@ -813,15 +816,18 @@ class _LinenMasukPreviewDialog extends StatefulWidget {
     required this.loadPage,
     required this.downloadAll,
     required this.downloadPdf,
+    required this.rooms,
   });
 
   final String userName;
+  final List<MapEntry<int, String>> rooms;
   final Future<LinenListResponse<LinenMasukItem>> Function(
     int page,
     DateTime? previewDate,
+    int? previewRoom,
   ) loadPage;
-  final Future<List<LinenMasukItem>> Function(DateTime? previewDate) downloadAll;
-  final Future<void> Function(List<LinenMasukItem>, [DateTime? previewDate]) downloadPdf;
+  final Future<List<LinenMasukItem>> Function(DateTime? previewDate, int? previewRoom) downloadAll;
+  final Future<void> Function(List<LinenMasukItem>, [DateTime? previewDate, int? previewRoom]) downloadPdf;
 
   @override
   State<_LinenMasukPreviewDialog> createState() => _LinenMasukPreviewDialogState();
@@ -838,6 +844,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
   bool _downloadingPdf = false;
   String? _error;
   DateTime? _filterDate;
+  int? _filterRoom;
 
   @override
   void initState() {
@@ -871,7 +878,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
       _error = null;
     });
     try {
-      final response = await widget.loadPage(page, _filterDate);
+      final response = await widget.loadPage(page, _filterDate, _filterRoom);
       if (!mounted) return;
       setState(() {
         _rows.addAll(response.data.take(5000 - _rows.length));
@@ -893,19 +900,11 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
     }
   }
 
-  Future<void> _pickPreviewDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _filterDate ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      helpText: 'Pilih tanggal transaksi',
-      cancelText: 'Batal',
-      confirmText: 'Terapkan',
-    );
-    if (picked == null || !mounted) return;
+  Future<void> _applyPreviewFilters({DateTime? date, int? room, bool resetDate = false, bool resetRoom = false}) async {
     setState(() {
-      _filterDate = DateTime(picked.year, picked.month, picked.day);
+      if (date != null) _filterDate = DateTime(date.year, date.month, date.day);
+      if (resetDate) _filterDate = null;
+      if (room != null || resetRoom) _filterRoom = room;
       _rows.clear();
       _nextPage = 1;
       _lastPage = 1;
@@ -917,24 +916,28 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
     await _loadNextPage();
   }
 
-  void _resetPreviewDate() {
-    setState(() {
-      _filterDate = null;
-      _rows.clear();
-      _nextPage = 1;
-      _lastPage = 1;
-      _total = null;
-      _error = null;
-      _loading = true;
-      _loadingMore = false;
-    });
-    _loadNextPage();
+  Future<void> _pickPreviewDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _filterDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      helpText: 'Pilih tanggal transaksi',
+      cancelText: 'Batal',
+      confirmText: 'Terapkan',
+    );
+    if (picked == null || !mounted) return;
+    await _applyPreviewFilters(date: picked);
+  }
+
+  void _resetPreviewFilters() {
+    _applyPreviewFilters(resetDate: true, resetRoom: true);
   }
 
   Future<void> _downloadPdf() async {
     setState(() => _downloadingPdf = true);
     try {
-      final rows = await widget.downloadAll(_filterDate);
+      final rows = await widget.downloadAll(_filterDate, _filterRoom);
       if (!mounted) return;
       if (rows.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -942,7 +945,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
         );
         return;
       }
-      await widget.downloadPdf(rows, _filterDate);
+      await widget.downloadPdf(rows, _filterDate, _filterRoom);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -965,31 +968,56 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
-                      icon: const Icon(Icons.calendar_month_rounded, size: 18),
-                      label: Text(
-                        _filterDate == null
-                            ? 'Filter per hari'
-                            : 'Tanggal: ${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
-                        overflow: TextOverflow.ellipsis,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<int?>(
+                          value: _filterRoom,
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            labelText: 'Ruangan',
+                            prefixIcon: const Icon(Icons.meeting_room_rounded, size: 18),
+                            filled: true,
+                            fillColor: const Color(0xfff7faff),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(28), borderSide: const BorderSide(color: Color(0xffd8e4f5))),
+                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(28), borderSide: const BorderSide(color: Color(0xffd8e4f5))),
+                          ),
+                          items: [
+                            const DropdownMenuItem<int?>(value: null, child: Text('Semua Ruangan')),
+                            ...widget.rooms.map((room) => DropdownMenuItem<int?>(value: room.key, child: Text(room.value, overflow: TextOverflow.ellipsis))),
+                          ],
+                          onChanged: _loading || _downloadingPdf ? null : (value) => _applyPreviewFilters(room: value, resetRoom: value == null),
+                        ),
                       ),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xff1261dc),
-                        side: const BorderSide(color: Color(0xffd8e4f5)),
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                      const SizedBox(width: 8),
+                      OutlinedButton.icon(
+                        onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
+                        icon: const Icon(Icons.calendar_month_rounded, size: 18),
+                        label: Text(
+                          _filterDate == null
+                              ? 'Tanggal'
+                              : '${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xff1261dc),
+                          side: const BorderSide(color: Color(0xffd8e4f5)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                          padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 12),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: _filterDate == null || _loading || _downloadingPdf
-                        ? null
-                        : _resetPreviewDate,
-                    child: const Text('Reset'),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: (_filterDate == null && _filterRoom == null) || _loading || _downloadingPdf ? null : _resetPreviewFilters,
+                      icon: const Icon(Icons.filter_alt_off_rounded, size: 16),
+                      label: const Text('Reset filter'),
+                    ),
                   ),
                 ],
               ),
