@@ -454,7 +454,7 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 240,
+      height: 260,
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: const BoxDecoration(
@@ -500,7 +500,7 @@ class DashboardHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(
               24,
-              24,
+              40,
               20,
               28,
             ),
