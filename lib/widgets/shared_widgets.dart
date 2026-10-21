@@ -454,7 +454,7 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 324,
+      height: 344,
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: const BoxDecoration(
