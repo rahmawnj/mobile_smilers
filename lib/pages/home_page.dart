@@ -329,7 +329,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
               Positioned(
-                top: 190,
+                top: 180,
                 left: 0,
                 right: 0,
                 child: MetricCard(
