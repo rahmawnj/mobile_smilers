@@ -263,6 +263,8 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
             ),
           ],
         ),
+        ],
+      ),
       ),
     );
   }
@@ -440,8 +442,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
             child: const Text('Coba Lagi'),
           ),
         ],
-        ],
-      ),
       ),
     );
   }
