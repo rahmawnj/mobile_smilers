@@ -457,21 +457,14 @@ class DashboardHeader extends StatelessWidget {
       height: 240,
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: transparentBottom
-              ? const [
-                  Color(0xff5cc9bd),
-                  Color(0xff159cf1),
-                  Colors.transparent,
-                ]
-              : const [
-                  Color(0xff5cc9bd),
-                  Color(0xff159cf1),
-                ],
-          stops: transparentBottom ? const [0.0, 0.45, 1.0] : null,
+          colors: [
+            Color(0xff5cc9bd),
+            Color(0xff159cf1),
+          ],
         ),
       ),
       child: Stack(
@@ -1261,16 +1254,23 @@ class DetailHeader extends StatelessWidget {
         18,
         18,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xff5cc9bd),
-            Color(0xff159cf1),
-          ],
+          colors: transparentBottom
+              ? const [
+                  Color(0xff5cc9bd),
+                  Color(0xff159cf1),
+                  Colors.transparent,
+                ]
+              : const [
+                  Color(0xff5cc9bd),
+                  Color(0xff159cf1),
+                ],
+          stops: transparentBottom ? const [0.0, 0.45, 1.0] : null,
         ),
-        borderRadius: BorderRadius.vertical(
+        borderRadius: const BorderRadius.vertical(
           bottom: Radius.circular(20),
         ),
       ),
