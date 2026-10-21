@@ -264,6 +264,23 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
             ),
           ],
         ),
+            // Keep the rounded white card visibly overlapping the blue header.
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              height: 60,
+              child: IgnorePointer(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(22),
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
       ),
