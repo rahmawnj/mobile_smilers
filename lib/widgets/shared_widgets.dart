@@ -1266,6 +1266,7 @@ class DetailHeader extends StatelessWidget {
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppBackButton(
             onTap: onHome,
@@ -1276,6 +1277,7 @@ class DetailHeader extends StatelessWidget {
 
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
