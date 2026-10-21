@@ -193,6 +193,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
             DetailHeader(
               title: 'Linen & Tirai Ready',
               userName: widget.userName,
+              transparentBottom: true,
             ),
             Expanded(
               child: AppRefreshIndicator(
