@@ -500,7 +500,7 @@ class DashboardHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(
               24,
-              64,
+              88,
               20,
               28,
             ),
