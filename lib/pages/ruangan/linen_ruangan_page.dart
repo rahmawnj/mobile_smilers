@@ -72,7 +72,24 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
       backgroundColor: const Color(0xfff5f8fc),
       body: SafeArea(
         bottom: false,
-        child: Column(
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22),
+                  ),
+                ),
+              ),
+            ),
+            Column(
           children: [
             DetailHeader(title: 'Linen & Tirai di Ruangan', userName: widget.userName),
             Padding(
@@ -223,6 +240,8 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
             ),
           ],
         ),
+        ],
+      ),
       ),
     );
   }
