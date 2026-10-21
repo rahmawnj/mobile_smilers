@@ -323,14 +323,31 @@ class AppShellState extends State<AppShell> {
                       Expanded(
                         child: _positionForIndex(_currentIndex) < 0
                             ? widget.body
-                            : PageView.builder(
-                                controller: _pageController,
-                                itemCount: _indexes.length,
-                                physics: const ClampingScrollPhysics(),
-                                onPageChanged: _onPageChanged,
-                                itemBuilder: (context, position) {
-                                  return _pageForPosition(position);
-                                },
+                            : Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Positioned.fill(
+                                    top: -30,
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(22),
+                                        ),
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: PageView.builder(
+                                        controller: _pageController,
+                                        itemCount: _indexes.length,
+                                        physics: const ClampingScrollPhysics(),
+                                        onPageChanged: _onPageChanged,
+                                        itemBuilder: (context, position) {
+                                          return _pageForPosition(position);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                       ),
                     ],
@@ -1226,7 +1243,9 @@ class DetailHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 190,
       width: double.infinity,
+      alignment: Alignment.topCenter,
       padding: const EdgeInsets.fromLTRB(
         8,
         12,
