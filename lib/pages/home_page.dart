@@ -87,7 +87,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     clipBehavior: Clip.none,
                     children: [
                       Positioned.fill(
-                        top: 20,
+                        top: -36,
                         child: Container(
                           decoration: const BoxDecoration(
                             color: Colors.white,
