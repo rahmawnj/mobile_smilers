@@ -457,14 +457,21 @@ class DashboardHeader extends StatelessWidget {
       height: 240,
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xff5cc9bd),
-            Color(0xff159cf1),
-          ],
+          colors: transparentBottom
+              ? const [
+                  Color(0xff5cc9bd),
+                  Color(0xff159cf1),
+                  Colors.transparent,
+                ]
+              : const [
+                  Color(0xff5cc9bd),
+                  Color(0xff159cf1),
+                ],
+          stops: transparentBottom ? const [0.0, 0.45, 1.0] : null,
         ),
       ),
       child: Stack(
@@ -1234,11 +1241,13 @@ class DetailHeader extends StatelessWidget {
     required this.title,
     required this.userName,
     this.onHome,
+    this.transparentBottom = false,
   });
 
   final String title;
   final String userName;
   final VoidCallback? onHome;
+  final bool transparentBottom;
 
   @override
   Widget build(BuildContext context) {
