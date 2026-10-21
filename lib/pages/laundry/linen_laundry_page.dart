@@ -143,6 +143,7 @@ class _LinenLaundryPageState extends State<LinenLaundryPage> {
             DetailHeader(
               title: 'Linen & Tirai di Laundry',
               userName: widget.userName,
+              transparentBottom: true,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
