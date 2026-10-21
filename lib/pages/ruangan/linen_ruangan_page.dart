@@ -91,7 +91,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
             ),
             Column(
           children: [
-            DetailHeader(title: 'Linen & Tirai di Ruangan', userName: widget.userName),
+            DetailHeader(title: 'Linen & Tirai di Ruangan', userName: widget.userName, transparentBottom: true),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
               child: TextField(
