@@ -1243,7 +1243,7 @@ class DetailHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 190,
+      height: 120,
       width: double.infinity,
       alignment: Alignment.topCenter,
       padding: const EdgeInsets.fromLTRB(
