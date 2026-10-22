@@ -1041,8 +1041,62 @@ class ApiService {
   Future<Map<String,dynamic>> saveLinenKeluar({required List<int> linens,required int ruanganId,required int userId})=>_post('/linen-keluar/save',{'linens':linens,'ruangan_id':ruanganId,'user_id':userId});
 
   Future<LinenListResponse<LinenMasukItem>> getLinenMasuk({String? search,int? perPage,int? ruangan,String? date,String? daterange,int? page}) async {
-    final d=await _get('/linen-masuk',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange,'page':page}));
-    return _listResponse(d,(e)=>LinenMasukItem.fromJson(e));
+    final d = await _get(
+      '/linen-masuk',
+      query: _query({
+        'per_page': perPage,
+        'search': search,
+        'ruangan': ruangan,
+        'date': date,
+        'daterange': daterange,
+        'page': page,
+      }),
+    );
+
+    // API laporan Linen Masuk dapat mengembalikan format ringkasan:
+    // data.kategori_linen, bukan data berupa array paginasi.
+    final payload = d['data'];
+    if (payload is Map && payload['kategori_linen'] is List) {
+      final report = Map<String, dynamic>.from(payload);
+      final categories = (report['kategori_linen'] as List)
+          .whereType<Map>()
+          .map((row) {
+            final item = Map<String, dynamic>.from(row);
+            final categoryName =
+                item['nama_kategori_linen']?.toString() ?? '';
+            return LinenMasukItem.fromJson({
+              'id': item['no'] ?? item['id'],
+              'nama_linen': categoryName,
+              'nama_kategori_linen': categoryName,
+              'jumlah': item['total'] ?? 0,
+              'dari_ruangan': item['ruangan'] ??
+                  report['ruangan'] ??
+                  '',
+              'tanggal': report['date'] ?? '',
+            });
+          })
+          .where((item) {
+            final term = search?.trim().toLowerCase() ?? '';
+            return term.isEmpty ||
+                item.namaLinen.toLowerCase().contains(term) ||
+                item.namaKategoriLinen.toLowerCase().contains(term);
+          })
+          .toList();
+
+      final total = _toInt(report['total_keseluruhan']);
+      return LinenListResponse<LinenMasukItem>(
+        data: categories,
+        meta: LinenMeta(
+          currentPage: 1,
+          perPage: categories.length,
+          total: total > 0 ? total : categories.length,
+          lastPage: 1,
+        ),
+      );
+    }
+
+    // Tetap kompatibel dengan format lama berupa array + meta.
+    return _listResponse(d, (e) => LinenMasukItem.fromJson(e));
   }
   Future<List<LinenRoomOption>> getLinenMasukRuangan() async=>_roomOptions(await _get('/linen-masuk/ruangan'));
   Future<LinenQrCheckResult> checkLinenQr(String qrCode) async {
