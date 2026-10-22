@@ -355,6 +355,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     }).toList(growable: false);
     final roomName = _rooms.where((room) => room.id == previewRoom).map((room) => room.nama).firstOrNull ?? '-';
     final searchText = _searchController.text.trim();
+    final petugasLaundry = rows.map((item) => item.petugasLaundry.trim()).firstWhere((name) => name.isNotEmpty, orElse: () => '-');
     const rowsPerPage = 25;
     final pageCount = (tableRows.length / rowsPerPage).ceil();
 
@@ -423,7 +424,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                       child: pw.Column(children: [
                         pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
                         pw.SizedBox(height: 28),
-                        pw.Text('____________________________', style: const pw.TextStyle(fontSize: 8)),
+                        pw.Text(petugasLaundry, style: const pw.TextStyle(fontSize: 8)),
                       ]),
                     ),
                   ],
@@ -893,6 +894,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
   String? _error;
   DateTimeRange? _filterDateRange;
   int? _filterRoom;
+  String _petugasLaundry = '-';
 
   String _previewDateLabel(DateTime date) =>
       '${date.month}/${date.day}/${date.year}';
@@ -933,6 +935,12 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
       if (!mounted) return;
       setState(() {
         _rows.addAll(response.data.take(5000 - _rows.length));
+        if (response.meta.petugasLaundry.trim().isNotEmpty) {
+          _petugasLaundry = response.meta.petugasLaundry.trim();
+        } else if (response.data.isNotEmpty) {
+          final name = response.data.map((item) => item.petugasLaundry.trim()).firstWhere((value) => value.isNotEmpty, orElse: () => '');
+          if (name.isNotEmpty) _petugasLaundry = name;
+        }
         _nextPage = page + 1;
         _lastPage = response.meta.lastPage;
         _total = response.meta.total;
@@ -1202,7 +1210,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                     Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                     SizedBox(height: 38),
-                    Text('____________________________', textAlign: TextAlign.center),
+                    Text(_petugasLaundry, textAlign: TextAlign.center),
                   ]),
                 ),
               ],
