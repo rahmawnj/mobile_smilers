@@ -903,17 +903,25 @@ class ApiService {
     if (perPage != null) query['per_page'] = perPage.toString();
     if (page != null) query['page'] = page.toString();
 
-    final data = await _get('/linen', query: query);
-    final items = (data['data'] as List? ?? const [])
+    final response = await _get('/linen', query: query);
+    // Support both a flat Laravel response (data: [...], meta: {...})
+    // and a wrapped response (data: {data: [...], meta: {...}}).
+    final payload = response['data'];
+    final nested = payload is Map ? Map<String, dynamic>.from(payload) : null;
+    final rawItems = payload is List
+        ? payload
+        : (nested?['data'] as List? ?? const []);
+    final rawMeta = response['meta'] is Map
+        ? Map<String, dynamic>.from(response['meta'] as Map)
+        : Map<String, dynamic>.from((nested?['meta'] as Map?) ?? const {});
+    final items = rawItems
         .whereType<Map>()
         .map((item) => LinenCategory.fromJson(Map<String, dynamic>.from(item)))
         .toList();
 
     return LinenListResponse(
       data: items,
-      meta: LinenMeta.fromJson(
-        Map<String, dynamic>.from((data['meta'] as Map?) ?? const {}),
-      ),
+      meta: LinenMeta.fromJson(rawMeta),
     );
   }
 
