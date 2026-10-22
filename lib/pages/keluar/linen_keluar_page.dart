@@ -273,15 +273,6 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   }
 
   Future<void> _previewDownload() async {
-    if (_filterRoom == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Pilih ruangan terlebih dahulu sebelum preview atau download.'),
-        ),
-      );
-      return;
-    }
-
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => _LinenKeluarPreviewDialog(
@@ -572,7 +563,6 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _loadNextPage();
   }
 
   @override
@@ -592,6 +582,18 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   }
 
   Future<void> _loadNextPage() async {
+    if (_filterRoom == null) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _loadingMore = false;
+          _rows.clear();
+          _total = null;
+          _error = null;
+        });
+      }
+      return;
+    }
     if (_loadingMore || _nextPage > _lastPage && _rows.isNotEmpty) return;
     final page = _nextPage;
     setState(() {
@@ -627,19 +629,23 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   }
 
   Future<void> _applyPreviewFilters({DateTime? date, int? room, bool resetDate = false, bool resetRoom = false}) async {
+    final nextRoom = resetRoom ? null : (room ?? _filterRoom);
     setState(() {
       if (date != null) _filterDate = DateTime(date.year, date.month, date.day);
       if (resetDate) _filterDate = null;
-      if (room != null || resetRoom) _filterRoom = room;
+      _filterRoom = nextRoom;
       _rows.clear();
       _nextPage = 1;
       _lastPage = 1;
       _total = null;
       _error = null;
-      _loading = true;
+      _loading = nextRoom != null;
       _loadingMore = false;
+      _petugasLaundryFromResponse = '';
     });
-    await _loadNextPage();
+    if (nextRoom != null) {
+      await _loadNextPage();
+    }
   }
 
   Future<void> _pickPreviewDate() async {
@@ -726,7 +732,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
                         ),
                       ),
                       items: [
-                        const DropdownMenuItem<int?>(value: null, child: Text('Semua Ruangan')),
+                        const DropdownMenuItem<int?>(value: null, child: Text('Pilih Ruangan')),
                         ...widget.rooms.map((room) => DropdownMenuItem<int?>(
                               value: room.key,
                               child: Text(room.value, overflow: TextOverflow.ellipsis),
@@ -772,9 +778,30 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
               ),
             ),
             Expanded(
-              child: _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _error != null && _rows.isEmpty
+              child: _filterRoom == null
+                  ? (widget.rooms.isEmpty
+                      ? const Center(child: Text('Daftar ruangan belum tersedia.'))
+                      : ListView.separated(
+                          itemCount: widget.rooms.length,
+                          separatorBuilder: (_, __) => const Divider(height: 1),
+                          itemBuilder: (context, index) {
+                            final room = widget.rooms[index];
+                            return ListTile(
+                              leading: const CircleAvatar(
+                                backgroundColor: Color(0xffe8fbfc),
+                                child: Icon(Icons.meeting_room_rounded, color: Color(0xff02aeb9)),
+                              ),
+                              title: Text(room.value, style: const TextStyle(fontWeight: FontWeight.w600)),
+                              trailing: const Icon(Icons.chevron_right_rounded),
+                              onTap: _loading || _downloadingPdf
+                                  ? null
+                                  : () => _applyPreviewFilters(room: room.key),
+                            );
+                          },
+                        ))
+                  : _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _error != null && _rows.isEmpty
                       ? Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
