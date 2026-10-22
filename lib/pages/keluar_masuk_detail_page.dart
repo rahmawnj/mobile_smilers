@@ -337,212 +337,195 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
               child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(22),
-                  ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
                 ),
               ),
             ),
-            AppRefreshIndicator(
-          onRefresh: _load,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            child: Column(
+            Column(
               children: [
-                _DetailHeader(
-                  namaRuangan: namaRuangan,
-                  onBack: () => Navigator.of(context).pop(),
+                DetailHeader(
+                  title: 'Detail Keluar Masuk - $namaRuangan',
+                  userName: widget.userName,
+                  transparentBottom: true,
                 ),
-                Transform.translate(
-                  offset: const Offset(0, -30),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
+                Expanded(
+                  child: AppRefreshIndicator(
+                    onRefresh: _load,
                     child: _loading
-              ? const AppPageLoading()
-              : _error != null
-                  ? Column(
-                      children: [
-                        const SizedBox(height: 40),
-                        Text(_error!, textAlign: TextAlign.center),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: _load,
-                          child: const Text('Coba Lagi'),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: .055),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 42,
-                                height: 42,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xffeaf2ff),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.swap_horiz_rounded,
-                                  color: Color(0xff1261dc),
-                                  size: 22,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Expanded(
-                                child: Text(
-                                  'Detail Keluar Masuk Linen & Tirai',
-                                  style: TextStyle(
-                                    color: Color(0xff172b4d),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        _DetailSummaryCard(
-                          namaRuangan: namaRuangan,
-                          totalMasuk: totalMasuk,
-                          totalKeluar: totalKeluar,
-                          selisih: selisih,
-                        ),
-                        const SizedBox(height: 18),
-                        Row(
-                          children: [
-                            const Expanded(child: SectionTitle(title: 'Linen & Tirai Keluar')),
-                            IconButton(
-                              onPressed: _previewKeluar,
-                              tooltip: 'Preview seluruh data dan download PDF',
-                              icon: const Icon(Icons.preview_rounded, color: Color(0xff1261dc)),
-                              style: IconButton.styleFrom(backgroundColor: const Color(0xffeaf2ff)),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        _LinenKeluarDetailTable(rows: _keluarResponse?.data ?? const []),
-                        const SizedBox(height: 22),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
+                        ? const AppPageLoading()
+                        : _error != null
+                            ? ListView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding: const EdgeInsets.all(24),
                                 children: [
-                                  const Text('PETUGAS LINEN', textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
-                                  const SizedBox(height: 38),
-                                  Text(widget.userName.isEmpty ? '-' : widget.userName,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+                                  const Icon(Icons.cloud_off_rounded),
+                                  const SizedBox(height: 10),
+                                  Text(_error!, textAlign: TextAlign.center),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: _load,
+                                    child: const Text('Coba Lagi'),
+                                  ),
                                 ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: const [
-                                  Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
-                                  SizedBox(height: 38),
-                                  Text('________________________', textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 10)),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (_keluarResponse != null)
-                          _DetailPager(
-                            meta: _keluarResponse!.meta,
-                            perPage: _keluarPerPage,
-                            onPage: (page) {
-                              setState(() => _keluarPage = page);
-                              _load();
-                            },
-                            onPerPage: (value) {
-                              setState(() {
-                                _keluarPerPage = value;
-                                _keluarPage = 1;
-                              });
-                              _load();
-                            },
-                          ),
-                        const SizedBox(height: 18),
-                        const SectionTitle(title: 'Linen & Tirai Masuk'),
-                        const SizedBox(height: 8),
-                        _LinenMasukDetailTable(rows: _masukResponse?.data ?? const []),
-                        if (_masukResponse != null)
-                          _DetailPager(
-                            meta: _masukResponse!.meta,
-                            perPage: _masukPerPage,
-                            onPage: (page) {
-                              setState(() => _masukPage = page);
-                              _load();
-                            },
-                            onPerPage: (value) {
-                              setState(() {
-                                _masukPerPage = value;
-                                _masukPage = 1;
-                              });
-                              _load();
-                            },
-                          ),
-                        const SizedBox(height: 18),
-                        const SectionTitle(title: 'Transaksi'),
-                        const SizedBox(height: 8),
-                        if (transaksi.isEmpty)
-                          TableSurface(
-                            child: Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Center(
-                                child: Column(
-                                  children: const [
-                                    Icon(
-                                      Icons.inventory_2_outlined,
-                                      size: 34,
-                                      color: Color(0xff8b99a5),
+                              )
+                            : ListView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding: const EdgeInsets.fromLTRB(18, 14, 18, 30),
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: .055),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      'Belum ada transaksi.',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: Color(0xff8b99a5),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 42,
+                                          height: 42,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xffeaf2ff),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: const Icon(Icons.swap_horiz_rounded,
+                                              color: Color(0xff1261dc), size: 22),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Expanded(
+                                          child: Text(
+                                            'Detail Keluar Masuk Linen & Tirai',
+                                            style: TextStyle(
+                                              color: Color(0xff172b4d),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _DetailSummaryCard(
+                                    namaRuangan: namaRuangan,
+                                    totalMasuk: totalMasuk,
+                                    totalKeluar: totalKeluar,
+                                    selisih: selisih,
+                                  ),
+                                  const SizedBox(height: 18),
+                                  Row(
+                                    children: [
+                                      const Expanded(child: SectionTitle(title: 'Linen & Tirai Keluar')),
+                                      IconButton(
+                                        onPressed: _previewKeluar,
+                                        tooltip: 'Preview seluruh data dan download PDF',
+                                        icon: const Icon(Icons.preview_rounded, color: Color(0xff1261dc)),
+                                        style: IconButton.styleFrom(backgroundColor: const Color(0xffeaf2ff)),
                                       ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  _LinenKeluarDetailTable(rows: _keluarResponse?.data ?? const []),
+                                  const SizedBox(height: 22),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            const Text('PETUGAS LINEN', textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
+                                            const SizedBox(height: 38),
+                                            Text(widget.userName.isEmpty ? '-' : widget.userName,
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          children: const [
+                                            Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
+                                            SizedBox(height: 38),
+                                            Text('________________________', textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 10)),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (_keluarResponse != null)
+                                    _DetailPager(
+                                      meta: _keluarResponse!.meta,
+                                      perPage: _keluarPerPage,
+                                      onPage: (page) {
+                                        setState(() => _keluarPage = page);
+                                        _load();
+                                      },
+                                      onPerPage: (value) {
+                                        setState(() {
+                                          _keluarPerPage = value;
+                                          _keluarPage = 1;
+                                        });
+                                        _load();
+                                      },
                                     ),
-                                  ],
-                                ),
+                                  const SizedBox(height: 18),
+                                  const SectionTitle(title: 'Linen & Tirai Masuk'),
+                                  const SizedBox(height: 8),
+                                  _LinenMasukDetailTable(rows: _masukResponse?.data ?? const []),
+                                  if (_masukResponse != null)
+                                    _DetailPager(
+                                      meta: _masukResponse!.meta,
+                                      perPage: _masukPerPage,
+                                      onPage: (page) {
+                                        setState(() => _masukPage = page);
+                                        _load();
+                                      },
+                                      onPerPage: (value) {
+                                        setState(() {
+                                          _masukPerPage = value;
+                                          _masukPage = 1;
+                                        });
+                                        _load();
+                                      },
+                                    ),
+                                  const SizedBox(height: 18),
+                                  const SectionTitle(title: 'Transaksi'),
+                                  const SizedBox(height: 8),
+                                  if (transaksi.isEmpty)
+                                    TableSurface(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(24),
+                                        child: Center(
+                                          child: Column(
+                                            children: const [
+                                              Icon(Icons.inventory_2_outlined,
+                                                  size: 34, color: Color(0xff8b99a5)),
+                                              SizedBox(height: 8),
+                                              Text('Belum ada transaksi.',
+                                                  style: TextStyle(fontSize: 10, color: Color(0xff8b99a5))),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    _TransactionTable(rows: transaksi),
+                                ],
                               ),
-                            ),
-                          )
-                        else
-                          _TransactionTable(rows: transaksi),
-                      ],
-                    ),
                   ),
                 ),
               ],
             ),
-            ),
-            ),
-            // Panel putih menimpa bagian bawah header biru, mengikuti halaman detail lain.
             Positioned(
               top: 60,
               left: 0,
@@ -552,9 +535,7 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                 child: Container(
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(22),
-                    ),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
                   ),
                 ),
               ),
