@@ -483,9 +483,10 @@ class LinenMasukItem {
     required this.jam,
     required this.tanggal,
     required this.keterangan,
+    this.petugasLaundry = '',
   });
   final int id;
-  final String namaLinen, namaKategoriLinen, jumlah, qrCode, tagRfid, dariRuangan, jam, tanggal, keterangan;
+  final String namaLinen, namaKategoriLinen, jumlah, qrCode, tagRfid, dariRuangan, jam, tanggal, keterangan, petugasLaundry;
   factory LinenMasukItem.fromJson(Map<String,dynamic> j)=>LinenMasukItem(
     id:_toInt(j['id']),
     namaLinen:j['nama_linen']?.toString()??'',
@@ -497,6 +498,7 @@ class LinenMasukItem {
     jam:j['jam']?.toString()??'',
     tanggal:j['tanggal']?.toString()??'',
     keterangan:j['keterangan']?.toString()??'',
+    petugasLaundry:j['petugas_laundry']?.toString()??'',
   );
 }
 class LinenRoomOption {
@@ -1151,6 +1153,7 @@ class ApiService {
                   report['ruangan'] ??
                   '',
               'tanggal': report['date'] ?? '',
+              'petugas_laundry': report['petugas_laundry'] ?? '',
             });
           })
           .where((item) {
