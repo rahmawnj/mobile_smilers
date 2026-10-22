@@ -121,9 +121,30 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
       backgroundColor: const Color(0xfff5f8fc),
       body: SafeArea(
         bottom: false,
-        child: Column(
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            _buildHeader(),
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22),
+                  ),
+                ),
+              ),
+            ),
+            Column(
+              children: [
+                DetailHeader(
+                  title: 'Linen & Tirai Rusak',
+                  userName: widget.userName,
+                  transparentBottom: true,
+                ),
             Expanded(
               child: AppRefreshIndicator(
                 onRefresh: _load,
@@ -177,6 +198,24 @@ class _LinenRusakPageState extends State<LinenRusakPage> {
                       ),
                     ],
                   ],
+                ),
+              ),
+            ),
+              ],
+            ),
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              height: 60,
+              child: IgnorePointer(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(22),
+                    ),
+                  ),
                 ),
               ),
             ),
