@@ -541,6 +541,7 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
               ],
             ),
             ),
+            ),
             // Panel putih menimpa bagian bawah header biru, mengikuti halaman detail lain.
             Positioned(
               top: 60,
