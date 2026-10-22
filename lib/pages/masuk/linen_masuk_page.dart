@@ -498,12 +498,28 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       userName: widget.userName,
       activeIndex: -1,
       showBottomNavigation: false,
-      body: Column(
+      body: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(22),
+                ),
+              ),
+            ),
+          ),
+          Column(
         children: [
           DetailHeader(
             title: 'Linen & Tirai Masuk',
-            userName: widget.userName,
-          ),
+            userName: widget.userName, transparentBottom: true),
           Expanded(
             child: AppRefreshIndicator(
               onRefresh: _load,
@@ -749,6 +765,24 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                     ),
                   ],
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            height: 60,
+            child: IgnorePointer(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22),
+                  ),
+                ),
               ),
             ),
           ),
