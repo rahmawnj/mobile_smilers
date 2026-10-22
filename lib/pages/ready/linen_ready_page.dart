@@ -19,7 +19,6 @@ class LinenReadyPage extends StatefulWidget {
 class _LinenReadyPageState extends State<LinenReadyPage> {
   bool _loading = true;
   String? _error;
-  List<LinenCategory> _categories = [];
   List<_ReadyLinenRow> _allItems = [];
   List<Map<String, dynamic>> _categoryOptions = [];
   int? _selectedCategoryId;
@@ -128,7 +127,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
 
       if (!mounted) return;
       setState(() {
-        _categories = categories;
         _allItems = readyRows;
         _loading = false;
         final lastPage = (_filteredRows.length / _perPage).ceil();
