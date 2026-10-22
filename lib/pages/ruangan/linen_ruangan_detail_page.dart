@@ -62,7 +62,24 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
       backgroundColor: const Color(0xfff5f8fc),
       body: SafeArea(
         bottom: false,
-        child: Column(
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22),
+                  ),
+                ),
+              ),
+            ),
+            Column(
           children: [
             DetailHeader(title: 'Detail Ruangan - $roomName', userName: widget.userName),
             Padding(
@@ -139,6 +156,25 @@ class _LinenRuanganDetailPageState extends State<LinenRuanganDetailPage> {
                                 ),
                             ],
                           ),
+              ),
+            ),
+          ],
+        ),
+            // White panel overlaps the blue header, matching the other pages.
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              height: 60,
+              child: IgnorePointer(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(22),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
