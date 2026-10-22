@@ -24,6 +24,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
   int? _selectedCategoryId;
   int _page = 1;
   int _perPage = 10;
+  int _totalLinen = 0;
 
   final TextEditingController _searchController = TextEditingController();
   Timer? _searchDebounce;
@@ -87,18 +88,50 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     });
 
     try {
+      final search = _searchController.text.trim().isEmpty
+          ? null
+          : _searchController.text.trim();
+      final perPage = _perPage;
       final response = await ApiService.instance.getLinen(
-        search: _searchController.text.trim().isEmpty
-            ? null
-            : _searchController.text.trim(),
-        perPage: _perPage,
+        search: search,
+        perPage: perPage,
         page: _page,
       );
+
+      // The list endpoint paginates category rows, while the summary should
+      // count ready linen units (sum of stock), not the number of categories.
+      var totalLinen = response.data.fold<int>(
+        0,
+        (sum, category) => sum + category.jumlahStok,
+      );
+      try {
+        final otherPages = await Future.wait(
+          List.generate(
+            response.meta.lastPage,
+            (index) => index + 1,
+          ).where((page) => page != _page).map(
+            (page) => ApiService.instance.getLinen(
+              search: search,
+              perPage: perPage,
+              page: page,
+            ),
+          ),
+        );
+        for (final pageResponse in otherPages) {
+          totalLinen += pageResponse.data.fold<int>(
+            0,
+            (sum, category) => sum + category.jumlahStok,
+          );
+        }
+      } catch (_) {
+        // Keep the current page usable if the optional total calculation fails.
+      }
 
       if (!mounted) return;
 
       setState(() {
         _response = response;
+        _totalLinen = totalLinen;
         _loading = false;
       });
     } on ApiException catch (e) {
@@ -223,7 +256,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                'Total Linen: ${meta.total}',
+                                'Total Linen: $_totalLinen',
                                 style: const TextStyle(
                                   color: Color(0xff7d8c99),
                                   fontSize: 10,
