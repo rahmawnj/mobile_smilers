@@ -387,9 +387,15 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
               pw.TableHelper.fromTextArray(
                 headers: const ['No', 'Nama Linen', 'Kategori Linen', 'Jumlah', 'Ruangan'],
                 data: pageRows,
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
+                headerStyle: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 8,
+                  color: PdfColors.white,
+                ),
                 cellStyle: const pw.TextStyle(fontSize: 7),
-                headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+                headerDecoration: pw.BoxDecoration(
+                  color: PdfColor.fromInt(0xffe29c02),
+                ),
                 cellPadding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 3),
                 border: pw.TableBorder.all(color: PdfColors.grey500, width: .4),
               ),
@@ -1093,16 +1099,20 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: DataTable(
-                                  horizontalMargin: 8,
-                                  columnSpacing: 14,
-                                  headingRowHeight: 34,
-                                  dataRowMinHeight: 30,
+                                  horizontalMargin: 6,
+                                  columnSpacing: 8,
+                                  headingRowHeight: 36,
+                                  dataRowMinHeight: 32,
                                   dataRowMaxHeight: 36,
-                                  headingRowColor: WidgetStateProperty.all(const Color(0xff1261dc)),
+                                  headingRowColor: WidgetStateProperty.all(const Color(0xffe29c02)),
                                   headingTextStyle: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
+                                  ),
+                                  dataTextStyle: const TextStyle(
+                                    color: Color(0xff465564),
+                                    fontSize: 10,
                                   ),
                                   columns: const [
                                     DataColumn(label: Text('No')),
@@ -1113,7 +1123,13 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                                   ],
                                   rows: _rows.asMap().entries.map((entry) {
                                     final item = entry.value;
-                                    return DataRow(cells: [
+                                    return DataRow(
+                                      color: WidgetStateProperty.resolveWith<Color?>(
+                                        (states) => entry.key.isEven
+                                            ? const Color(0xfff5f6f8)
+                                            : Colors.white,
+                                      ),
+                                      cells: [
                                       DataCell(Text('${entry.key + 1}', style: const TextStyle(fontSize: 10))),
                                       DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen, style: const TextStyle(fontSize: 10))),
                                       DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen, style: const TextStyle(fontSize: 10))),
