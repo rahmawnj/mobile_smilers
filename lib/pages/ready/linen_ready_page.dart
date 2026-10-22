@@ -200,7 +200,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                 onRefresh: _load,
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   children: [
                     _buildSearchBar(),
                     const SizedBox(height: 10),
@@ -311,11 +311,17 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(
+            color: Color(0xffd8e1eb),
+            width: 1,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(
+            color: Color(0xffd8e1eb),
+            width: 1,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
