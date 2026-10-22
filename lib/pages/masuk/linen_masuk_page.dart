@@ -1206,10 +1206,10 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                   ]),
                 ),
                 Expanded(
-                  child: Column(children: const [
-                    Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
+                  child: Column(children: [
+                    const Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-                    SizedBox(height: 38),
+                    const SizedBox(height: 38),
                     Text(_petugasLaundry, textAlign: TextAlign.center),
                   ]),
                 ),
