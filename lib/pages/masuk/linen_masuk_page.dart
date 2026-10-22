@@ -894,6 +894,9 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
   DateTimeRange? _filterDateRange;
   int? _filterRoom;
 
+  String _previewDateLabel(DateTime date) =>
+      '${date.month}/${date.day}/${date.year}';
+
   @override
   void initState() {
     super.initState();
@@ -1074,7 +1077,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                   IconButton(
                     tooltip: _filterDateRange == null
                         ? 'Pilih rentang tanggal'
-                        : 'Tanggal: ${_date(_filterDateRange!.start)} - ${_date(_filterDateRange!.end)}',
+                        : 'Tanggal: ${_previewDateLabel(_filterDateRange!.start)} - ${_previewDateLabel(_filterDateRange!.end)}',
                     onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
                     icon: const Icon(Icons.calendar_month_rounded, size: 20),
                     style: IconButton.styleFrom(
