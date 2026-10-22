@@ -293,9 +293,10 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
 
   Future<LinenListResponse<LinenMasukItem>> _getMasukPreviewPage(
     int page,
-    DateTime? previewDate,
+    DateTimeRange? previewRange,
     int? previewRoom,
   ) {
+    final singleDate = previewRange != null && _isSingleDate(previewRange);
     return ApiService.instance.getLinenMasuk(
       perPage: 500,
       page: page,
@@ -303,12 +304,12 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
           ? null
           : _searchController.text.trim(),
       ruangan: previewRoom,
-      date: previewDate == null ? null : _date(previewDate),
-      daterange: null,
+      date: singleDate ? _date(previewRange.start) : null,
+      daterange: previewRange != null && !singleDate ? _range(previewRange) : null,
     );
   }
 
-  Future<List<LinenMasukItem>> _loadAllMasukRows(DateTime? previewDate, int? previewRoom) async {
+  Future<List<LinenMasukItem>> _loadAllMasukRows(DateTimeRange? previewRange, int? previewRoom) async {
     const maxRows = 5000;
     final rows = <LinenMasukItem>[];
     var page = 1;
@@ -321,8 +322,12 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
             ? null
             : _searchController.text.trim(),
         ruangan: previewRoom,
-        date: previewDate == null ? null : _date(previewDate),
-        daterange: null,
+        date: previewRange != null && _isSingleDate(previewRange)
+            ? _date(previewRange.start)
+            : null,
+        daterange: previewRange != null && !_isSingleDate(previewRange)
+            ? _range(previewRange)
+            : null,
       );
       lastPage = response.meta.lastPage;
       rows.addAll(response.data.take(maxRows - rows.length));
@@ -333,7 +338,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
 
   Future<void> _downloadMasukPdf(
     List<LinenMasukItem> rows, [
-    DateTime? previewDate,
+    DateTimeRange? previewRange,
     int? previewRoom,
   ]) async {
     // Pecah PDF menjadi halaman kecil agar layout ribuan baris tidak membekukan UI.
@@ -379,8 +384,11 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
               ),
               if (previewRoom != null)
                 pw.Text('Filter ruangan: $roomName', style: const pw.TextStyle(fontSize: 7)),
-              if (previewDate != null)
-                pw.Text('Filter tanggal: ${_date(previewDate)}', style: const pw.TextStyle(fontSize: 7)),
+              if (previewRange != null)
+                pw.Text(
+                  'Filter tanggal: ${_isSingleDate(previewRange) ? _date(previewRange.start) : _range(previewRange)}',
+                  style: const pw.TextStyle(fontSize: 7),
+                ),
               if (searchText.isNotEmpty)
                 pw.Text('Pencarian: $searchText', style: const pw.TextStyle(fontSize: 7)),
               pw.SizedBox(height: 7),
@@ -863,11 +871,11 @@ class _LinenMasukPreviewDialog extends StatefulWidget {
   final List<MapEntry<int, String>> rooms;
   final Future<LinenListResponse<LinenMasukItem>> Function(
     int page,
-    DateTime? previewDate,
+    DateTimeRange? previewRange,
     int? previewRoom,
   ) loadPage;
-  final Future<List<LinenMasukItem>> Function(DateTime? previewDate, int? previewRoom) downloadAll;
-  final Future<void> Function(List<LinenMasukItem>, [DateTime? previewDate, int? previewRoom]) downloadPdf;
+  final Future<List<LinenMasukItem>> Function(DateTimeRange? previewRange, int? previewRoom) downloadAll;
+  final Future<void> Function(List<LinenMasukItem>, [DateTimeRange? previewRange, int? previewRoom]) downloadPdf;
 
   @override
   State<_LinenMasukPreviewDialog> createState() => _LinenMasukPreviewDialogState();
@@ -883,7 +891,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
   bool _loadingMore = false;
   bool _downloadingPdf = false;
   String? _error;
-  DateTime? _filterDate;
+  DateTimeRange? _filterDateRange;
   int? _filterRoom;
 
   @override
@@ -942,8 +950,13 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
 
   Future<void> _applyPreviewFilters({DateTime? date, int? room, bool resetDate = false, bool resetRoom = false}) async {
     setState(() {
-      if (date != null) _filterDate = DateTime(date.year, date.month, date.day);
-      if (resetDate) _filterDate = null;
+      if (date != null) {
+        _filterDateRange = DateTimeRange(
+          start: DateTime(date.year, date.month, date.day),
+          end: DateTime(date.year, date.month, date.day),
+        );
+      }
+      if (resetDate) _filterDateRange = null;
       if (room != null || resetRoom) _filterRoom = room;
       _rows.clear();
       _nextPage = 1;
@@ -957,17 +970,30 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
   }
 
   Future<void> _pickPreviewDate() async {
-    final picked = await showDatePicker(
+    final picked = await showDateRangePicker(
       context: context,
-      initialDate: _filterDate ?? DateTime.now(),
+      initialDateRange: _filterDateRange,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
-      helpText: 'Pilih tanggal transaksi',
+      helpText: 'Pilih rentang tanggal transaksi',
       cancelText: 'Batal',
       confirmText: 'Terapkan',
     );
     if (picked == null || !mounted) return;
-    await _applyPreviewFilters(date: picked);
+    setState(() {
+      _filterDateRange = DateTimeRange(
+        start: DateTime(picked.start.year, picked.start.month, picked.start.day),
+        end: DateTime(picked.end.year, picked.end.month, picked.end.day),
+      );
+      _rows.clear();
+      _nextPage = 1;
+      _lastPage = 1;
+      _total = null;
+      _error = null;
+      _loading = true;
+      _loadingMore = false;
+    });
+    await _loadNextPage();
   }
 
   void _resetPreviewFilters() {
@@ -977,7 +1003,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
   Future<void> _downloadPdf() async {
     setState(() => _downloadingPdf = true);
     try {
-      final rows = await widget.downloadAll(_filterDate, _filterRoom);
+      final rows = await widget.downloadAll(_filterDateRange, _filterRoom);
       if (!mounted) return;
       if (rows.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -985,7 +1011,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
         );
         return;
       }
-      await widget.downloadPdf(rows, _filterDate, _filterRoom);
+      await widget.downloadPdf(rows, _filterDateRange, _filterRoom);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1046,9 +1072,9 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    tooltip: _filterDate == null
-                        ? 'Pilih tanggal'
-                        : 'Tanggal: ${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
+                    tooltip: _filterDateRange == null
+                        ? 'Pilih rentang tanggal'
+                        : 'Tanggal: ${_date(_filterDateRange!.start)} - ${_date(_filterDateRange!.end)}',
                     onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
                     icon: const Icon(Icons.calendar_month_rounded, size: 20),
                     style: IconButton.styleFrom(
@@ -1060,7 +1086,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
                   const SizedBox(width: 4),
                   IconButton(
                     tooltip: 'Reset filter',
-                    onPressed: (_filterDate == null && _filterRoom == null) ||
+                    onPressed: (_filterDateRange == null && _filterRoom == null) ||
                             _loading ||
                             _downloadingPdf
                         ? null
