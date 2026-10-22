@@ -167,12 +167,30 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
     return Scaffold(
       backgroundColor: const Color(0xfff5f8fc),
       body: SafeArea(
-        child: Column(
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            DetailHeader(
-              title: 'Linen & Tirai Hilang',
-              userName: widget.userName,
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22),
+                  ),
+                ),
+              ),
             ),
+            Column(
+              children: [
+                DetailHeader(
+                  title: 'Linen & Tirai Hilang',
+                  userName: widget.userName,
+                  transparentBottom: true,
+                ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
               child: Row(
@@ -456,6 +474,24 @@ class _LinenHilangPageState extends State<LinenHilangPage> {
                       ),
                     ],
                   ],
+                ),
+              ),
+            ),
+              ],
+            ),
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              height: 60,
+              child: IgnorePointer(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(22),
+                    ),
+                  ),
                 ),
               ),
             ),
