@@ -1,15 +1,12 @@
 import 'dart:async';
-import 'dart:typed_data';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../api/api_service.dart';
 import '../../widgets/pagination_widget.dart';
 import '../../widgets/shared_widgets.dart';
+import '../../utils/linen_pdf_report.dart';
 
 class LinenMasukPage extends StatefulWidget {
   const LinenMasukPage({super.key, required this.userName});
@@ -28,6 +25,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   bool _loading = true;
   bool _roomsLoading = true;
   bool _scanning = false;
+  bool _exporting = false;
   String? _error;
   int _page = 1;
   int _perPage = 10;
@@ -291,25 +289,10 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     }
   }
 
-  Future<LinenListResponse<LinenMasukItem>> _getMasukPreviewPage(
-    int page,
-    DateTimeRange? previewRange,
-    int? previewRoom,
-  ) {
-    final singleDate = previewRange != null && _isSingleDate(previewRange);
-    return ApiService.instance.getLinenMasuk(
-      perPage: 500,
-      page: page,
-      search: _searchController.text.trim().isEmpty
-          ? null
-          : _searchController.text.trim(),
-      ruangan: previewRoom,
-      date: singleDate ? _date(previewRange.start) : null,
-      daterange: previewRange != null && !singleDate ? _range(previewRange) : null,
-    );
-  }
-
-  Future<List<LinenMasukItem>> _loadAllMasukRows(DateTimeRange? previewRange, int? previewRoom) async {
+  Future<List<LinenMasukItem>> _loadAllMasukRows(
+    DateTimeRange? selectedRange,
+    int? selectedRoom,
+  ) async {
     const maxRows = 5000;
     final rows = <LinenMasukItem>[];
     var page = 1;
@@ -321,12 +304,12 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
         search: _searchController.text.trim().isEmpty
             ? null
             : _searchController.text.trim(),
-        ruangan: previewRoom,
-        date: previewRange != null && _isSingleDate(previewRange)
-            ? _date(previewRange.start)
+        ruangan: selectedRoom,
+        date: selectedRange != null && _isSingleDate(selectedRange)
+            ? _date(selectedRange.start)
             : null,
-        daterange: previewRange != null && !_isSingleDate(previewRange)
-            ? _range(previewRange)
+        daterange: selectedRange != null && !_isSingleDate(selectedRange)
+            ? _range(selectedRange)
             : null,
       );
       lastPage = response.meta.lastPage;
@@ -336,131 +319,69 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     return rows;
   }
 
-  Future<void> _downloadMasukPdf(
-    List<LinenMasukItem> rows, [
-    DateTimeRange? previewRange,
-    int? previewRoom,
-  ]) async {
-    // Pecah PDF menjadi halaman kecil agar layout ribuan baris tidak membekukan UI.
-    final document = pw.Document();
-    final tableRows = rows.asMap().entries.map((entry) {
-      final item = entry.value;
-      return <String>[
-        '${entry.key + 1}',
-        item.namaLinen.isEmpty ? '-' : item.namaLinen,
-        item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen,
-        item.jumlah.isEmpty ? '-' : item.jumlah,
-        item.dariRuangan.isEmpty ? '-' : item.dariRuangan,
-      ];
-    }).toList(growable: false);
-    final roomName = _rooms.where((room) => room.id == previewRoom).map((room) => room.nama).firstOrNull ?? '-';
-    final searchText = _searchController.text.trim();
-    final petugasLaundry = rows.map((item) => item.petugasLaundry.trim()).firstWhere((name) => name.isNotEmpty, orElse: () => '-');
-    const rowsPerPage = 25;
-    final pageCount = (tableRows.length / rowsPerPage).ceil();
-
-    for (var pageIndex = 0; pageIndex < pageCount; pageIndex++) {
-      final startIndex = pageIndex * rowsPerPage;
-      final endIndex = (startIndex + rowsPerPage < tableRows.length)
-          ? startIndex + rowsPerPage
-          : tableRows.length;
-      final pageRows = tableRows.sublist(startIndex, endIndex);
-      final isLastPage = pageIndex == pageCount - 1;
-
-      document.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4.landscape,
-          margin: const pw.EdgeInsets.all(24),
-          build: (context) => pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                'DATA LINEN & TIRAI MASUK',
-                style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold),
-              ),
-              pw.SizedBox(height: 3),
-              pw.Text(
-                'Halaman ${pageIndex + 1} dari $pageCount • Tanggal cetak: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                style: const pw.TextStyle(fontSize: 7),
-              ),
-              if (previewRoom != null)
-                pw.Text('Filter ruangan: $roomName', style: const pw.TextStyle(fontSize: 7)),
-              if (previewRange != null)
-                pw.Text(
-                  'Filter tanggal: ${_isSingleDate(previewRange) ? _date(previewRange.start) : _range(previewRange)}',
-                  style: const pw.TextStyle(fontSize: 7),
-                ),
-              if (searchText.isNotEmpty)
-                pw.Text('Pencarian: $searchText', style: const pw.TextStyle(fontSize: 7)),
-              pw.SizedBox(height: 7),
-              pw.TableHelper.fromTextArray(
-                headers: const ['No', 'Nama Linen', 'Kategori Linen', 'Jumlah', 'Ruangan'],
-                data: pageRows,
-                headerStyle: pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold,
-                  fontSize: 8,
-                  color: PdfColors.white,
-                ),
-                cellStyle: const pw.TextStyle(fontSize: 7),
-                headerDecoration: pw.BoxDecoration(
-                  color: PdfColor.fromInt(0xffe29c02),
-                ),
-                cellPadding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-                border: pw.TableBorder.all(color: PdfColors.grey500, width: .4),
-              ),
-              if (isLastPage) ...[
-                pw.SizedBox(height: 18),
-                pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Expanded(
-                      child: pw.Column(children: [
-                        pw.Text('PETUGAS LINEN', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
-                        pw.SizedBox(height: 28),
-                        pw.Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(), style: const pw.TextStyle(fontSize: 8)),
-                      ]),
-                    ),
-                    pw.Expanded(
-                      child: pw.Column(children: [
-                        pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
-                        pw.SizedBox(height: 28),
-                        pw.Text(petugasLaundry, style: const pw.TextStyle(fontSize: 8)),
-                      ]),
-                    ),
-                  ],
-                ),
-              ],
-            ],
-          ),
-        ),
-      );
-
-      // Beri kesempatan event loop memperbarui indikator loading dan menerima input.
-      if (pageIndex % 4 == 3) {
-        await Future<void>.delayed(Duration.zero);
-      }
-    }
-
-    final bytes = Uint8List.fromList(await document.save());
-    await FilePicker.saveFile(
-      dialogTitle: 'Simpan PDF Linen & Tirai Masuk',
-      fileName: 'linen_tirai_masuk.pdf',
-      mimeType: 'application/pdf',
-      bytes: bytes,
-    );
+  String _reportDate(DateTime date) {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
-  Future<void> _previewDownload() async {
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) => _LinenMasukPreviewDialog(
-        userName: widget.userName,
-        loadPage: _getMasukPreviewPage,
-        downloadAll: _loadAllMasukRows,
-        downloadPdf: _downloadMasukPdf,
-        rooms: _rooms.map((room) => MapEntry(room.id, room.nama)).toList(),
-      ),
-    );
+  String _reportPeriod(DateTimeRange? range) {
+    if (range == null) return 'Semua Periode';
+    String format(DateTime date) =>
+        '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+    return '${format(range.start)} - ${format(range.end)}';
+  }
+
+  Future<void> _downloadPdf() async {
+    setState(() => _exporting = true);
+    try {
+      final dateRange = _selectedDateRange;
+      final rows = await _loadAllMasukRows(dateRange, _filterRoom);
+      if (!mounted) return;
+      final room = _rooms
+          .where((option) => option.id == _filterRoom)
+          .map((option) => option.nama)
+          .firstOrNull;
+      final search = _searchController.text.trim();
+      final bytes = await createLinenPdfReport(
+        title: 'Laporan Linen & Tirai Masuk',
+        period: _reportPeriod(dateRange),
+        printedDate: _reportDate(DateTime.now()),
+        linenOfficer: widget.userName.trim().isEmpty ? '-' : widget.userName.trim(),
+        laundryOfficer: rows
+            .map((item) => item.petugasLaundry.trim())
+            .firstWhere((name) => name.isNotEmpty, orElse: () => '-'),
+        room: room,
+        search: search.isEmpty ? null : search,
+        rows: rows.asMap().entries.map((entry) {
+          final item = entry.value;
+          return [
+            '${entry.key + 1}',
+            item.namaLinen.isEmpty ? '-' : item.namaLinen,
+            item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen,
+            item.jumlah.isEmpty ? '-' : item.jumlah,
+            item.dariRuangan.isEmpty ? '-' : item.dariRuangan,
+          ];
+        }).toList(growable: false),
+      );
+      await FilePicker.saveFile(
+        dialogTitle: 'Simpan PDF Linen & Tirai Masuk',
+        fileName: 'linen_tirai_masuk.pdf',
+        mimeType: 'application/pdf',
+        bytes: bytes,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      final message =
+          e is ApiException ? e.message : 'Gagal mengunduh PDF: $e';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } finally {
+      if (mounted) setState(() => _exporting = false);
+    }
   }
 
   Future<void> _pickRange() async {
@@ -580,8 +501,8 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                       ),
                       const SizedBox(width: 4),
                       IconButton(
-                        onPressed: _previewDownload,
-                        tooltip: 'Preview dan download',
+                        onPressed: _exporting ? null : _downloadPdf,
+                        tooltip: 'Download PDF',
                         style: IconButton.styleFrom(
                           backgroundColor: const Color(0xffeaf2ff),
                           foregroundColor: const Color(0xff1261dc),
@@ -590,7 +511,13 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        icon: const Icon(Icons.preview_rounded, size: 21),
+                        icon: _exporting
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(Icons.picture_as_pdf_rounded, size: 21),
                       ),
                     ],
                   ),
@@ -858,387 +785,6 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
   }
 }
 
-
-class _LinenMasukPreviewDialog extends StatefulWidget {
-  const _LinenMasukPreviewDialog({
-    required this.userName,
-    required this.loadPage,
-    required this.downloadAll,
-    required this.downloadPdf,
-    required this.rooms,
-  });
-
-  final String userName;
-  final List<MapEntry<int, String>> rooms;
-  final Future<LinenListResponse<LinenMasukItem>> Function(
-    int page,
-    DateTimeRange? previewRange,
-    int? previewRoom,
-  ) loadPage;
-  final Future<List<LinenMasukItem>> Function(DateTimeRange? previewRange, int? previewRoom) downloadAll;
-  final Future<void> Function(List<LinenMasukItem>, [DateTimeRange? previewRange, int? previewRoom]) downloadPdf;
-
-  @override
-  State<_LinenMasukPreviewDialog> createState() => _LinenMasukPreviewDialogState();
-}
-
-class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
-  final ScrollController _scrollController = ScrollController();
-  final List<LinenMasukItem> _rows = [];
-  int _nextPage = 1;
-  int _lastPage = 1;
-  int? _total;
-  bool _loading = true;
-  bool _loadingMore = false;
-  bool _downloadingPdf = false;
-  String? _error;
-  DateTimeRange? _filterDateRange;
-  int? _filterRoom;
-  String _petugasLaundry = '-';
-
-  String _previewDateLabel(DateTime date) =>
-      '${date.month}/${date.day}/${date.year}';
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-    _loadNextPage();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (!_scrollController.hasClients || _loadingMore || _loading) return;
-    if (_scrollController.position.extentAfter < 240 &&
-        _nextPage <= _lastPage &&
-        _rows.length < 5000) {
-      _loadNextPage();
-    }
-  }
-
-  Future<void> _loadNextPage() async {
-    if (_loadingMore || (_nextPage > _lastPage && _rows.isNotEmpty)) return;
-    final page = _nextPage;
-    setState(() {
-      _loading = _rows.isEmpty;
-      _loadingMore = _rows.isNotEmpty;
-      _error = null;
-    });
-    try {
-      final response = await widget.loadPage(page, _filterDateRange, _filterRoom);
-      if (!mounted) return;
-      setState(() {
-        _rows.addAll(response.data.take(5000 - _rows.length));
-        if (response.meta.petugasLaundry.trim().isNotEmpty) {
-          _petugasLaundry = response.meta.petugasLaundry.trim();
-        } else if (response.data.isNotEmpty) {
-          final name = response.data.map((item) => item.petugasLaundry.trim()).firstWhere((value) => value.isNotEmpty, orElse: () => '');
-          if (name.isNotEmpty) _petugasLaundry = name;
-        }
-        _nextPage = page + 1;
-        _lastPage = response.meta.lastPage;
-        _total = response.meta.total;
-        _loading = false;
-        _loadingMore = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _loading = false;
-        _loadingMore = false;
-        _error = e is ApiException
-            ? e.message
-            : 'Gagal memuat data. Periksa koneksi lalu coba lagi.';
-      });
-    }
-  }
-
-  Future<void> _applyPreviewFilters({DateTime? date, int? room, bool resetDate = false, bool resetRoom = false}) async {
-    setState(() {
-      if (date != null) {
-        _filterDateRange = DateTimeRange(
-          start: DateTime(date.year, date.month, date.day),
-          end: DateTime(date.year, date.month, date.day),
-        );
-      }
-      if (resetDate) _filterDateRange = null;
-      if (room != null || resetRoom) _filterRoom = room;
-      _rows.clear();
-      _nextPage = 1;
-      _lastPage = 1;
-      _total = null;
-      _error = null;
-      _loading = true;
-      _loadingMore = false;
-    });
-    await _loadNextPage();
-  }
-
-  Future<void> _pickPreviewDate() async {
-    final picked = await showDateRangePicker(
-      context: context,
-      initialDateRange: _filterDateRange,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      helpText: 'Pilih rentang tanggal transaksi',
-      cancelText: 'Batal',
-      confirmText: 'Terapkan',
-    );
-    if (picked == null || !mounted) return;
-    setState(() {
-      _filterDateRange = DateTimeRange(
-        start: DateTime(picked.start.year, picked.start.month, picked.start.day),
-        end: DateTime(picked.end.year, picked.end.month, picked.end.day),
-      );
-      _rows.clear();
-      _nextPage = 1;
-      _lastPage = 1;
-      _total = null;
-      _error = null;
-      _loading = true;
-      _loadingMore = false;
-    });
-    await _loadNextPage();
-  }
-
-  void _resetPreviewFilters() {
-    _applyPreviewFilters(resetDate: true, resetRoom: true);
-  }
-
-  Future<void> _downloadPdf() async {
-    setState(() => _downloadingPdf = true);
-    try {
-      final rows = await widget.downloadAll(_filterDateRange, _filterRoom);
-      if (!mounted) return;
-      if (rows.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak ada data untuk diunduh.')),
-        );
-        return;
-      }
-      await widget.downloadPdf(rows, _filterDateRange, _filterRoom);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal membuat PDF: $e')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _downloadingPdf = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Preview Linen & Tirai Masuk'),
-      content: SizedBox(
-        width: 760,
-        height: 520,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<int?>(
-                      value: _filterRoom,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: 'Ruangan',
-                        prefixIcon: const Icon(Icons.meeting_room_rounded, size: 18),
-                        filled: true,
-                        fillColor: const Color(0xfff7faff),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xffd8e4f5)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xffd8e4f5)),
-                        ),
-                      ),
-                      items: [
-                        const DropdownMenuItem<int?>(value: null, child: Text('Semua Ruangan')),
-                        ...widget.rooms.map((room) => DropdownMenuItem<int?>(
-                              value: room.key,
-                              child: Text(room.value, overflow: TextOverflow.ellipsis),
-                            )),
-                      ],
-                      onChanged: _loading || _downloadingPdf
-                          ? null
-                          : (value) => _applyPreviewFilters(
-                                room: value,
-                                resetRoom: value == null,
-                              ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    tooltip: _filterDateRange == null
-                        ? 'Pilih rentang tanggal'
-                        : 'Tanggal: ${_previewDateLabel(_filterDateRange!.start)} - ${_previewDateLabel(_filterDateRange!.end)}',
-                    onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
-                    icon: const Icon(Icons.calendar_month_rounded, size: 20),
-                    style: IconButton.styleFrom(
-                      foregroundColor: const Color(0xff1261dc),
-                      backgroundColor: const Color(0xfff7faff),
-                      shape: const CircleBorder(),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    tooltip: 'Reset filter',
-                    onPressed: (_filterDateRange == null && _filterRoom == null) ||
-                            _loading ||
-                            _downloadingPdf
-                        ? null
-                        : _resetPreviewFilters,
-                    icon: const Icon(Icons.filter_alt_off_rounded, size: 20),
-                    style: IconButton.styleFrom(
-                      foregroundColor: const Color(0xff1261dc),
-                      backgroundColor: const Color(0xfff7faff),
-                      shape: const CircleBorder(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _error != null && _rows.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(_error!, textAlign: TextAlign.center),
-                              const SizedBox(height: 10),
-                              ElevatedButton(
-                                onPressed: _loadNextPage,
-                                child: const Text('Coba Lagi'),
-                              ),
-                            ],
-                          ),
-                        )
-                      : _rows.isEmpty
-                          ? const Center(child: Text('Tidak ada data untuk di-preview.'))
-                          : SingleChildScrollView(
-                              controller: _scrollController,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: DataTable(
-                                  horizontalMargin: 6,
-                                  columnSpacing: 8,
-                                  headingRowHeight: 36,
-                                  dataRowMinHeight: 32,
-                                  dataRowMaxHeight: 36,
-                                  headingRowColor: WidgetStateProperty.all(const Color(0xffe29c02)),
-                                  headingTextStyle: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  dataTextStyle: const TextStyle(
-                                    color: Color(0xff465564),
-                                    fontSize: 10,
-                                  ),
-                                  columns: const [
-                                    DataColumn(label: Text('No')),
-                                    DataColumn(label: Text('Nama Linen')),
-                                    DataColumn(label: Text('Kategori Linen')),
-                                    DataColumn(label: Text('Jumlah')),
-                                    DataColumn(label: Text('Ruangan')),
-                                  ],
-                                  rows: _rows.asMap().entries.map((entry) {
-                                    final item = entry.value;
-                                    return DataRow(
-                                      color: WidgetStateProperty.resolveWith<Color?>(
-                                        (states) => entry.key.isEven
-                                            ? const Color(0xfff5f6f8)
-                                            : Colors.white,
-                                      ),
-                                      cells: [
-                                      DataCell(Text('${entry.key + 1}', style: const TextStyle(fontSize: 10))),
-                                      DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen, style: const TextStyle(fontSize: 10))),
-                                      DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen, style: const TextStyle(fontSize: 10))),
-                                      DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah, style: const TextStyle(fontSize: 10))),
-                                      DataCell(Text(item.dariRuangan.isEmpty ? '-' : item.dariRuangan, style: const TextStyle(fontSize: 10))),
-                                    ]);
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-            ),
-            if (_loadingMore)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-                    SizedBox(width: 8),
-                    Text('Memuat data berikutnya...', style: TextStyle(fontSize: 11)),
-                  ],
-                ),
-              ),
-            if (_error != null && _rows.isNotEmpty)
-              TextButton(onPressed: _loadNextPage, child: const Text('Gagal memuat. Coba lagi')),
-            const Divider(),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(children: [
-                    const Text('PETUGAS LINEN', textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-                    const SizedBox(height: 38),
-                    Text(widget.userName.trim().isEmpty ? '-' : widget.userName.trim(),
-                        textAlign: TextAlign.center),
-                  ]),
-                ),
-                Expanded(
-                  child: Column(children: [
-                    const Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-                    const SizedBox(height: 38),
-                    Text(_petugasLaundry, textAlign: TextAlign.center),
-                  ]),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Menampilkan ${_rows.length}${_total == null ? '' : ' dari $_total'} data • maksimal 5.000 data',
-              style: const TextStyle(color: Color(0xff7d8c99), fontSize: 11, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: _downloadingPdf ? null : () => Navigator.of(context).pop(),
-          child: const Text('Tutup'),
-        ),
-        ElevatedButton.icon(
-          onPressed: _downloadingPdf || _loading ? null : _downloadPdf,
-          icon: _downloadingPdf
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.picture_as_pdf_rounded),
-          label: Text(_downloadingPdf ? 'Menyiapkan PDF...' : 'Download PDF'),
-        ),
-      ],
-    );
-  }
-}
 
 class _ScanDetailRow extends StatelessWidget {
   const _ScanDetailRow({
