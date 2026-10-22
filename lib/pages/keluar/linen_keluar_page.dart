@@ -566,6 +566,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   String? _error;
   DateTime? _filterDate;
   int? _filterRoom;
+  String _petugasLaundryFromResponse = '';
 
   @override
   void initState() {
@@ -603,6 +604,12 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
       if (!mounted) return;
       setState(() {
         _rows.addAll(response.data.take(5000 - _rows.length));
+        if (response.meta.petugasLaundry.trim().isNotEmpty) {
+          _petugasLaundryFromResponse = response.meta.petugasLaundry.trim();
+        } else if (response.data.isNotEmpty) {
+          final name = response.data.map((item) => item.user.trim()).firstWhere((value) => value.isNotEmpty, orElse: () => '');
+          if (name.isNotEmpty) _petugasLaundryFromResponse = name;
+        }
         _nextPage = page + 1;
         _lastPage = response.meta.lastPage;
         _total = response.meta.total;
@@ -654,6 +661,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   }
 
   String get _petugasLaundry {
+    if (_petugasLaundryFromResponse.isNotEmpty) return _petugasLaundryFromResponse;
     if (_filterRoom == null) return '';
     for (final item in _rows) {
       final name = item.user.trim();
