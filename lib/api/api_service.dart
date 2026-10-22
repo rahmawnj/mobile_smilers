@@ -1029,8 +1029,74 @@ class ApiService {
   }
 
   Future<LinenListResponse<LinenKeluarItem>> getLinenKeluar({String? search,int? perPage,int? ruangan,String? date,String? daterange,int? page}) async {
-    final d=await _get('/linen-keluar',query:_query({'per_page':perPage,'search':search,'ruangan':ruangan,'date':date,'daterange':daterange,'page':page}));
-    return _listResponse(d,(e)=>LinenKeluarItem.fromJson(e));
+    if (ruangan == null) {
+      throw const ApiException('Pilih ruangan terlebih dahulu untuk menampilkan data Linen Keluar.');
+    }
+
+    final d = await _get(
+      '/linen-keluar',
+      query: _query({
+        'per_page': perPage,
+        'search': search,
+        'ruangan': ruangan,
+        'date': date,
+        'daterange': daterange,
+        'page': page,
+      }),
+    );
+
+    // Format laporan mobile: data berisi setting, room, user, dan linens.
+    final payload = d['data'];
+    if (payload is Map && payload['linens'] is List) {
+      final report = Map<String, dynamic>.from(payload);
+      final room = Map<String, dynamic>.from(
+        (report['room'] as Map?) ?? const {},
+      );
+      final user = Map<String, dynamic>.from(
+        (report['user'] as Map?) ?? const {},
+      );
+      final roomName = room['nama_ruangan']?.toString() ?? '';
+      final userName = user['name']?.toString() ?? '';
+      final term = search?.trim().toLowerCase() ?? '';
+      final items = (report['linens'] as List)
+          .whereType<Map>()
+          .map((row) {
+            final item = Map<String, dynamic>.from(row);
+            final category =
+                (item['nama_kategori_linen'] ?? item['nama_linen'] ?? '')
+                    .toString();
+            return LinenKeluarItem.fromJson({
+              'id': item['no'] ?? item['id'],
+              'nama_linen': category,
+              'nama_kategori_linen': category,
+              'jumlah': item['total'] ?? item['jumlah'] ?? 0,
+              'ke_ruangan': item['nama_ruangan'] ?? roomName,
+              'tanggal': report['date'] ?? report['tanggal_keluar'] ?? '',
+              'jam': report['jam_keluar'] ?? '',
+              'user': userName,
+            });
+          })
+          .where((item) =>
+              term.isEmpty ||
+              item.namaLinen.toLowerCase().contains(term) ||
+              item.namaKategoriLinen.toLowerCase().contains(term) ||
+              item.keRuangan.toLowerCase().contains(term))
+          .toList();
+
+      final total = _toInt(report['total_keseluruhan']);
+      return LinenListResponse<LinenKeluarItem>(
+        data: items,
+        meta: LinenMeta(
+          currentPage: 1,
+          perPage: items.length,
+          total: total,
+          lastPage: 1,
+        ),
+      );
+    }
+
+    // Tetap kompatibel dengan format daftar lama yang memakai data array + meta.
+    return _listResponse(d, (e) => LinenKeluarItem.fromJson(e));
   }
   Future<LinenKeluarOptions> getLinenKeluarOptions() async {
     final d=await _get('/linen-keluar/options'); return LinenKeluarOptions.fromJson(Map<String,dynamic>.from((d['data'] as Map?)??const {}));
