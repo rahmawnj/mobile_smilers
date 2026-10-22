@@ -339,6 +339,7 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
     try {
       final dateRange = _selectedDateRange;
       final rows = await _loadAllMasukRows(dateRange, _filterRoom);
+      final appInfo = await ApiService.instance.getStoredAppInfo();
       if (!mounted) return;
       final room = _rooms
           .where((option) => option.id == _filterRoom)
@@ -347,6 +348,12 @@ class _LinenMasukPageState extends State<LinenMasukPage> {
       final search = _searchController.text.trim();
       final bytes = await createLinenPdfReport(
         title: 'Laporan Linen & Tirai Masuk',
+        organizationName: appInfo?.appName.trim().isNotEmpty == true
+            ? appInfo!.appName.trim()
+            : 'Rumah Sakit',
+        organizationAddress: appInfo?.appAddress.trim().isNotEmpty == true
+            ? appInfo!.appAddress.trim()
+            : 'Alamat rumah sakit',
         period: _reportPeriod(dateRange),
         printedDate: _reportDate(DateTime.now()),
         linenOfficer: widget.userName.trim().isEmpty ? '-' : widget.userName.trim(),

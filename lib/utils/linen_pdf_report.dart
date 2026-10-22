@@ -5,6 +5,8 @@ import 'package:pdf/widgets.dart' as pw;
 
 Future<Uint8List> createLinenPdfReport({
   required String title,
+  required String organizationName,
+  required String organizationAddress,
   required String period,
   required String printedDate,
   required String linenOfficer,
@@ -39,10 +41,10 @@ Future<Uint8List> createLinenPdfReport({
         pw.Divider(color: PdfColors.grey700, thickness: 1),
         pw.SizedBox(height: 8),
         pw.Text(
-          'RS Anugerah Global Sehat',
+          organizationName,
           style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
         ),
-        pw.Text('Madiun', style: const pw.TextStyle(fontSize: 12)),
+        pw.Text(organizationAddress, style: const pw.TextStyle(fontSize: 12)),
         if (room != null || (search != null && search.isNotEmpty)) ...[
           pw.SizedBox(height: 6),
           if (room != null)

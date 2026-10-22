@@ -155,6 +155,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         _selectedDateRange,
         _filterRoom,
       );
+      final appInfo = await ApiService.instance.getStoredAppInfo();
       if (!mounted) return;
       final room = _options?.ruangan
           .where((option) => option.id == _filterRoom)
@@ -163,6 +164,12 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
       final search = _searchController.text.trim();
       final bytes = await createLinenPdfReport(
         title: 'Laporan Linen & Tirai Keluar',
+        organizationName: appInfo?.appName.trim().isNotEmpty == true
+            ? appInfo!.appName.trim()
+            : 'Rumah Sakit',
+        organizationAddress: appInfo?.appAddress.trim().isNotEmpty == true
+            ? appInfo!.appAddress.trim()
+            : 'Alamat rumah sakit',
         period: _reportPeriod(_selectedDateRange),
         printedDate: _reportDate(DateTime.now()),
         linenOfficer: widget.userName.trim().isEmpty ? '-' : widget.userName.trim(),

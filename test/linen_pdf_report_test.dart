@@ -5,6 +5,8 @@ void main() {
   test('creates a downloadable PDF when there are no rows', () async {
     final bytes = await createLinenPdfReport(
       title: 'Laporan Linen & Tirai Masuk',
+      organizationName: 'RS Contoh',
+      organizationAddress: 'Kota Contoh',
       period: 'Semua Periode',
       printedDate: '22 October 2026',
       linenOfficer: 'Petugas',
@@ -19,6 +21,8 @@ void main() {
   test('creates a PDF report containing supplied table data', () async {
     final bytes = await createLinenPdfReport(
       title: 'Laporan Linen & Tirai Keluar',
+      organizationName: 'RS Contoh',
+      organizationAddress: 'Kota Contoh',
       period: '01/09/2026 - 30/09/2026',
       printedDate: '22 October 2026',
       linenOfficer: 'Petugas',
