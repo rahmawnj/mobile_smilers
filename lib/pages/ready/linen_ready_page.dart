@@ -167,7 +167,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
 
   void _search() {
     setState(() => _page = 1);
-    _load();
   }
 
   void _onSearchChanged(String value) {
@@ -179,12 +178,10 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     _searchController.clear();
     _searchDebounce?.cancel();
     setState(() => _page = 1);
-    _load();
   }
 
   void _changePage(int page) {
     setState(() => _page = page);
-    _load();
   }
 
   void _changePerPage(int value) {
@@ -192,7 +189,6 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
       _perPage = value;
       _page = 1;
     });
-    _load();
   }
 
   void _openDetail(LinenCategory category) {
