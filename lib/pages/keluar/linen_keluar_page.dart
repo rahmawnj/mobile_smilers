@@ -108,7 +108,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   Future<LinenListResponse<LinenKeluarItem>> _getKeluarPage(
     int page, {
     int perPage = 100,
-    DateTime? previewDate,
+    DateTimeRange? previewDateRange,
     int? previewRoom,
     bool usePreviewRoom = false,
   }) {
@@ -127,19 +127,19 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
           : _searchController.text.trim(),
       ruangan: room,
       date: null,
-      daterange: previewDate == null
+      daterange: previewDateRange == null
           ? (_selectedDateRange == null ? null : _range(_selectedDateRange!))
-          : '${_date(previewDate)} - ${_date(previewDate)}',
+          : _range(previewDateRange),
     );
   }
 
-  Future<List<LinenKeluarItem>> _loadAllKeluarRows(DateTime? previewDate, int? previewRoom) async {
+  Future<List<LinenKeluarItem>> _loadAllKeluarRows(DateTimeRange? previewDateRange, int? previewRoom) async {
     const maxRows = 5000;
     final rows = <LinenKeluarItem>[];
     var page = 1;
     var lastPage = 1;
     do {
-      final response = await _getKeluarPage(page, previewDate: previewDate, previewRoom: previewRoom, usePreviewRoom: true);
+      final response = await _getKeluarPage(page, previewDateRange: previewDateRange, previewRoom: previewRoom, usePreviewRoom: true);
       lastPage = response.meta.lastPage;
       rows.addAll(response.data.take(maxRows - rows.length));
       page++;
@@ -149,7 +149,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
 
   Future<void> _downloadKeluarPdf(
     List<LinenKeluarItem> rows, [
-    DateTime? previewDate,
+    DateTimeRange? previewDateRange,
     int? previewRoom,
   ]) async {
     // Pecah PDF menjadi halaman kecil agar layout ribuan baris tidak membekukan UI.
@@ -195,8 +195,8 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
               ),
               if (previewRoom != null)
                 pw.Text('Filter ruangan: $roomName', style: const pw.TextStyle(fontSize: 7)),
-              if (previewDate != null)
-                pw.Text('Filter tanggal: ${_date(previewDate)}', style: const pw.TextStyle(fontSize: 7)),
+              if (previewDateRange != null)
+                pw.Text('Filter tanggal: ${_range(previewDateRange)}', style: const pw.TextStyle(fontSize: 7)),
               if (searchText.isNotEmpty)
                 pw.Text('Pencarian: $searchText', style: const pw.TextStyle(fontSize: 7)),
               pw.SizedBox(height: 7),
@@ -266,10 +266,10 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
 
   Future<LinenListResponse<LinenKeluarItem>> _getKeluarPreviewPage(
     int page,
-    DateTime? previewDate,
+    DateTimeRange? previewDateRange,
     int? previewRoom,
   ) {
-    return _getKeluarPage(page, perPage: 500, previewDate: previewDate, previewRoom: previewRoom, usePreviewRoom: true);
+    return _getKeluarPage(page, perPage: 500, previewDateRange: previewDateRange, previewRoom: previewRoom, usePreviewRoom: true);
   }
 
   Future<void> _previewDownload() async {
@@ -535,11 +535,11 @@ class _LinenKeluarPreviewDialog extends StatefulWidget {
   final List<MapEntry<int, String>> rooms;
   final Future<LinenListResponse<LinenKeluarItem>> Function(
     int page,
-    DateTime? previewDate,
+    DateTimeRange? previewDateRange,
     int? previewRoom,
   ) loadPage;
-  final Future<List<LinenKeluarItem>> Function(DateTime? previewDate, int? previewRoom) downloadAll;
-  final Future<void> Function(List<LinenKeluarItem>, [DateTime? previewDate, int? previewRoom]) downloadPdf;
+  final Future<List<LinenKeluarItem>> Function(DateTimeRange? previewDateRange, int? previewRoom) downloadAll;
+  final Future<void> Function(List<LinenKeluarItem>, [DateTimeRange? previewDateRange, int? previewRoom]) downloadPdf;
 
   @override
   State<_LinenKeluarPreviewDialog> createState() => _LinenKeluarPreviewDialogState();
@@ -555,7 +555,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   bool _loadingMore = false;
   bool _downloadingPdf = false;
   String? _error;
-  DateTime? _filterDate;
+  DateTimeRange? _filterDateRange;
   int? _filterRoom;
   String _petugasLaundryFromResponse = '';
 
@@ -602,7 +602,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
       _error = null;
     });
     try {
-      final response = await widget.loadPage(page, _filterDate, _filterRoom);
+      final response = await widget.loadPage(page, _filterDateRange, _filterRoom);
       if (!mounted) return;
       setState(() {
         _rows.addAll(response.data.take(5000 - _rows.length));
@@ -628,11 +628,16 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
     }
   }
 
-  Future<void> _applyPreviewFilters({DateTime? date, int? room, bool resetDate = false, bool resetRoom = false}) async {
+  Future<void> _applyPreviewFilters({DateTimeRange? dateRange, int? room, bool resetDate = false, bool resetRoom = false}) async {
     final nextRoom = resetRoom ? null : (room ?? _filterRoom);
     setState(() {
-      if (date != null) _filterDate = DateTime(date.year, date.month, date.day);
-      if (resetDate) _filterDate = null;
+      if (dateRange != null) {
+        _filterDateRange = DateTimeRange(
+          start: DateTime(dateRange.start.year, dateRange.start.month, dateRange.start.day),
+          end: DateTime(dateRange.end.year, dateRange.end.month, dateRange.end.day),
+        );
+      }
+      if (resetDate) _filterDateRange = null;
       _filterRoom = nextRoom;
       _rows.clear();
       _nextPage = 1;
@@ -648,18 +653,21 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
     }
   }
 
-  Future<void> _pickPreviewDate() async {
-    final picked = await showDatePicker(
+  String _previewDateLabel(DateTime date) =>
+      '${date.month}/${date.day}/${date.year}';
+
+  Future<void> _pickPreviewDateRange() async {
+    final picked = await showDateRangePicker(
       context: context,
-      initialDate: _filterDate ?? DateTime.now(),
+      initialDateRange: _filterDateRange,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
-      helpText: 'Pilih tanggal transaksi',
+      helpText: 'Pilih rentang tanggal transaksi',
       cancelText: 'Batal',
       confirmText: 'Terapkan',
     );
     if (picked == null || !mounted) return;
-    await _applyPreviewFilters(date: picked);
+    await _applyPreviewFilters(dateRange: picked);
   }
 
   void _resetPreviewFilters() {
@@ -679,7 +687,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   Future<void> _downloadPdf() async {
     setState(() => _downloadingPdf = true);
     try {
-      final rows = await widget.downloadAll(_filterDate, _filterRoom);
+      final rows = await widget.downloadAll(_filterDateRange, _filterRoom);
       if (!mounted) return;
       if (rows.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -687,7 +695,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
         );
         return;
       }
-      await widget.downloadPdf(rows, _filterDate, _filterRoom);
+      await widget.downloadPdf(rows, _filterDateRange, _filterRoom);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -748,10 +756,10 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    tooltip: _filterDate == null
-                        ? 'Pilih tanggal'
-                        : 'Tanggal: ${_filterDate!.day.toString().padLeft(2, '0')}/${_filterDate!.month.toString().padLeft(2, '0')}/${_filterDate!.year}',
-                    onPressed: _loading || _downloadingPdf ? null : _pickPreviewDate,
+                    tooltip: _filterDateRange == null
+                        ? 'Pilih rentang tanggal'
+                        : 'Tanggal: ${_previewDateLabel(_filterDateRange!.start)} - ${_previewDateLabel(_filterDateRange!.end)}',
+                    onPressed: _loading || _downloadingPdf ? null : _pickPreviewDateRange,
                     icon: const Icon(Icons.calendar_month_rounded, size: 20),
                     style: IconButton.styleFrom(
                       foregroundColor: const Color(0xff1261dc),
@@ -762,7 +770,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
                   const SizedBox(width: 4),
                   IconButton(
                     tooltip: 'Reset filter',
-                    onPressed: (_filterDate == null && _filterRoom == null) ||
+                    onPressed: (_filterDateRange == null && _filterRoom == null) ||
                             _loading ||
                             _downloadingPdf
                         ? null
