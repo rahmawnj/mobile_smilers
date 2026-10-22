@@ -1,9 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 import '../api/api_service.dart';
 import '../widgets/pagination_widget.dart';
@@ -31,6 +26,7 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
   Map<String, dynamic> _data = const {};
   LinenListResponse<LinenKeluarItem>? _keluarResponse;
   LinenListResponse<LinenMasukItem>? _masukResponse;
+  DateTimeRange? _selectedDateRange;
   int _keluarPage = 1;
   int _masukPage = 1;
   int _keluarPerPage = 10;
@@ -42,6 +38,41 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
     _load();
   }
 
+  String _dateForMasuk(DateTime date) =>
+      '${date.month}/${date.day}/${date.year}';
+
+  String _dateForKeluar(DateTime date) =>
+      '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+
+  String _dateRange(DateTimeRange range, String Function(DateTime) formatDate) =>
+      '${formatDate(range.start)} - ${formatDate(range.end)}';
+
+  Future<void> _pickDateRange() async {
+    final range = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      initialDateRange: _selectedDateRange,
+    );
+    if (range == null || !mounted) return;
+
+    setState(() {
+      _selectedDateRange = range;
+      _keluarPage = 1;
+      _masukPage = 1;
+    });
+    _load();
+  }
+
+  void _resetDateRange() {
+    setState(() {
+      _selectedDateRange = null;
+      _keluarPage = 1;
+      _masukPage = 1;
+    });
+    _load();
+  }
+
   Future<void> _load() async {
     setState(() {
       _loading = true;
@@ -49,10 +80,39 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
     });
 
     try {
+      final range = _selectedDateRange;
       final results = await Future.wait<dynamic>([
-        ApiService.instance.getInOutDetail(widget.ruanganId),
-        ApiService.instance.getLinenKeluar(ruangan: widget.ruanganId, perPage: _keluarPerPage, page: _keluarPage),
-        ApiService.instance.getLinenMasuk(ruangan: widget.ruanganId, perPage: _masukPerPage, page: _masukPage),
+        ApiService.instance.getInOutDetail(
+          widget.ruanganId,
+          daterange: range == null
+              ? null
+              : _dateRange(range, _dateForMasuk),
+        ),
+        ApiService.instance.getLinenKeluar(
+          ruangan: widget.ruanganId,
+          perPage: _keluarPerPage,
+          page: _keluarPage,
+          daterange: range == null
+              ? null
+              : _dateRange(range, _dateForKeluar),
+        ),
+        ApiService.instance.getLinenMasuk(
+          ruangan: widget.ruanganId,
+          perPage: _masukPerPage,
+          page: _masukPage,
+          date: range != null &&
+                  range.start.year == range.end.year &&
+                  range.start.month == range.end.month &&
+                  range.start.day == range.end.day
+              ? _dateForMasuk(range.start)
+              : null,
+          daterange: range != null &&
+                  (range.start.year != range.end.year ||
+                      range.start.month != range.end.month ||
+                      range.start.day != range.end.day)
+              ? _dateRange(range, _dateForMasuk)
+              : null,
+        ),
       ]);
       if (!mounted) return;
       final raw = results[0]['data'];
@@ -74,200 +134,6 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
         _error = 'Tidak dapat mengambil detail Keluar Masuk dari server.';
         _loading = false;
       });
-    }
-  }
-
-  Future<List<LinenKeluarItem>> _loadAllKeluarRows() async {
-    final firstPage = await ApiService.instance.getLinenKeluar(
-      ruangan: widget.ruanganId,
-      perPage: 100,
-      page: 1,
-    );
-    final rows = <LinenKeluarItem>[...firstPage.data];
-    for (var page = 2; page <= firstPage.meta.lastPage; page++) {
-      final response = await ApiService.instance.getLinenKeluar(
-        ruangan: widget.ruanganId,
-        perPage: 100,
-        page: page,
-      );
-      rows.addAll(response.data);
-    }
-    return rows;
-  }
-
-  Future<void> _downloadKeluarPdf(List<LinenKeluarItem> rows) async {
-    final document = pw.Document();
-    document.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(28),
-        build: (context) => [
-          pw.Text(
-            'DATA LINEN & TIRAI KELUAR',
-            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
-          ),
-          pw.SizedBox(height: 5),
-          pw.Text('Ruangan: ${widget.namaRuangan}'),
-          pw.SizedBox(height: 16),
-          pw.TableHelper.fromTextArray(
-            headers: ['No', 'Nama Linen', 'Kategori Linen', 'Jumlah', 'Ruangan'],
-            data: rows.asMap().entries.map((entry) {
-              final item = entry.value;
-              return [
-                '${entry.key + 1}',
-                item.namaLinen.isEmpty ? '-' : item.namaLinen,
-                item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen,
-                item.jumlah.isEmpty ? '-' : item.jumlah,
-                item.keRuangan.isEmpty ? '-' : item.keRuangan,
-              ];
-            }).toList(),
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
-            cellStyle: const pw.TextStyle(fontSize: 8),
-            headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-            cellPadding: const pw.EdgeInsets.all(6),
-            border: pw.TableBorder.all(color: PdfColors.grey500, width: .5),
-          ),
-          pw.SizedBox(height: 45),
-          pw.Row(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Expanded(
-                child: pw.Column(
-                  children: [
-                    pw.Text('PETUGAS LINEN', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                    pw.SizedBox(height: 45),
-                    pw.Text(widget.userName.isEmpty ? '-' : widget.userName, style: const pw.TextStyle(fontSize: 10)),
-                  ],
-                ),
-              ),
-              pw.Expanded(
-                child: pw.Column(
-                  children: [
-                    pw.Text('PETUGAS LAUNDRY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                    pw.SizedBox(height: 45),
-                    pw.Text('________________________', style: const pw.TextStyle(fontSize: 10)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-    final bytes = Uint8List.fromList(await document.save());
-    await FilePicker.saveFile(
-      dialogTitle: 'Simpan PDF Linen & Tirai Keluar',
-      fileName: 'linen_tirai_keluar.pdf',
-      mimeType: 'application/pdf',
-      bytes: bytes,
-    );
-  }
-
-  Future<void> _previewKeluar() async {
-    showDialog<void>(context: context, barrierDismissible: false, builder: (loadingContext) => const AlertDialog(content: Row(children: [CircularProgressIndicator(), SizedBox(width: 16), Expanded(child: Text('Memuat semua data linen keluar...'))])));
-    try {
-      final rows = await _loadAllKeluarRows();
-      if (mounted) Navigator.of(context, rootNavigator: true).pop();
-      if (!mounted) return;
-      if (rows.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Belum ada data linen keluar untuk ruangan ini.')),
-        );
-        return;
-      }
-      await showDialog<void>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: Text('Linen & Tirai Keluar - ${widget.namaRuangan}'),
-          content: SizedBox(
-            width: 720,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      columns: const [
-                        DataColumn(label: Text('No')),
-                        DataColumn(label: Text('Nama Linen')),
-                        DataColumn(label: Text('Kategori Linen')),
-                        DataColumn(label: Text('Jumlah')),
-                        DataColumn(label: Text('Ruangan')),
-                      ],
-                      rows: rows.asMap().entries.map((entry) {
-                        final item = entry.value;
-                        return DataRow(cells: [
-                          DataCell(Text('${entry.key + 1}')),
-                          DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
-                          DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
-                          DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
-                          DataCell(Text(item.keRuangan.isEmpty ? '-' : item.keRuangan)),
-                        ]);
-                      }).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const Text('PETUGAS LINEN', style: TextStyle(fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 36),
-                            Text(widget.userName.isEmpty ? '-' : widget.userName, textAlign: TextAlign.center),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: const [
-                            Text('PETUGAS LAUNDRY', style: TextStyle(fontWeight: FontWeight.bold)),
-                            SizedBox(height: 36),
-                            Text('________________________'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Tutup'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  await _downloadKeluarPdf(rows);
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Gagal membuat PDF: $e')),
-                    );
-                  }
-                }
-              },
-              icon: const Icon(Icons.picture_as_pdf_rounded),
-              label: const Text('Download PDF'),
-            ),
-          ],
-        ),
-      );
-    } on ApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat seluruh data linen: $e')),
-        );
-      }
     }
   }
 
@@ -413,6 +279,34 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: OutlinedButton.icon(
+                                          onPressed: _pickDateRange,
+                                          icon: const Icon(Icons.date_range_rounded),
+                                          label: Text(
+                                            _selectedDateRange == null
+                                                ? 'Pilih Rentang Tanggal'
+                                                : _dateRange(
+                                                    _selectedDateRange!,
+                                                    _dateForMasuk,
+                                                  ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                      if (_selectedDateRange != null) ...[
+                                        const SizedBox(width: 8),
+                                        IconButton(
+                                          onPressed: _resetDateRange,
+                                          tooltip: 'Reset rentang tanggal',
+                                          icon: const Icon(Icons.filter_alt_off_rounded),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
                                   _DetailSummaryCard(
                                     namaRuangan: namaRuangan,
                                     totalMasuk: totalMasuk,
@@ -420,47 +314,11 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                                     selisih: selisih,
                                   ),
                                   const SizedBox(height: 18),
-                                  Row(
-                                    children: [
-                                      const Expanded(child: SectionTitle(title: 'Linen & Tirai Keluar')),
-                                      IconButton(
-                                        onPressed: _previewKeluar,
-                                        tooltip: 'Preview seluruh data dan download PDF',
-                                        icon: const Icon(Icons.preview_rounded, color: Color(0xff1261dc)),
-                                        style: IconButton.styleFrom(backgroundColor: const Color(0xffeaf2ff)),
-                                      ),
-                                    ],
-                                  ),
+                                  const SectionTitle(title: 'Linen & Tirai Keluar'),
                                   const SizedBox(height: 8),
-                                  _LinenKeluarDetailTable(rows: _keluarResponse?.data ?? const []),
-                                  const SizedBox(height: 22),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            const Text('PETUGAS LINEN', textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
-                                            const SizedBox(height: 38),
-                                            Text(widget.userName.isEmpty ? '-' : widget.userName,
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
-                                          ],
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          children: const [
-                                            Text('PETUGAS LAUNDRY', textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
-                                            SizedBox(height: 38),
-                                            Text('________________________', textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 10)),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                  _LinenKeluarDetailTable(
+                                    rows: _keluarResponse?.data ?? const [],
+                                    meta: _keluarResponse?.meta,
                                   ),
                                   if (_keluarResponse != null)
                                     _DetailPager(
@@ -481,7 +339,10 @@ class _InOutDetailPageState extends State<InOutDetailPage> {
                                   const SizedBox(height: 18),
                                   const SectionTitle(title: 'Linen & Tirai Masuk'),
                                   const SizedBox(height: 8),
-                                  _LinenMasukDetailTable(rows: _masukResponse?.data ?? const []),
+                                  _LinenMasukDetailTable(
+                                    rows: _masukResponse?.data ?? const [],
+                                    meta: _masukResponse?.meta,
+                                  ),
                                   if (_masukResponse != null)
                                     _DetailPager(
                                       meta: _masukResponse!.meta,
@@ -922,12 +783,16 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _LinenKeluarDetailTable extends StatelessWidget {
-  const _LinenKeluarDetailTable({required this.rows});
+  const _LinenKeluarDetailTable({required this.rows, this.meta});
   final List<LinenKeluarItem> rows;
+  final LinenMeta? meta;
 
   @override
   Widget build(BuildContext context) {
     if (rows.isEmpty) return _emptyTable('Belum ada data Linen & Tirai Keluar.');
+    final firstRowNumber = meta == null
+        ? 0
+        : (meta!.currentPage - 1) * meta!.perPage;
     return AppDataTable(
       headingColor: const Color(0xff02c0cc),
       columns: const [
@@ -939,8 +804,9 @@ class _LinenKeluarDetailTable extends StatelessWidget {
       ],
       rows: rows.asMap().entries.map((entry) {
         final item = entry.value;
+        final rowNumber = firstRowNumber + entry.key + 1;
         return DataRow(cells: [
-          DataCell(Text('${entry.key + 1}')),
+          DataCell(Text('$rowNumber')),
           DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
           DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
           DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),
@@ -952,12 +818,16 @@ class _LinenKeluarDetailTable extends StatelessWidget {
 }
 
 class _LinenMasukDetailTable extends StatelessWidget {
-  const _LinenMasukDetailTable({required this.rows});
+  const _LinenMasukDetailTable({required this.rows, this.meta});
   final List<LinenMasukItem> rows;
+  final LinenMeta? meta;
 
   @override
   Widget build(BuildContext context) {
     if (rows.isEmpty) return _emptyTable('Belum ada data Linen & Tirai Masuk.');
+    final firstRowNumber = meta == null
+        ? 0
+        : (meta!.currentPage - 1) * meta!.perPage;
     return AppDataTable(
       headingColor: const Color(0xffe29c02),
       columns: const [
@@ -969,8 +839,9 @@ class _LinenMasukDetailTable extends StatelessWidget {
       ],
       rows: rows.asMap().entries.map((entry) {
         final item = entry.value;
+        final rowNumber = firstRowNumber + entry.key + 1;
         return DataRow(cells: [
-          DataCell(Text('${entry.key + 1}')),
+          DataCell(Text('$rowNumber')),
           DataCell(Text(item.namaLinen.isEmpty ? '-' : item.namaLinen)),
           DataCell(Text(item.namaKategoriLinen.isEmpty ? '-' : item.namaKategoriLinen)),
           DataCell(Text(item.jumlah.isEmpty ? '-' : item.jumlah)),

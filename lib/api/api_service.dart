@@ -214,6 +214,19 @@ int _toInt(dynamic value) {
   return int.tryParse(value?.toString() ?? '') ?? 0;
 }
 
+Map<String, dynamic> _linenReportPayload(Map<String, dynamic> response) {
+  final data = response['data'];
+  if (data is! Map) return response;
+  return {...response, ...Map<String, dynamic>.from(data)};
+}
+
+String _linenRoomName(dynamic value) {
+  if (value is Map) {
+    return (value['nama_ruangan'] ?? value['nama'] ?? '').toString();
+  }
+  return value?.toString() ?? '';
+}
+
 class LinenLaundryItem {
   const LinenLaundryItem({required this.id, required this.namaLinen, required this.namaKategoriLinen, required this.ready});
   final int id; final String namaLinen; final String namaKategoriLinen; final dynamic ready;
@@ -501,6 +514,159 @@ class LinenMasukItem {
     petugasLaundry:j['petugas_laundry']?.toString()??'',
   );
 }
+
+LinenListResponse<LinenKeluarItem> parseLinenKeluarResponse(
+  Map<String, dynamic> response, {
+  String? search,
+}) {
+  final report = _linenReportPayload(response);
+  final rawLinens = report['linens'] ?? report['kategori_linen'];
+  if (rawLinens is List) {
+    final room = report['room'] is Map
+        ? Map<String, dynamic>.from(report['room'] as Map)
+        : const <String, dynamic>{};
+    final user = report['user'] is Map
+        ? Map<String, dynamic>.from(report['user'] as Map)
+        : const <String, dynamic>{};
+    final roomName = _linenRoomName(room['nama_ruangan'] ?? report['ruangan']);
+    final userName =
+        (report['petugas_laundry'] ?? user['name'])?.toString() ?? '';
+    final term = search?.trim().toLowerCase() ?? '';
+    final items = rawLinens
+        .whereType<Map>()
+        .map((row) {
+          final item = Map<String, dynamic>.from(row);
+          final category =
+              (item['nama_kategori_linen'] ??
+                      item['kategori_linen'] ??
+                      item['kategori'] ??
+                      item['nama_linen'] ??
+                      '')
+                  .toString();
+          return LinenKeluarItem.fromJson({
+            'id': item['no'] ?? item['id'],
+            'nama_linen': item['nama_linen'] ?? category,
+            'nama_kategori_linen': category,
+            'jumlah':
+                item['total'] ??
+                item['jumlah'] ??
+                item['jumlah_linen'] ??
+                item['qty'] ??
+                0,
+            'ke_ruangan': _linenRoomName(
+              item['nama_ruangan'] ??
+                  item['ke_ruangan'] ??
+                  item['ruangan'] ??
+                  roomName,
+            ),
+            'tanggal': report['date'] ?? report['tanggal_keluar'] ?? '',
+            'jam': report['jam_keluar'] ?? '',
+            'user': userName,
+          });
+        })
+        .where((item) {
+          return term.isEmpty ||
+              item.namaLinen.toLowerCase().contains(term) ||
+              item.namaKategoriLinen.toLowerCase().contains(term) ||
+              item.keRuangan.toLowerCase().contains(term);
+        })
+        .toList();
+    return LinenListResponse<LinenKeluarItem>(
+      data: items,
+      meta: LinenMeta(
+        currentPage: 1,
+        perPage: items.length,
+        total: _toInt(
+          report['total_keseluruhan'] ?? report['total'] ?? items.length,
+        ),
+        lastPage: 1,
+        petugasLaundry: report['petugas_laundry']?.toString() ?? '',
+      ),
+    );
+  }
+
+  return LinenListResponse<LinenKeluarItem>(
+    data: (response['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((row) => LinenKeluarItem.fromJson(Map<String, dynamic>.from(row)))
+        .toList(),
+    meta: LinenMeta.fromJson(
+      Map<String, dynamic>.from((response['meta'] as Map?) ?? const {}),
+    ),
+  );
+}
+
+LinenListResponse<LinenMasukItem> parseLinenMasukResponse(
+  Map<String, dynamic> response, {
+  String? search,
+}) {
+  final report = _linenReportPayload(response);
+  final rawCategories = report['kategori_linen'] ?? report['linens'];
+  if (rawCategories is List) {
+    final term = search?.trim().toLowerCase() ?? '';
+    final categories = rawCategories
+        .whereType<Map>()
+        .map((row) {
+          final item = Map<String, dynamic>.from(row);
+          final categoryName =
+              (item['nama_kategori_linen'] ??
+                      item['kategori_linen'] ??
+                      item['kategori'] ??
+                      item['nama_linen'] ??
+                      '')
+                  .toString();
+          final room = _linenRoomName(
+            item['ruangan'] ??
+                item['dari_ruangan'] ??
+                item['nama_ruangan'] ??
+                report['ruangan'],
+          );
+          return LinenMasukItem.fromJson({
+            'id': item['no'] ?? item['id'],
+            'nama_linen': item['nama_linen'] ?? categoryName,
+            'nama_kategori_linen': categoryName,
+            'jumlah':
+                item['total'] ??
+                item['jumlah'] ??
+                item['jumlah_linen'] ??
+                item['qty'] ??
+                0,
+            'dari_ruangan': room,
+            'tanggal': report['date'] ?? '',
+            'petugas_laundry': report['petugas_laundry'] ?? '',
+          });
+        })
+        .where((item) {
+          return term.isEmpty ||
+              item.namaLinen.toLowerCase().contains(term) ||
+              item.namaKategoriLinen.toLowerCase().contains(term);
+        })
+        .toList();
+    return LinenListResponse<LinenMasukItem>(
+      data: categories,
+      meta: LinenMeta(
+        currentPage: 1,
+        perPage: categories.length,
+        total: _toInt(
+          report['total_keseluruhan'] ?? report['total'] ?? categories.length,
+        ),
+        lastPage: 1,
+        petugasLaundry: report['petugas_laundry']?.toString() ?? '',
+      ),
+    );
+  }
+
+  return LinenListResponse<LinenMasukItem>(
+    data: (response['data'] as List? ?? const [])
+        .whereType<Map>()
+        .map((row) => LinenMasukItem.fromJson(Map<String, dynamic>.from(row)))
+        .toList(),
+    meta: LinenMeta.fromJson(
+      Map<String, dynamic>.from((response['meta'] as Map?) ?? const {}),
+    ),
+  );
+}
+
 class LinenRoomOption {
   const LinenRoomOption({required this.id,required this.nama}); final int id; final String nama;
   factory LinenRoomOption.fromJson(Map<String,dynamic> j)=>LinenRoomOption(id:_toInt(j['id']??j['ruangan_id']),nama:j['nama_ruangan']?.toString()??j['ruangan']?.toString()??j['nama']?.toString()??'');
@@ -1058,59 +1224,7 @@ class ApiService {
       }),
     );
 
-    // Format laporan mobile: data berisi setting, room, user, dan linens.
-    final payload = d['data'];
-    if (payload is Map && payload['linens'] is List) {
-      final report = Map<String, dynamic>.from(payload);
-      final room = Map<String, dynamic>.from(
-        (report['room'] as Map?) ?? const {},
-      );
-      final user = Map<String, dynamic>.from(
-        (report['user'] as Map?) ?? const {},
-      );
-      final roomName = room['nama_ruangan']?.toString() ?? '';
-      final userName = (report['petugas_laundry'] ?? user['name'])?.toString() ?? '';
-      final term = search?.trim().toLowerCase() ?? '';
-      final items = (report['linens'] as List)
-          .whereType<Map>()
-          .map((row) {
-            final item = Map<String, dynamic>.from(row);
-            final category =
-                (item['nama_kategori_linen'] ?? item['nama_linen'] ?? '')
-                    .toString();
-            return LinenKeluarItem.fromJson({
-              'id': item['no'] ?? item['id'],
-              'nama_linen': category,
-              'nama_kategori_linen': category,
-              'jumlah': item['total'] ?? item['jumlah'] ?? 0,
-              'ke_ruangan': item['nama_ruangan'] ?? roomName,
-              'tanggal': report['date'] ?? report['tanggal_keluar'] ?? '',
-              'jam': report['jam_keluar'] ?? '',
-              'user': userName,
-            });
-          })
-          .where((item) =>
-              term.isEmpty ||
-              item.namaLinen.toLowerCase().contains(term) ||
-              item.namaKategoriLinen.toLowerCase().contains(term) ||
-              item.keRuangan.toLowerCase().contains(term))
-          .toList();
-
-      final total = _toInt(report['total_keseluruhan']);
-      return LinenListResponse<LinenKeluarItem>(
-        data: items,
-        meta: LinenMeta(
-          currentPage: 1,
-          perPage: items.length,
-          total: total,
-          lastPage: 1,
-          petugasLaundry: report['petugas_laundry']?.toString() ?? '',
-        ),
-      );
-    }
-
-    // Tetap kompatibel dengan format daftar lama yang memakai data array + meta.
-    return _listResponse(d, (e) => LinenKeluarItem.fromJson(e));
+    return parseLinenKeluarResponse(d, search: search);
   }
   Future<LinenKeluarOptions> getLinenKeluarOptions() async {
     final d=await _get('/linen-keluar/options'); return LinenKeluarOptions.fromJson(Map<String,dynamic>.from((d['data'] as Map?)??const {}));
@@ -1133,51 +1247,7 @@ class ApiService {
       }),
     );
 
-    // API laporan Linen Masuk dapat mengembalikan format ringkasan:
-    // data.kategori_linen, bukan data berupa array paginasi.
-    final payload = d['data'];
-    if (payload is Map && payload['kategori_linen'] is List) {
-      final report = Map<String, dynamic>.from(payload);
-      final categories = (report['kategori_linen'] as List)
-          .whereType<Map>()
-          .map((row) {
-            final item = Map<String, dynamic>.from(row);
-            final categoryName =
-                item['nama_kategori_linen']?.toString() ?? '';
-            return LinenMasukItem.fromJson({
-              'id': item['no'] ?? item['id'],
-              'nama_linen': categoryName,
-              'nama_kategori_linen': categoryName,
-              'jumlah': item['total'] ?? 0,
-              'dari_ruangan': item['ruangan'] ??
-                  report['ruangan'] ??
-                  '',
-              'tanggal': report['date'] ?? '',
-              'petugas_laundry': report['petugas_laundry'] ?? '',
-            });
-          })
-          .where((item) {
-            final term = search?.trim().toLowerCase() ?? '';
-            return term.isEmpty ||
-                item.namaLinen.toLowerCase().contains(term) ||
-                item.namaKategoriLinen.toLowerCase().contains(term);
-          })
-          .toList();
-
-      return LinenListResponse<LinenMasukItem>(
-        data: categories,
-        meta: LinenMeta(
-          currentPage: 1,
-          perPage: categories.length,
-          total: categories.length,
-          lastPage: 1,
-          petugasLaundry: report['petugas_laundry']?.toString() ?? '',
-        ),
-      );
-    }
-
-    // Tetap kompatibel dengan format lama berupa array + meta.
-    return _listResponse(d, (e) => LinenMasukItem.fromJson(e));
+    return parseLinenMasukResponse(d, search: search);
   }
   Future<List<LinenRoomOption>> getLinenMasukRuangan() async=>_roomOptions(await _get('/linen-masuk/ruangan'));
   Future<LinenQrCheckResult> checkLinenQr(String qrCode) async {
