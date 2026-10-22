@@ -581,12 +581,28 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
       userName: widget.userName,
       activeIndex: -1,
       showBottomNavigation: false,
-      body: Column(
+      body: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(22),
+                ),
+              ),
+            ),
+          ),
+          Column(
         children: [
           DetailHeader(
             title: 'Permintaan Linen & Tirai',
-            userName: widget.userName,
-          ),
+            userName: widget.userName, transparentBottom: true),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: LayoutBuilder(
@@ -858,6 +874,24 @@ class _PermintaanLinenPageState extends State<PermintaanLinenPage> {
                                 ],
                               ),
               ); }),
+            ),
+          ),
+        ],
+      ),
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            height: 60,
+            child: IgnorePointer(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
