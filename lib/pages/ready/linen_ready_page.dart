@@ -223,7 +223,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                'Total ${meta.total} kategori',
+                                'Total Linen: ${meta.total}',
                                 style: const TextStyle(
                                   color: Color(0xff7d8c99),
                                   fontSize: 10,
