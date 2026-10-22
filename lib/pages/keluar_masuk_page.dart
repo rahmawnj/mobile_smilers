@@ -154,16 +154,6 @@ class _InOutPageState extends State<InOutPage> {
                         onChanged: (_) => setState(() {}),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      onPressed: _pickRange,
-                      tooltip: 'Pilih rentang tanggal',
-                      style: IconButton.styleFrom(
-                        backgroundColor: const Color(0xff1261dc),
-                        foregroundColor: Colors.white,
-                      ),
-                      icon: const Icon(Icons.date_range_rounded, size: 20),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -204,6 +194,16 @@ class _InOutPageState extends State<InOutPage> {
                           _load();
                         },
                       ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: _pickRange,
+                      tooltip: 'Pilih rentang tanggal',
+                      style: IconButton.styleFrom(
+                        backgroundColor: const Color(0xff1261dc),
+                        foregroundColor: Colors.white,
+                      ),
+                      icon: const Icon(Icons.date_range_rounded, size: 20),
                     ),
                     if (_hasFilters) ...[
                       const SizedBox(width: 8),
