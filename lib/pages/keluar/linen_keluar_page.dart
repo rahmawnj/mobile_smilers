@@ -779,26 +779,13 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
             ),
             Expanded(
               child: _filterRoom == null
-                  ? (widget.rooms.isEmpty
-                      ? const Center(child: Text('Daftar ruangan belum tersedia.'))
-                      : ListView.separated(
-                          itemCount: widget.rooms.length,
-                          separatorBuilder: (_, __) => const Divider(height: 1),
-                          itemBuilder: (context, index) {
-                            final room = widget.rooms[index];
-                            return ListTile(
-                              leading: const CircleAvatar(
-                                backgroundColor: Color(0xffe8fbfc),
-                                child: Icon(Icons.meeting_room_rounded, color: Color(0xff02aeb9)),
-                              ),
-                              title: Text(room.value, style: const TextStyle(fontWeight: FontWeight.w600)),
-                              trailing: const Icon(Icons.chevron_right_rounded),
-                              onTap: _loading || _downloadingPdf
-                                  ? null
-                                  : () => _applyPreviewFilters(room: room.key),
-                            );
-                          },
-                        ))
+                  ? const Center(
+                      child: Text(
+                        'Pilih ruangan melalui dropdown di atas untuk menampilkan preview.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Color(0xff7d8c99), fontSize: 12),
+                      ),
+                    )
                   : _loading
                       ? const Center(child: CircularProgressIndicator())
                       : _error != null && _rows.isEmpty
