@@ -9,10 +9,7 @@ import 'about_smile_rs_page.dart';
 import 'profile_page.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({
-    super.key,
-    required this.userName,
-  });
+  const SettingsPage({super.key, required this.userName});
 
   final String userName;
 
@@ -95,114 +92,124 @@ class _SettingsPageState extends State<SettingsPage> {
             return ListView(
               padding: EdgeInsets.zero,
               children: [
-                _SettingsHero(
-                  name: name,
-                  role: role,
-                ),
+                _SettingsHero(name: name, role: role),
                 Transform.translate(
-                  offset: const Offset(0, -42),
+                  offset: const Offset(0, -30),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const ProfilePage(),
+                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: .12),
+                            blurRadius: 22,
+                            offset: const Offset(0, 9),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const ProfilePage(),
+                                  ),
+                                );
+                              },
+                              child: _ProfileCard(
+                                name: name,
+                                username: username,
+                                role: role,
+                                foto: foto,
+                              ),
                             ),
-                          );
-                        },
-                        child: _ProfileCard(
-                          name: name,
-                          username: username,
-                          role: role,
-                          foto: foto,
-                        ),
+                          ),
+                          const SizedBox(height: 12),
+                          _SettingMenu(
+                            icon: Icons.lock_outline_rounded,
+                            title: 'Ganti Sandi',
+                            subtitle: 'Ubah kata sandi akun Anda',
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const ChangePasswordPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          const _SettingDivider(),
+                          _SettingMenu(
+                            icon: Icons.menu_book_outlined,
+                            title: 'Manual Book',
+                            subtitle: 'Panduan penggunaan aplikasi SmileRS',
+                            onTap: () {
+                              Navigator.of(context).push(
+                                smoothPageRoute((_) => const ManualBookPage()),
+                              );
+                            },
+                          ),
+                          const _SettingDivider(),
+                          _SettingMenu(
+                            icon: Icons.info_outline_rounded,
+                            title: 'Tentang SmileRS',
+                            subtitle: 'Informasi tentang aplikasi SmileRS',
+                            onTap: () {
+                              Navigator.of(context).push(
+                                smoothPageRoute(
+                                  (_) => const AboutSmileRsPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 32),
+                          SizedBox(
+                            width: 190,
+                            height: 48,
+                            child: ElevatedButton(
+                              onPressed: _isLoggingOut ? null : _logout,
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: const Color(0xffe85d5d),
+                                disabledBackgroundColor: const Color(
+                                  0xffe8a1a1,
+                                ),
+                                foregroundColor: Colors.white,
+                                disabledForegroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: _isLoggingOut
+                                  ? const SizedBox(
+                                      width: 19,
+                                      height: 19,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Keluar',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                Transform.translate(
-                  offset: const Offset(0, -24),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 42),
-                    child: Column(
-                      children: [
-                        _SettingMenu(
-                          icon: Icons.lock_outline_rounded,
-                          title: 'Ganti Sandi',
-                          subtitle: 'Ubah kata sandi akun Anda',
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const ChangePasswordPage(),
-                              ),
-                            );
-                          },
-                        ),
-                        const _SettingDivider(),
-                        _SettingMenu(
-                          icon: Icons.menu_book_outlined,
-                          title: 'Manual Book',
-                          subtitle: 'Panduan penggunaan aplikasi SmileRS',
-                          onTap: () {
-                            Navigator.of(context).push(
-                              smoothPageRoute((_) => const ManualBookPage()),
-                            );
-                          },
-                        ),
-                        const _SettingDivider(),
-                        _SettingMenu(
-                          icon: Icons.info_outline_rounded,
-                          title: 'Tentang SmileRS',
-                          subtitle: 'Informasi tentang aplikasi SmileRS',
-                          onTap: () {
-                            Navigator.of(context).push(
-                              smoothPageRoute((_) => const AboutSmileRsPage()),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 48),
-                        SizedBox(
-                          width: 190,
-                          height: 48,
-                          child: ElevatedButton(
-                            onPressed: _isLoggingOut ? null : _logout,
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: const Color(0xffe85d5d),
-                              disabledBackgroundColor:
-                                  const Color(0xffe8a1a1),
-                              foregroundColor: Colors.white,
-                              disabledForegroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: _isLoggingOut
-                                ? const SizedBox(
-                                    width: 19,
-                                    height: 19,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Text(
-                                    'Keluar',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 14),
               ],
             );
           },
@@ -213,10 +220,7 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 class _SettingsHero extends StatelessWidget {
-  const _SettingsHero({
-    required this.name,
-    required this.role,
-  });
+  const _SettingsHero({required this.name, required this.role});
 
   final String name;
   final String role;
@@ -224,47 +228,33 @@ class _SettingsHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 190,
+      height: 174,
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xff5cc9bd),
-            Color(0xff159cf1),
-          ],
+          colors: [Color(0xff5cc9bd), Color(0xff159cf1)],
         ),
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(26),
-        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(26)),
       ),
       child: Stack(
         children: [
           Positioned(
             right: -50,
             top: -70,
-            child: _HeroCircle(
-              size: 170,
-              opacity: .10,
-            ),
+            child: _HeroCircle(size: 170, opacity: .10),
           ),
           Positioned(
             left: -75,
             bottom: -100,
-            child: _HeroCircle(
-              size: 180,
-              opacity: .08,
-            ),
+            child: _HeroCircle(size: 180, opacity: .08),
           ),
           Positioned(
             right: 55,
             bottom: -90,
-            child: _HeroCircle(
-              size: 160,
-              opacity: .06,
-            ),
+            child: _HeroCircle(size: 160, opacity: .06),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(22, 22, 22, 26),
@@ -298,7 +288,6 @@ class _SettingsHero extends StatelessWidget {
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -309,10 +298,7 @@ class _SettingsHero extends StatelessWidget {
 }
 
 class _HeroCircle extends StatelessWidget {
-  const _HeroCircle({
-    required this.size,
-    required this.opacity,
-  });
+  const _HeroCircle({required this.size, required this.opacity});
 
   final double size;
   final double opacity;
@@ -424,10 +410,7 @@ class _ProfileCard extends StatelessWidget {
 }
 
 class _ProfileAvatar extends StatelessWidget {
-  const _ProfileAvatar({
-    required this.foto,
-    required this.name,
-  });
+  const _ProfileAvatar({required this.foto, required this.name});
 
   final String? foto;
   final String name;
@@ -446,9 +429,7 @@ class _ProfileAvatar extends StatelessWidget {
             ? Image.network(
                 foto!,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _AvatarFallback(
-                  text: fallback,
-                ),
+                errorBuilder: (_, __, ___) => _AvatarFallback(text: fallback),
               )
             : _AvatarFallback(text: fallback),
       ),
@@ -483,11 +464,7 @@ class _SettingDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: EdgeInsets.only(left: 60),
-      child: Divider(
-        height: 1,
-        thickness: .6,
-        color: Color(0xffe6ebf0),
-      ),
+      child: Divider(height: 1, thickness: .6, color: Color(0xffe6ebf0)),
     );
   }
 }
@@ -516,10 +493,7 @@ class _SettingMenu extends StatelessWidget {
         highlightColor: const Color(0xff159cf1).withValues(alpha: .04),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 4,
-            vertical: 14,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
           child: Row(
             children: [
               Container(
@@ -529,11 +503,7 @@ class _SettingMenu extends StatelessWidget {
                   color: const Color(0xff159cf1).withValues(alpha: .08),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: const Color(0xff159cf1),
-                  size: 21,
-                ),
+                child: Icon(icon, color: const Color(0xff159cf1), size: 21),
               ),
               const SizedBox(width: 14),
               Expanded(
