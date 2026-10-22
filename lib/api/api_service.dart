@@ -162,12 +162,14 @@ class LinenMeta {
     required this.perPage,
     required this.total,
     required this.lastPage,
+    this.petugasLaundry = '',
   });
 
   final int currentPage;
   final int perPage;
   final int total;
   final int lastPage;
+  final String petugasLaundry;
 
   factory LinenMeta.fromJson(Map<String, dynamic> json) {
     return LinenMeta(
@@ -175,6 +177,7 @@ class LinenMeta {
       perPage: _toInt(json['per_page']) == 0 ? 10 : _toInt(json['per_page']),
       total: _toInt(json['total']),
       lastPage: _toInt(json['last_page']) == 0 ? 1 : _toInt(json['last_page']),
+      petugasLaundry: json['petugas_laundry']?.toString() ?? '',
     );
   }
 }
@@ -1064,7 +1067,7 @@ class ApiService {
         (report['user'] as Map?) ?? const {},
       );
       final roomName = room['nama_ruangan']?.toString() ?? '';
-      final userName = user['name']?.toString() ?? '';
+      final userName = (report['petugas_laundry'] ?? user['name'])?.toString() ?? '';
       final term = search?.trim().toLowerCase() ?? '';
       final items = (report['linens'] as List)
           .whereType<Map>()
@@ -1099,6 +1102,7 @@ class ApiService {
           perPage: items.length,
           total: total,
           lastPage: 1,
+          petugasLaundry: report['petugas_laundry']?.toString() ?? '',
         ),
       );
     }
@@ -1164,6 +1168,7 @@ class ApiService {
           perPage: categories.length,
           total: categories.length,
           lastPage: 1,
+          petugasLaundry: report['petugas_laundry']?.toString() ?? '',
         ),
       );
     }
