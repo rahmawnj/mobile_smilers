@@ -82,7 +82,7 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
           clipBehavior: Clip.none,
           children: [
             Positioned(
-              top: 60,
+              top: 75,
               left: 0,
               right: 0,
               bottom: 0,
@@ -205,10 +205,10 @@ class _LinenLaundryDetailPageState extends State<LinenLaundryDetailPage> {
         ),
             // White panel overlaps the blue header, matching the other pages.
             Positioned(
-              top: 60,
+              top: 75,
               left: 0,
               right: 0,
-              height: 60,
+              height: 45,
               child: IgnorePointer(
                 child: Container(
                   decoration: const BoxDecoration(

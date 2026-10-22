@@ -327,7 +327,7 @@ class AppShellState extends State<AppShell> {
                                 clipBehavior: Clip.none,
                                 children: [
                                   Positioned.fill(
-                                    top: -60,
+                                    top: _currentIndex == 0 ? -60 : -40,
                                     child: Container(
                                       decoration: const BoxDecoration(
                                         color: Colors.white,
@@ -1258,17 +1258,10 @@ class DetailHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: transparentBottom
-              ? const [
-                  Color(0xff5cc9bd),
-                  Color(0xff159cf1),
-                  Colors.transparent,
-                ]
-              : const [
-                  Color(0xff5cc9bd),
-                  Color(0xff159cf1),
-                ],
-          stops: transparentBottom ? const [0.0, 0.45, 1.0] : null,
+          colors: const [
+            Color(0xff5cc9bd),
+            Color(0xff159cf1),
+          ],
         ),
         borderRadius: const BorderRadius.vertical(
           bottom: Radius.circular(20),

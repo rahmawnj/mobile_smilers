@@ -96,7 +96,7 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
           clipBehavior: Clip.none,
           children: [
             Positioned(
-              top: 60,
+              top: 75,
               left: 0,
               right: 0,
               bottom: 0,
@@ -191,10 +191,10 @@ class _LinenCategoryDetailPageState extends State<LinenCategoryDetailPage> {
       ),
             // White panel overlaps the blue header, matching the other pages.
             Positioned(
-              top: 60,
+              top: 75,
               left: 0,
               right: 0,
-              height: 60,
+              height: 45,
               child: IgnorePointer(
                 child: Container(
                   decoration: const BoxDecoration(

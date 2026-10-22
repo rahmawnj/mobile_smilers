@@ -89,127 +89,137 @@ class _SettingsPageState extends State<SettingsPage> {
                 : 'User';
             final foto = user?.foto;
 
-            return ListView(
-              padding: EdgeInsets.zero,
+            return Stack(
               children: [
-                _SettingsHero(name: name, role: role),
-                Transform.translate(
-                  offset: const Offset(0, -30),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: .12),
-                            blurRadius: 22,
-                            offset: const Offset(0, 9),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const ProfilePage(),
-                                  ),
-                                );
-                              },
-                              child: _ProfileCard(
-                                name: name,
-                                username: username,
-                                role: role,
-                                foto: foto,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _SettingMenu(
-                            icon: Icons.lock_outline_rounded,
-                            title: 'Ganti Sandi',
-                            subtitle: 'Ubah kata sandi akun Anda',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const ChangePasswordPage(),
-                                ),
-                              );
-                            },
-                          ),
-                          const _SettingDivider(),
-                          _SettingMenu(
-                            icon: Icons.menu_book_outlined,
-                            title: 'Manual Book',
-                            subtitle: 'Panduan penggunaan aplikasi SmileRS',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                smoothPageRoute((_) => const ManualBookPage()),
-                              );
-                            },
-                          ),
-                          const _SettingDivider(),
-                          _SettingMenu(
-                            icon: Icons.info_outline_rounded,
-                            title: 'Tentang SmileRS',
-                            subtitle: 'Informasi tentang aplikasi SmileRS',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                smoothPageRoute(
-                                  (_) => const AboutSmileRsPage(),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 32),
-                          SizedBox(
-                            width: 190,
-                            height: 48,
-                            child: ElevatedButton(
-                              onPressed: _isLoggingOut ? null : _logout,
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                backgroundColor: const Color(0xffe85d5d),
-                                disabledBackgroundColor: const Color(
-                                  0xffe8a1a1,
-                                ),
-                                foregroundColor: Colors.white,
-                                disabledForegroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              child: _isLoggingOut
-                                  ? const SizedBox(
-                                      width: 19,
-                                      height: 19,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Keluar',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ],
+                Positioned(
+                  top: 144,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(22),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 14),
+                ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    _SettingsHero(name: name, role: role),
+                    Transform.translate(
+                      offset: const Offset(0, -30),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+                          child: Column(
+                            children: [
+                              Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => const ProfilePage(),
+                                      ),
+                                    );
+                                  },
+                                  child: _ProfileCard(
+                                    name: name,
+                                    username: username,
+                                    role: role,
+                                    foto: foto,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              _SettingMenu(
+                                icon: Icons.lock_outline_rounded,
+                                title: 'Ganti Sandi',
+                                subtitle: 'Ubah kata sandi akun Anda',
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const ChangePasswordPage(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const _SettingDivider(),
+                              _SettingMenu(
+                                icon: Icons.menu_book_outlined,
+                                title: 'Manual Book',
+                                subtitle: 'Panduan penggunaan aplikasi SmileRS',
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    smoothPageRoute(
+                                      (_) => const ManualBookPage(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const _SettingDivider(),
+                              _SettingMenu(
+                                icon: Icons.info_outline_rounded,
+                                title: 'Tentang SmileRS',
+                                subtitle: 'Informasi tentang aplikasi SmileRS',
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    smoothPageRoute(
+                                      (_) => const AboutSmileRsPage(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 32),
+                              SizedBox(
+                                width: 190,
+                                height: 48,
+                                child: ElevatedButton(
+                                  onPressed: _isLoggingOut ? null : _logout,
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    backgroundColor: const Color(0xffe85d5d),
+                                    disabledBackgroundColor: const Color(
+                                      0xffe8a1a1,
+                                    ),
+                                    foregroundColor: Colors.white,
+                                    disabledForegroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                  ),
+                                  child: _isLoggingOut
+                                      ? const SizedBox(
+                                          width: 19,
+                                          height: 19,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Keluar',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                  ],
+                ),
               ],
             );
           },

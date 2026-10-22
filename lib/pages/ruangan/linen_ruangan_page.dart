@@ -76,7 +76,7 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
           clipBehavior: Clip.none,
           children: [
             Positioned(
-              top: 60,
+              top: 75,
               left: 0,
               right: 0,
               bottom: 0,
@@ -242,10 +242,10 @@ class _LinenRuanganPageState extends State<LinenRuanganPage> {
         ),
             // Keep the rounded white card visibly overlapping the blue header.
             Positioned(
-              top: 60,
+              top: 75,
               left: 0,
               right: 0,
-              height: 60,
+              height: 45,
               child: IgnorePointer(
                 child: Container(
                   decoration: const BoxDecoration(
