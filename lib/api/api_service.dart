@@ -1083,13 +1083,12 @@ class ApiService {
           })
           .toList();
 
-      final total = _toInt(report['total_keseluruhan']);
       return LinenListResponse<LinenMasukItem>(
         data: categories,
         meta: LinenMeta(
           currentPage: 1,
           perPage: categories.length,
-          total: total > 0 ? total : categories.length,
+          total: categories.length,
           lastPage: 1,
         ),
       );
