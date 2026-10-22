@@ -19,12 +19,12 @@ class LinenReadyPage extends StatefulWidget {
 class _LinenReadyPageState extends State<LinenReadyPage> {
   bool _loading = true;
   String? _error;
-  LinenListResponse<LinenCategory>? _response;
+  List<LinenCategory> _categories = [];
+  List<_ReadyLinenRow> _allItems = [];
   List<Map<String, dynamic>> _categoryOptions = [];
   int? _selectedCategoryId;
   int _page = 1;
   int _perPage = 10;
-  int _totalLinen = 0;
 
   final TextEditingController _searchController = TextEditingController();
   Timer? _searchDebounce;
@@ -88,51 +88,51 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     });
 
     try {
-      final search = _searchController.text.trim().isEmpty
-          ? null
-          : _searchController.text.trim();
-      final perPage = _perPage;
-      final response = await ApiService.instance.getLinen(
-        search: search,
-        perPage: perPage,
-        page: _page,
+      final categoriesResponse = await ApiService.instance.getLinen(
+        search: null,
+        perPage: 100,
+        page: 1,
       );
-
-      // The list endpoint paginates category rows, while the summary should
-      // count ready linen units (sum of stock), not the number of categories.
-      var totalLinen = response.data.fold<int>(
-        0,
-        (sum, category) => sum + category.jumlahStok,
-      );
-      try {
-        final otherPages = await Future.wait(
-          List.generate(
-            response.meta.lastPage,
-            (index) => index + 1,
-          ).where((page) => page != _page).map(
-            (page) => ApiService.instance.getLinen(
-              search: search,
-              perPage: perPage,
-              page: page,
-            ),
-          ),
+      final categories = <LinenCategory>[...categoriesResponse.data];
+      for (var page = 2; page <= categoriesResponse.meta.lastPage; page++) {
+        final response = await ApiService.instance.getLinen(
+          perPage: 100,
+          page: page,
         );
-        for (final pageResponse in otherPages) {
-          totalLinen += pageResponse.data.fold<int>(
-            0,
-            (sum, category) => sum + category.jumlahStok,
+        categories.addAll(response.data);
+      }
+
+      final readyRows = <_ReadyLinenRow>[];
+      // /linen returns category summaries (about 61 rows), not the individual
+      // linen records. Fetch each category's actual item rows before paginating.
+      for (final category in categories) {
+        final first = await ApiService.instance.getLinenItems(
+          category.id,
+          perPage: 100,
+          page: 1,
+        );
+        readyRows.addAll(
+          first.data.map((item) => _ReadyLinenRow(category: category, item: item)),
+        );
+        for (var page = 2; page <= first.meta.lastPage; page++) {
+          final response = await ApiService.instance.getLinenItems(
+            category.id,
+            perPage: 100,
+            page: page,
+          );
+          readyRows.addAll(
+            response.data.map((item) => _ReadyLinenRow(category: category, item: item)),
           );
         }
-      } catch (_) {
-        // Keep the current page usable if the optional total calculation fails.
       }
 
       if (!mounted) return;
-
       setState(() {
-        _response = response;
-        _totalLinen = totalLinen;
+        _categories = categories;
+        _allItems = readyRows;
         _loading = false;
+        final lastPage = (_filteredRows.length / _perPage).ceil();
+        if (lastPage > 0 && _page > lastPage) _page = lastPage;
       });
     } on ApiException catch (e) {
       if (!mounted) return;
@@ -147,6 +147,22 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
         _loading = false;
       });
     }
+  }
+
+  List<_ReadyLinenRow> get _filteredRows {
+    final search = _searchController.text.trim().toLowerCase();
+    return _allItems.where((row) {
+      final categoryMatches =
+          _selectedCategoryId == null || row.category.id == _selectedCategoryId;
+      final searchMatches = search.isEmpty ||
+          row.category.namaKategoriLinen.toLowerCase().contains(search) ||
+          row.item.namaLinen.toLowerCase().contains(search) ||
+          row.item.kodeLinen.toLowerCase().contains(search) ||
+          row.item.subKategoriLinen.toLowerCase().contains(search) ||
+          row.item.qrCode.toLowerCase().contains(search) ||
+          row.item.tagRfid.toLowerCase().contains(search);
+      return categoryMatches && searchMatches;
+    }).toList();
   }
 
   void _search() {
@@ -192,13 +208,10 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final allRows = _response?.data ?? const <LinenCategory>[];
-    final rows = allRows.where((category) {
-      final categoryMatches =
-          _selectedCategoryId == null || category.id == _selectedCategoryId;
-      return categoryMatches;
-    }).toList();
-    final meta = _response?.meta;
+    final allRows = _filteredRows;
+    final startIndex = (_page - 1) * _perPage;
+    final rows = allRows.skip(startIndex).take(_perPage).toList();
+    final totalPages = (allRows.length / _perPage).ceil();
 
     return Scaffold(
       backgroundColor: const Color(0xfff5f8fc),
@@ -247,7 +260,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                       _buildEmpty()
                     else
                       _buildTable(rows),
-                    if (!_loading && _error == null && meta != null) ...[
+                    if (!_loading && _error == null) ...[
                       const SizedBox(height: 10),
                       Column(
                         children: [
@@ -256,7 +269,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                'Total Linen: $_totalLinen',
+                                'Total Linen: ${allRows.length}',
                                 style: const TextStyle(
                                   color: Color(0xff7d8c99),
                                   fontSize: 10,
@@ -282,9 +295,14 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
                               ),
                             ],
                           ),
-                          if (meta.lastPage > 1)
+                          if (totalPages > 1)
                             AppPagination(
-                              meta: meta,
+                              meta: LinenMeta(
+                                currentPage: _page,
+                                perPage: _perPage,
+                                total: allRows.length,
+                                lastPage: totalPages,
+                              ),
                               onPage: _changePage,
                               alignment: MainAxisAlignment.center,
                             ),
@@ -400,33 +418,31 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
     );
   }
 
-  Widget _buildTable(List<LinenCategory> rows) {
+  Widget _buildTable(List<_ReadyLinenRow> rows) {
     return AppDataTable(
       columns: const [
         DataColumn(label: Text('No')),
         DataColumn(label: Text('Nama Kategori')),
-        DataColumn(label: Text('Nama Item')),
-        DataColumn(label: Text('Stok Ready')),
+        DataColumn(label: Text('Nama Linen')),
+        DataColumn(label: Text('Kode Linen')),
+        DataColumn(label: Text('Status')),
         DataColumn(label: Text('Action')),
       ],
       rows: rows.asMap().entries.map((entry) {
         final index = entry.key;
-        final category = entry.value;
+        final row = entry.value;
         final rowNumber = ((_page - 1) * _perPage) + index + 1;
-        final sub = category.subKategoriLinen.trim().isEmpty
-            ? '-'
-            : category.subKategoriLinen;
-
         return DataRow(
           cells: [
             DataCell(Text(rowNumber.toString())),
-            DataCell(Text(category.namaKategoriLinen)),
-            DataCell(Text(sub)),
-            DataCell(Text(category.jumlahStok.toString())),
+            DataCell(Text(row.category.namaKategoriLinen)),
+            DataCell(Text(row.item.namaLinen)),
+            DataCell(Text(row.item.kodeLinen)),
+            DataCell(Text(row.item.status)),
             DataCell(
               IconButton(
-                tooltip: 'Detail',
-                onPressed: () => _openDetail(category),
+                tooltip: 'Detail kategori',
+                onPressed: () => _openDetail(row.category),
                 icon: const Icon(
                   Icons.visibility_outlined,
                   size: 18,
@@ -439,6 +455,7 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
       }).toList(),
     );
   }
+
   Widget _buildEmpty() {
     return Container(
       width: double.infinity,
@@ -502,4 +519,11 @@ class _LinenReadyPageState extends State<LinenReadyPage> {
       ),
     );
   }
+}
+
+
+class _ReadyLinenRow {
+  const _ReadyLinenRow({required this.category, required this.item});
+  final LinenCategory category;
+  final LinenItem item;
 }
