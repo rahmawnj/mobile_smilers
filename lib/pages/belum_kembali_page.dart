@@ -10,9 +10,153 @@ class _LinenBelumKembaliPageState extends State<LinenBelumKembaliPage> { bool _l
 Future<void> _loadRooms() async {try{final rooms=await ApiService.instance.getLinenBelumKembaliRuangan();if(mounted)setState(()=>_rooms=rooms);}catch(_){}}
 Future<void> _load() async {setState((){_loading=true;_error=null;});try{final r=await ApiService.instance.getLinenBelumKembali(perPage:10,page:_page,search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),ruangan:_roomId,daterange:_daterange);if(!mounted)return;setState((){_response=r;_loading=false;});}on ApiException catch(e){if(mounted)setState((){_error=e.message;_loading=false;});}catch(_){if(mounted)setState((){_error='Tidak dapat mengambil data Linen Belum Kembali.';_loading=false;});}}
 Future<void> _pickRange() async {final r=await showDateRangePicker(context:context,firstDate:DateTime(2020),lastDate:DateTime(2100),initialDateRange:_range);if(r!=null){setState(()=>_range=r);_load();}}
-@override Widget build(BuildContext context){final rows=_response?.data??const <LinenBelumKembaliItem>[];return AppShell(
-      embedded: widget.embedded,userName:widget.userName,activeIndex:4,body:Column(children:[// Header is provided by AppShell so it stays fixed while the body pages slide.
-Padding(padding:const EdgeInsets.fromLTRB(16,14,16,8),child:Row(children:[Expanded(child:TextField(controller:_searchController,onSubmitted:(_)=>_load(),decoration:InputDecoration(hintText:'Cari linen / ruangan...',prefixIcon:const Icon(Icons.search_rounded,size:20),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(20),borderSide:BorderSide.none)))))),Padding(padding:const EdgeInsets.fromLTRB(16,0,16,6),child:Row(children:[Expanded(child:DropdownButtonFormField<int?>(value:_roomId,isExpanded:true,decoration:InputDecoration(hintText:'Semua Ruangan',prefixIcon:const Icon(Icons.meeting_room_rounded,size:19),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(20),borderSide:BorderSide.none)),items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua Ruangan')),..._rooms.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.nama)))],onChanged:(v){setState(()=>_roomId=v);_load();})),const SizedBox(width:8),IconButton(onPressed:_pickRange,tooltip:'Pilih rentang tanggal',style:IconButton.styleFrom(backgroundColor:const Color(0xff1261dc),foregroundColor:Colors.white),icon:const Icon(Icons.date_range_rounded,size:20))])),if(_range!=null)Padding(padding:const EdgeInsets.symmetric(horizontal:16),child:Row(children:[Expanded(child:Text('Periode: '+_date(_range!.start)+' - '+_date(_range!.end),style:const TextStyle(fontSize:9,color:Color(0xff6f7f8d)))),TextButton(onPressed:(){setState(()=>_range=null);_load();},child:const Text('Reset'))])),Expanded(child:AppRefreshIndicator(onRefresh:_load,child:SingleChildScrollView(physics:const AlwaysScrollableScrollPhysics(),padding:const EdgeInsets.fromLTRB(16,8,16,20),child:_loading?const AppPageLoading():_error!=null?_BelumKembaliError(message:_error!,onRetry:_load):rows.isEmpty?const Padding(padding:EdgeInsets.all(40),child:Center(child:Text('Tidak ada linen yang belum kembali.'))):Column(children:[_BelumKembaliTable(rows:rows),if(_response!=null)AppPagination(meta:_response!.meta,onPage:(page){setState(()=>_page=page);_load();})]))))]));}}
+@override
+Widget build(BuildContext context) {
+  final rows = _response?.data ?? const <LinenBelumKembaliItem>[];
+  return AppShell(
+    embedded: widget.embedded,
+    userName: widget.userName,
+    activeIndex: 4,
+    body: Column(
+      children: [
+        // Header is provided by AppShell so it stays fixed while the body pages slide.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  onSubmitted: (_) => _load(),
+                  decoration: InputDecoration(
+                    hintText: 'Cari linen / ruangan...',
+                    prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+          child: Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<int?>(
+                  value: _roomId,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    hintText: 'Semua Ruangan',
+                    prefixIcon: const Icon(Icons.meeting_room_rounded, size: 19),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: [
+                    const DropdownMenuItem<int?>(
+                      value: null,
+                      child: Text('Semua Ruangan'),
+                    ),
+                    ..._rooms.map(
+                      (r) => DropdownMenuItem<int?>(
+                        value: r.id,
+                        child: Text(r.nama),
+                      ),
+                    ),
+                  ],
+                  onChanged: (v) {
+                    setState(() => _roomId = v);
+                    _load();
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: _pickRange,
+                tooltip: 'Pilih rentang tanggal',
+                style: IconButton.styleFrom(
+                  backgroundColor: const Color(0xff1261dc),
+                  foregroundColor: Colors.white,
+                ),
+                icon: const Icon(Icons.date_range_rounded, size: 20),
+              ),
+            ],
+          ),
+        ),
+        if (_range != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Periode: ' +
+                        _date(_range!.start) +
+                        ' - ' +
+                        _date(_range!.end),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      color: Color(0xff6f7f8d),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() => _range = null);
+                    _load();
+                  },
+                  child: const Text('Reset'),
+                ),
+              ],
+            ),
+          ),
+        Expanded(
+          child: AppRefreshIndicator(
+            onRefresh: _load,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+              child: _loading
+                  ? const AppPageLoading()
+                  : _error != null
+                      ? _BelumKembaliError(message: _error!, onRetry: _load)
+                      : rows.isEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.all(40),
+                              child: Center(
+                                child: Text('Tidak ada linen yang belum kembali.'),
+                              ),
+                            )
+                          : Column(
+                              children: [
+                                _BelumKembaliTable(rows: rows),
+                                if (_response != null)
+                                  AppPagination(
+                                    meta: _response!.meta,
+                                    onPage: (page) {
+                                      setState(() => _page = page);
+                                      _load();
+                                    },
+                                  ),
+                              ],
+                            ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 class _BelumKembaliTable extends StatelessWidget {
   const _BelumKembaliTable({required this.rows});
   final List<LinenBelumKembaliItem> rows;
