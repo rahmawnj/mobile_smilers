@@ -30,8 +30,9 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
 
   @override void initState(){super.initState();_loadOptions();_load();_loadQueue();}
   @override void dispose(){_searchController.dispose();super.dispose();}
-  String _date(DateTime d) => '${d.month}/${d.day}/${d.year}';
-  String _range(DateTimeRange r)=>'\${_date(r.start)} - \${_date(r.end)}';
+  String _date(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+  String _range(DateTimeRange r) => '${_date(r.start)} - ${_date(r.end)}';
   bool _isSingleDate(DateTimeRange r) =>
       r.start.year == r.end.year &&
       r.start.month == r.end.month &&
@@ -45,18 +46,27 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     } catch (_) {} finally { if(mounted)setState(()=>_optionsLoading=false); }
   }
   Future<void> _load() async {
+    if (_filterRoom == null) {
+      if (!mounted) return;
+      setState(() {
+        _response = null;
+        _error = null;
+        _loading = false;
+        _page = 1;
+      });
+      return;
+    }
+
     setState(()=>_loading=true);
     try {
       final r=await ApiService.instance.getLinenKeluar(
         perPage:_perPage,page:_page,
         search:_searchController.text.trim().isEmpty?null:_searchController.text.trim(),
         ruangan:_filterRoom,
-        date:_selectedDateRange != null && _isSingleDate(_selectedDateRange!)
-            ? _date(_selectedDateRange!.start)
-            : null,
-        daterange:_selectedDateRange != null && !_isSingleDate(_selectedDateRange!)
-            ? _range(_selectedDateRange!)
-            : null);
+        date: null,
+        daterange: _selectedDateRange == null
+            ? null
+            : _range(_selectedDateRange!));
       if(!mounted)return;
       setState(()=>{_response=r,_error=null,_loading=false});
     } on ApiException catch(e) {
@@ -102,15 +112,24 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
     int? previewRoom,
     bool usePreviewRoom = false,
   }) {
+    final room = usePreviewRoom ? previewRoom : _filterRoom;
+    if (room == null) {
+      throw const ApiException(
+        'Pilih ruangan terlebih dahulu untuk menampilkan data Linen Keluar.',
+      );
+    }
+
     return ApiService.instance.getLinenKeluar(
       perPage: perPage,
       page: page,
       search: _searchController.text.trim().isEmpty
           ? null
           : _searchController.text.trim(),
-      ruangan: usePreviewRoom ? previewRoom : _filterRoom,
-      date: previewDate == null ? null : _date(previewDate),
-      daterange: null,
+      ruangan: room,
+      date: null,
+      daterange: previewDate == null
+          ? (_selectedDateRange == null ? null : _range(_selectedDateRange!))
+          : '${_date(previewDate)} - ${_date(previewDate)}',
     );
   }
 
@@ -248,6 +267,15 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   }
 
   Future<void> _previewDownload() async {
+    if (_filterRoom == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Pilih ruangan terlebih dahulu sebelum preview atau download.'),
+        ),
+      );
+      return;
+    }
+
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => _LinenKeluarPreviewDialog(
@@ -348,7 +376,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
               Expanded(child:DropdownButtonFormField<int?>(
                 value:_filterRoom,
                 decoration:const InputDecoration(labelText:'Ruangan',filled:true,fillColor:Color(0xfff5f8fc),border:OutlineInputBorder(borderSide:BorderSide.none)),
-                items:[const DropdownMenuItem<int?>(value:null,child:Text('Semua Ruangan')), ...?_options?.ruangan.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.namaRuangan)))],
+                items:[const DropdownMenuItem<int?>(value:null,child:Text('Pilih Ruangan')), ...?_options?.ruangan.map((r)=>DropdownMenuItem<int?>(value:r.id,child:Text(r.namaRuangan)))],
                 onChanged:(v){setState(()=>{_filterRoom=v,_page=1});_load();},
               )),
               const SizedBox(width:8),
@@ -383,7 +411,24 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         ),
         const SizedBox(height:12),
         const SizedBox(height:12),
-        if (_loading) const AppPageLoading()
+        if (_filterRoom == null)
+          const Padding(
+            padding: EdgeInsets.all(28),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(Icons.meeting_room_outlined, size: 38, color: Color(0xff7d8c99)),
+                  SizedBox(height: 10),
+                  Text(
+                    'Pilih ruangan terlebih dahulu untuk menampilkan data Linen & Tirai Keluar.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Color(0xff7d8c99), fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else if (_loading) const AppPageLoading()
         else if(_error!=null)Padding(padding:const EdgeInsets.all(24),child:Column(children:[const Icon(Icons.cloud_off_rounded),const SizedBox(height:10),Text(_error!,textAlign:TextAlign.center),const SizedBox(height:12),ElevatedButton(onPressed:_load,child:const Text('Coba Lagi'))]))
         else AppDataTable(
       headingColor: const Color(0xff02c0cc),
@@ -408,7 +453,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
             ]);
           }).toList(),
         ),
-        if(!_loading&&_error==null&&rows.isEmpty)const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data Linen & Tirai Keluar.'))),
+        if(_filterRoom != null && !_loading && _error==null && rows.isEmpty)const Padding(padding:EdgeInsets.all(24),child:Center(child:Text('Tidak ada data Linen & Tirai Keluar.'))),
         if(meta!=null) ...[
           Column(
             children: [
