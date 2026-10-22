@@ -277,8 +277,25 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
   @override Widget build(BuildContext context) {
     final rows=_response?.data??const <LinenKeluarItem>[];
     final meta=_response?.meta;
-    return AppShell(userName:widget.userName,activeIndex:-1,body:Column(children:[
-      DetailHeader(title:'Linen & Tirai Keluar',userName:widget.userName),
+    return AppShell(userName:widget.userName,activeIndex:-1,body: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(22),
+                ),
+              ),
+            ),
+          ),
+          Column(children:[
+      DetailHeader(title:'Linen & Tirai Keluar',userName:widget.userName, transparentBottom: true),
       Expanded(child:AppRefreshIndicator(onRefresh:() async=>Future.wait([_load(),_loadQueue()]),child:ListView(padding:const EdgeInsets.fromLTRB(16,14,16,100),children:[
         Row(children:[
           Expanded(child:TextField(controller:_searchController,onSubmitted:(_){setState(()=>_page=1);_load();},decoration:InputDecoration(
@@ -440,7 +457,25 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
 
         ],
       ]))),
-    ]));
+    ]),
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            height: 60,
+            child: IgnorePointer(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ));
   }
 }
 
