@@ -157,6 +157,8 @@ Widget build(BuildContext context) {
   );
 }
 
+}
+
 class _BelumKembaliTable extends StatelessWidget {
   const _BelumKembaliTable({required this.rows});
   final List<LinenBelumKembaliItem> rows;
