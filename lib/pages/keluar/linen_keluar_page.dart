@@ -910,7 +910,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
           child: const Text('Tutup'),
         ),
         ElevatedButton.icon(
-          onPressed: _downloadingPdf || _loading ? null : _downloadPdf,
+          onPressed: _downloadingPdf || _loading || _filterRoom == null ? null : _downloadPdf,
           icon: _downloadingPdf
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
               : const Icon(Icons.picture_as_pdf_rounded),
