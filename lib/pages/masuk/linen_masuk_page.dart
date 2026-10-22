@@ -926,7 +926,7 @@ class _LinenMasukPreviewDialogState extends State<_LinenMasukPreviewDialog> {
       _error = null;
     });
     try {
-      final response = await widget.loadPage(page, _filterDate, _filterRoom);
+      final response = await widget.loadPage(page, _filterDateRange, _filterRoom);
       if (!mounted) return;
       setState(() {
         _rows.addAll(response.data.take(5000 - _rows.length));
