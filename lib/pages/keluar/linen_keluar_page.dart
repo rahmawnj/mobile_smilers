@@ -551,7 +551,7 @@ class _LinenKeluarPreviewDialogState extends State<_LinenKeluarPreviewDialog> {
   int _nextPage = 1;
   int _lastPage = 1;
   int? _total;
-  bool _loading = true;
+  bool _loading = false;
   bool _loadingMore = false;
   bool _downloadingPdf = false;
   String? _error;
