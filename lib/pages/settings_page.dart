@@ -73,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff5f8fc),
+      backgroundColor: Colors.white,
       body: SafeArea(
         bottom: false,
         child: FutureBuilder<AuthUser?>(
@@ -117,26 +117,29 @@ class _SettingsPageState extends State<SettingsPage> {
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
                           child: Column(
                             children: [
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(20),
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => const ProfilePage(),
-                                      ),
-                                    );
-                                  },
-                                  child: _ProfileCard(
-                                    name: name,
-                                    username: username,
-                                    role: role,
-                                    foto: foto,
+                              Transform.translate(
+                                offset: const Offset(0, -12),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(20),
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const ProfilePage(),
+                                        ),
+                                      );
+                                    },
+                                    child: _ProfileCard(
+                                      name: name,
+                                      username: username,
+                                      role: role,
+                                      foto: foto,
+                                    ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 12),
                               _SettingMenu(
                                 icon: Icons.lock_outline_rounded,
                                 title: 'Ganti Sandi',
@@ -247,7 +250,6 @@ class _SettingsHero extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [Color(0xff5cc9bd), Color(0xff159cf1)],
         ),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(26)),
       ),
       child: Stack(
         children: [

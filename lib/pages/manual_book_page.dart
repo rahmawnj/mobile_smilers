@@ -8,12 +8,26 @@ class ManualBookPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff5f8fc),
+      backgroundColor: Colors.white,
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Stack(
           children: [
+            Positioned(
+              top: 140,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+                ),
+              ),
+            ),
+            ListView(
+              padding: EdgeInsets.zero,
+              children: [
             Container(
               height: 170,
               width: double.infinity,
@@ -24,7 +38,6 @@ class ManualBookPage extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [Color(0xff5cc9bd), Color(0xff159cf1)],
                 ),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(26)),
               ),
               child: Stack(
                 children: [
@@ -76,12 +89,12 @@ class ManualBookPage extends StatelessWidget {
             Transform.translate(
               offset: const Offset(0, -30),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
+                padding: EdgeInsets.zero,
                 child: Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
                     boxShadow: [
                       BoxShadow(color: Colors.black.withValues(alpha: .09), blurRadius: 20, offset: const Offset(0, 8)),
                     ],
@@ -89,6 +102,8 @@ class ManualBookPage extends StatelessWidget {
                   child: _ManualContent(),
                 ),
               ),
+            ),
+          ],
             ),
           ],
         ),

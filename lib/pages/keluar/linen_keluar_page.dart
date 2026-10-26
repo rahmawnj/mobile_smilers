@@ -228,7 +228,7 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
         clipBehavior: Clip.none,
         children: [
           Positioned(
-            top: 60,
+            top: 90,
             left: 0,
             right: 0,
             bottom: 0,
@@ -429,10 +429,10 @@ class _LinenKeluarPageState extends State<LinenKeluarPage> {
       ]))),
     ]),
           Positioned(
-            top: 60,
+            top: 90,
             left: 0,
             right: 0,
-            height: 60,
+            height: 30,
             child: IgnorePointer(
               child: Container(
                 decoration: const BoxDecoration(
